@@ -18,6 +18,7 @@ type Repository struct {
 
 type ServiceRow struct {
 	ID                  int64    `json:"id"`
+	Level1ID            int64    `json:"level1_id"`
 	Code                string   `json:"code"`
 	Name                string   `json:"name"`
 	Level1Code          string   `json:"level1_code"`
@@ -31,6 +32,7 @@ type ServiceRow struct {
 	Minimum             *float64 `json:"minimum"`
 	Maximum             *float64 `json:"maximum"`
 	ReviewRequired      bool     `json:"review_required"`
+	IsActive            bool     `json:"is_active"`
 	SectionID           *int64   `json:"section_id,omitempty"`
 	SectionName         *string  `json:"section_name,omitempty"`
 	ResponsibleUserID   *int64   `json:"responsible_user_id,omitempty"`
@@ -43,16 +45,56 @@ type AssignmentInput struct {
 	ResponsibleUserID *int64 `json:"responsible_user_id"`
 }
 
+type ServiceFilters struct {
+	Query        string
+	Level1ID     *int64
+	IsActive     *bool
+	ServiceClass string
+	Criticality  string
+	ServiceType  string
+}
+
+type Level1Option struct {
+	ID   int64  `json:"id"`
+	Code string `json:"code"`
+	Name string `json:"name"`
+}
+
+type Lookups struct {
+	ServiceClasses []string `json:"service_classes"`
+	Criticalities  []string `json:"criticalities"`
+	ServiceTypes   []string `json:"service_types"`
+}
+
+type Level1Input struct {
+	Code string `json:"code"`
+	Name string `json:"name"`
+}
+
+type Level2Input struct {
+	Level1ID     int64    `json:"level1_id"`
+	Code         string   `json:"code"`
+	Name         string   `json:"name"`
+	ActiveValue  *string  `json:"active_value"`
+	ServiceClass *string  `json:"service_class"`
+	Criticality  *string  `json:"criticality"`
+	ServiceType  *string  `json:"service_type"`
+	Description  *string  `json:"description"`
+	Metric       *string  `json:"metric"`
+	Minimum      *float64 `json:"minimum"`
+	Maximum      *float64 `json:"maximum"`
+}
+
 func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{pool: pool}
 }
 
-func (r *Repository) ListServices(ctx context.Context, query string) ([]ServiceRow, error) {
-	query = strings.TrimSpace(query)
+func (r *Repository) ListServices(ctx context.Context, filters ServiceFilters) ([]ServiceRow, error) {
+	filters.Query = strings.TrimSpace(filters.Query)
 	rows, err := r.pool.Query(ctx, `
-		SELECT s.id, s.code, s.name, l.code, l.canonical_name, s.active_value,
+		SELECT s.id, s.service_level1_id, s.code, s.name, l.code, l.canonical_name, s.active_value,
 		       c.name, cr.name, st.name, s.description, s.metric, s.minimum, s.maximum,
-		       s.review_required, a.section_id, sec.name, a.responsible_user_id, u.full_name
+		       s.review_required, s.is_active, a.section_id, sec.name, a.responsible_user_id, u.full_name
 		FROM services_level2 s
 		JOIN services_level1 l ON l.id = s.service_level1_id
 		LEFT JOIN service_classes c ON c.id = s.service_class_id
@@ -63,7 +105,12 @@ func (r *Repository) ListServices(ctx context.Context, query string) ([]ServiceR
 		LEFT JOIN app_users u ON u.id = a.responsible_user_id
 		WHERE ($1 = '' OR s.code ILIKE '%' || $1 || '%' OR s.name ILIKE '%' || $1 || '%'
 		       OR l.code ILIKE '%' || $1 || '%' OR l.canonical_name ILIKE '%' || $1 || '%')
-		ORDER BY s.code`, query)
+		  AND ($2::bigint IS NULL OR s.service_level1_id = $2)
+		  AND ($3::boolean IS NULL OR s.is_active = $3)
+		  AND ($4 = '' OR c.name = $4)
+		  AND ($5 = '' OR cr.name = $5)
+		  AND ($6 = '' OR st.name = $6)
+		ORDER BY s.code`, filters.Query, filters.Level1ID, filters.IsActive, filters.ServiceClass, filters.Criticality, filters.ServiceType)
 	if err != nil {
 		return nil, err
 	}
@@ -71,16 +118,231 @@ func (r *Repository) ListServices(ctx context.Context, query string) ([]ServiceR
 	services := make([]ServiceRow, 0)
 	for rows.Next() {
 		var service ServiceRow
-		if err := rows.Scan(&service.ID, &service.Code, &service.Name, &service.Level1Code,
+		if err := rows.Scan(&service.ID, &service.Level1ID, &service.Code, &service.Name, &service.Level1Code,
 			&service.Level1Name, &service.ActiveValue, &service.ServiceClass, &service.Criticality,
 			&service.ServiceType, &service.Description, &service.Metric, &service.Minimum,
-			&service.Maximum, &service.ReviewRequired, &service.SectionID, &service.SectionName,
+			&service.Maximum, &service.ReviewRequired, &service.IsActive, &service.SectionID, &service.SectionName,
 			&service.ResponsibleUserID, &service.ResponsibleUserName); err != nil {
 			return nil, err
 		}
 		services = append(services, service)
 	}
 	return services, rows.Err()
+}
+
+func (r *Repository) ListLevel1(ctx context.Context) ([]Level1Option, error) {
+	rows, err := r.pool.Query(ctx, `SELECT id, code, canonical_name FROM services_level1 WHERE is_active = TRUE ORDER BY code`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	result := make([]Level1Option, 0)
+	for rows.Next() {
+		var option Level1Option
+		if err := rows.Scan(&option.ID, &option.Code, &option.Name); err != nil {
+			return nil, err
+		}
+		result = append(result, option)
+	}
+	return result, rows.Err()
+}
+
+func (r *Repository) ListLookups(ctx context.Context) (Lookups, error) {
+	result := Lookups{}
+	var err error
+	if result.ServiceClasses, err = listNames(ctx, r.pool, "service_classes"); err != nil {
+		return result, err
+	}
+	if result.Criticalities, err = listNames(ctx, r.pool, "criticalities"); err != nil {
+		return result, err
+	}
+	if result.ServiceTypes, err = listNames(ctx, r.pool, "service_types"); err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func listNames(ctx context.Context, pool *pgxpool.Pool, table string) ([]string, error) {
+	if table != "service_classes" && table != "criticalities" && table != "service_types" {
+		return nil, fmt.Errorf("invalid lookup table")
+	}
+	rows, err := pool.Query(ctx, fmt.Sprintf(`SELECT name FROM %s ORDER BY name`, table))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	result := make([]string, 0)
+	for rows.Next() {
+		var value string
+		if err := rows.Scan(&value); err != nil {
+			return nil, err
+		}
+		result = append(result, value)
+	}
+	return result, rows.Err()
+}
+
+func (r *Repository) CreateLevel1(ctx context.Context, input Level1Input) (Level1Option, error) {
+	input.Code, input.Name = strings.TrimSpace(input.Code), strings.TrimSpace(input.Name)
+	if input.Code == "" || input.Name == "" {
+		return Level1Option{}, fmt.Errorf("código y nombre son obligatorios")
+	}
+	var result Level1Option
+	err := r.pool.QueryRow(ctx, `
+		INSERT INTO services_level1 (code, canonical_name)
+		VALUES ($1, $2)
+		RETURNING id, code, canonical_name`, input.Code, input.Name).
+		Scan(&result.ID, &result.Code, &result.Name)
+	if err != nil {
+		return Level1Option{}, fmt.Errorf("crear servicio nivel 1: %w", err)
+	}
+	return result, nil
+}
+
+func (r *Repository) UpdateLevel1(ctx context.Context, id int64, input Level1Input) (Level1Option, error) {
+	input.Code, input.Name = strings.TrimSpace(input.Code), strings.TrimSpace(input.Name)
+	if input.Code == "" || input.Name == "" {
+		return Level1Option{}, fmt.Errorf("código y nombre son obligatorios")
+	}
+	var result Level1Option
+	err := r.pool.QueryRow(ctx, `
+		UPDATE services_level1 SET code = $1, canonical_name = $2
+		WHERE id = $3
+		RETURNING id, code, canonical_name`, input.Code, input.Name, id).
+		Scan(&result.ID, &result.Code, &result.Name)
+	if err != nil {
+		return Level1Option{}, fmt.Errorf("actualizar servicio nivel 1: %w", err)
+	}
+	return result, nil
+}
+
+func (r *Repository) SetLevel1Active(ctx context.Context, id int64, active bool) error {
+	if !active {
+		var hasChildren bool
+		if err := r.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM services_level2 WHERE service_level1_id = $1 AND is_active = TRUE)`, id).Scan(&hasChildren); err != nil {
+			return err
+		}
+		if hasChildren {
+			return fmt.Errorf("no se puede desactivar: existen servicios nivel 2 activos")
+		}
+	}
+	result, err := r.pool.Exec(ctx, `UPDATE services_level1 SET is_active = $1 WHERE id = $2`, active, id)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("servicio nivel 1 no encontrado")
+	}
+	return nil
+}
+
+func validateLevel2Input(input Level2Input) error {
+	input.Code, input.Name = strings.TrimSpace(input.Code), strings.TrimSpace(input.Name)
+	if input.Level1ID <= 0 || input.Code == "" || input.Name == "" {
+		return fmt.Errorf("nivel 1, código y nombre son obligatorios")
+	}
+	if input.Minimum != nil && input.Maximum != nil && *input.Minimum > *input.Maximum {
+		return fmt.Errorf("el mínimo no puede ser mayor que el máximo")
+	}
+	return nil
+}
+
+func (r *Repository) CreateLevel2(ctx context.Context, input Level2Input) error {
+	if err := validateLevel2Input(input); err != nil {
+		return err
+	}
+	tx, err := r.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	var parentActive bool
+	if err := tx.QueryRow(ctx, `SELECT is_active FROM services_level1 WHERE id = $1`, input.Level1ID).Scan(&parentActive); err != nil || !parentActive {
+		return fmt.Errorf("el servicio nivel 1 no existe o está inactivo")
+	}
+	classID, err := lookupID(ctx, tx, "service_classes", input.ServiceClass)
+	if err != nil {
+		return err
+	}
+	criticalityID, err := lookupID(ctx, tx, "criticalities", input.Criticality)
+	if err != nil {
+		return err
+	}
+	typeID, err := lookupID(ctx, tx, "service_types", input.ServiceType)
+	if err != nil {
+		return err
+	}
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO services_level2
+			(service_level1_id, code, name, active_value, service_class_id, criticality_id, service_type_id,
+			 description, metric, minimum, maximum, review_required, is_active)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, FALSE, TRUE)`, input.Level1ID,
+		input.Code, input.Name, input.ActiveValue, classID, criticalityID, typeID, input.Description,
+		input.Metric, input.Minimum, input.Maximum); err != nil {
+		return fmt.Errorf("crear servicio nivel 2: %w", err)
+	}
+	return tx.Commit(ctx)
+}
+
+func (r *Repository) UpdateLevel2(ctx context.Context, id int64, input Level2Input) error {
+	if err := validateLevel2Input(input); err != nil {
+		return err
+	}
+	tx, err := r.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	var parentActive bool
+	if err := tx.QueryRow(ctx, `SELECT is_active FROM services_level1 WHERE id = $1`, input.Level1ID).Scan(&parentActive); err != nil || !parentActive {
+		return fmt.Errorf("el servicio nivel 1 no existe o está inactivo")
+	}
+	classID, err := lookupID(ctx, tx, "service_classes", input.ServiceClass)
+	if err != nil {
+		return err
+	}
+	criticalityID, err := lookupID(ctx, tx, "criticalities", input.Criticality)
+	if err != nil {
+		return err
+	}
+	typeID, err := lookupID(ctx, tx, "service_types", input.ServiceType)
+	if err != nil {
+		return err
+	}
+	result, err := tx.Exec(ctx, `
+		UPDATE services_level2 SET
+			service_level1_id = $1, code = $2, name = $3, active_value = $4,
+			service_class_id = $5, criticality_id = $6, service_type_id = $7,
+			description = $8, metric = $9, minimum = $10, maximum = $11
+		WHERE id = $12`, input.Level1ID, input.Code, input.Name, input.ActiveValue, classID,
+		criticalityID, typeID, input.Description, input.Metric, input.Minimum, input.Maximum, id)
+	if err != nil {
+		return fmt.Errorf("actualizar servicio nivel 2: %w", err)
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("servicio nivel 2 no encontrado")
+	}
+	return tx.Commit(ctx)
+}
+
+func (r *Repository) SetLevel2Active(ctx context.Context, id int64, active bool) error {
+	if !active {
+		var assigned bool
+		if err := r.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments WHERE service_level2_id = $1)`, id).Scan(&assigned); err != nil {
+			return err
+		}
+		if assigned {
+			return fmt.Errorf("no se puede desactivar: el servicio tiene una asignación")
+		}
+	}
+	result, err := r.pool.Exec(ctx, `UPDATE services_level2 SET is_active = $1 WHERE id = $2`, active, id)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("servicio nivel 2 no encontrado")
+	}
+	return nil
 }
 
 func (r *Repository) Assign(ctx context.Context, input AssignmentInput) error {

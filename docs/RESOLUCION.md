@@ -120,6 +120,8 @@ Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el
 | Docker y persistencia | `compose.yaml` y volumen `catalogo_pgdata` | `docker compose up --build -d`, `/api/health`, `/api/ready` | Evidencia de ciclo Compose | Comprobado |
 | Esquema PostgreSQL inicial | Migración `001_initial_schema.sql` | Arranque del servidor y migración | `backend/migrations/` | Comprobado |
 | Persistencia del catálogo | Service/Repository y migración `002_import_idempotency.sql` | Importador con `--database-url` y conteos SQL | Evidencia de ciclo Compose y prompt 004 | Comprobado |
+| CRUD y filtros del catálogo | Repositorio, handlers, migración 003 e interfaz React | Suite P09–P10 y endpoints protegidos | `scripts/acceptance.sh` y evidencia CRUD | Comprobado |
+| Escenarios de aceptación P01–P12 | Suite reproducible con datos aislados | Ejecución remota completa | Evidencia del ciclo CRUD y pruebas | Comprobado |
 
 ## 8. Resultados reales de pruebas
 
@@ -133,7 +135,7 @@ Importación: 12 nivel 1, 46 nivel 2, 4 observaciones y 51 filas omitidas
 Docker Compose: API y PostgreSQL iniciados
 /api/health: {"status":"ok"}
 /api/ready: {"status":"ready"}
-Migraciones aplicadas: 1
+Migraciones aplicadas: 3
 Clases de servicio cargadas: 2
 Login válido: HTTP 200
 Login inválido: HTTP 401
@@ -143,6 +145,8 @@ Frontend y proxy `/api`: HTTP 200
 Sección creada con administrador: HTTP 201
 Responsable de sección distinta: HTTP 400
 Usuario inactivo intentando login: HTTP 401
+CRUD y filtros del catálogo: HTTP 200/201/400 según operación
+Suite P01–P12: PASS
 ```
 
 Durante el ciclo se corrigió un error real en el uso de `GetSheetIndex` y se añadió una prueba para conservar ambos nombres originales de `SE.12`. La evidencia está en [2026-10-01-ciclo-importador.md](evidencias/2026-10-01-ciclo-importador.md).
@@ -157,4 +161,4 @@ El primer arranque detectó y corrigió una ruta de volumen incompatible; despu�
 
 Hasta ahora, la decisión humana principal fue conservar el primer nombre de `SE.12` como canónico y mantener el segundo como evidencia, en vez de inventar una unificación semántica. También se decidió no corregir automáticamente la escritura original del Excel.
 
-Las limitaciones pendientes son completar la automatización de P01–P12 y ampliar los mantenimientos de catálogo y organización con formularios de edición más detallados. La base PostgreSQL, autenticación, asignaciones, interfaz inicial y arranque Compose ya están comprobados.
+La suite P01–P12 ya está automatizada y comprobada en la laptop remota. Como mejora posterior queda ampliar los formularios de edición detallada de catálogo y organización; el CRUD, la búsqueda, los filtros, la persistencia y las reglas de validación principales ya están comprobados.

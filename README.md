@@ -40,7 +40,7 @@ No debe modificarse. La importación debe conservar 12 códigos de nivel 1 y 46 
 
 ## Estado actual
 
-Ya están implementados el importador trazable, la persistencia PostgreSQL, la autenticación local, la organización, las asignaciones y una interfaz React inicial. El reporte validado obtuvo:
+Ya están implementados el importador trazable, la persistencia PostgreSQL, la autenticación local, la organización, las asignaciones, el CRUD del catálogo, los filtros y la interfaz React. El reporte validado obtuvo:
 
 ```text
 Nivel 1: 12
@@ -91,6 +91,19 @@ go run ./backend/cmd/importer \
 
 En la prueba remota se verificaron 12 registros de nivel 1, 46 de nivel 2, 4 observaciones y una importación exitosa.
 
+## Pruebas de aceptación
+
+Con los contenedores levantados y las cuentas locales creadas, ejecutar:
+
+```bash
+ADMIN_PASSWORD='clave-local-admin' \
+CONSULTA_PASSWORD='clave-local-consulta' \
+BASE_URL=http://localhost:8080 \
+bash scripts/acceptance.sh
+```
+
+La suite cubre P01–P12 y crea datos de prueba aislados. Ver [pruebas de aceptación](tests/README.md) y la [evidencia del ciclo CRUD](docs/evidencias/ciclo-crud-y-pruebas.md).
+
 ## Verificación actual del importador
 
 La prueba actual se ejecuta en la laptop remota mediante un contenedor de Go:
@@ -116,6 +129,8 @@ El sufijo `:Z` es necesario en Fedora/Podman para el etiquetado SELinux del volu
 - [Prompt de persistencia del catálogo](docs/prompts/004-persistencia-importacion.md)
 - [Prompt de autenticación, organización e interfaz](docs/prompts/005-auth-organizacion-interfaz.md)
 - [Evidencia de autenticación e interfaz](docs/evidencias/2026-10-01-ciclo-auth-ui.md)
+- [Prompt de CRUD, filtros y pruebas](docs/prompts/006-crud-filtros-pruebas.md)
+- [Evidencia de CRUD y pruebas P01–P12](docs/evidencias/ciclo-crud-y-pruebas.md)
 
 ## Seguridad
 

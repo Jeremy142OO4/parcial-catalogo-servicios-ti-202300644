@@ -46,6 +46,14 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("PATCH /api/users/{id}", s.requireAdmin(s.updateUser))
 	mux.HandleFunc("PATCH /api/users/{id}/active", s.requireAdmin(s.setUserActive))
 	mux.HandleFunc("GET /api/catalog/services", s.requireAuth(s.listServices))
+	mux.HandleFunc("GET /api/catalog/lookups", s.requireAuth(s.listLookups))
+	mux.HandleFunc("GET /api/catalog/level1", s.requireAuth(s.listLevel1))
+	mux.HandleFunc("POST /api/catalog/level1", s.requireAdmin(s.createLevel1))
+	mux.HandleFunc("PATCH /api/catalog/level1/{id}", s.requireAdmin(s.updateLevel1))
+	mux.HandleFunc("PATCH /api/catalog/level1/{id}/active", s.requireAdmin(s.setLevel1Active))
+	mux.HandleFunc("POST /api/catalog/services", s.requireAdmin(s.createLevel2))
+	mux.HandleFunc("PATCH /api/catalog/services/{id}", s.requireAdmin(s.updateLevel2))
+	mux.HandleFunc("PATCH /api/catalog/services/{id}/active", s.requireAdmin(s.setLevel2Active))
 	mux.HandleFunc("POST /api/catalog/assignments", s.requireAdmin(s.assignService))
 	return cors(mux)
 }
@@ -241,12 +249,150 @@ func (s *Server) updateUser(w http.ResponseWriter, r *http.Request, _ *auth.User
 }
 
 func (s *Server) listServices(w http.ResponseWriter, r *http.Request, _ *auth.User) {
-	services, err := s.catalog.ListServices(r.Context(), r.URL.Query().Get("q"))
+	filters := catalog.ServiceFilters{
+		Query:        r.URL.Query().Get("q"),
+		ServiceClass: r.URL.Query().Get("service_class"),
+		Criticality:  r.URL.Query().Get("criticality"),
+		ServiceType:  r.URL.Query().Get("service_type"),
+	}
+	if value := r.URL.Query().Get("level1_id"); value != "" {
+		id, err := strconv.ParseInt(value, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "level1_id inválido")
+			return
+		}
+		filters.Level1ID = &id
+	}
+	if value := r.URL.Query().Get("is_active"); value != "" {
+		active, err := strconv.ParseBool(value)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "is_active inválido")
+			return
+		}
+		filters.IsActive = &active
+	}
+	services, err := s.catalog.ListServices(r.Context(), filters)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "no se pudieron consultar los servicios")
 		return
 	}
 	writeJSON(w, http.StatusOK, services)
+}
+
+func (s *Server) listLookups(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	lookups, err := s.catalog.ListLookups(r.Context())
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "no se pudieron consultar los catálogos")
+		return
+	}
+	writeJSON(w, http.StatusOK, lookups)
+}
+
+func (s *Server) listLevel1(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	services, err := s.catalog.ListLevel1(r.Context())
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "no se pudieron consultar los servicios nivel 1")
+		return
+	}
+	writeJSON(w, http.StatusOK, services)
+}
+
+func (s *Server) createLevel1(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	var input catalog.Level1Input
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	service, err := s.catalog.CreateLevel1(r.Context(), input)
+	if err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusCreated, service)
+}
+
+func (s *Server) updateLevel1(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	id, err := pathID(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "identificador inválido")
+		return
+	}
+	var input catalog.Level1Input
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	service, err := s.catalog.UpdateLevel1(r.Context(), id, input)
+	if err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, service)
+}
+
+func (s *Server) setLevel1Active(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	id, err := pathID(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "identificador inválido")
+		return
+	}
+	var input struct {
+		IsActive bool `json:"is_active"`
+	}
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	if err := s.catalog.SetLevel1Active(r.Context(), id, input.IsActive); err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) createLevel2(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	var input catalog.Level2Input
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	if err := s.catalog.CreateLevel2(r.Context(), input); err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (s *Server) updateLevel2(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	id, err := pathID(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "identificador inválido")
+		return
+	}
+	var input catalog.Level2Input
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	if err := s.catalog.UpdateLevel2(r.Context(), id, input); err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) setLevel2Active(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	id, err := pathID(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "identificador inválido")
+		return
+	}
+	var input struct {
+		IsActive bool `json:"is_active"`
+	}
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	if err := s.catalog.SetLevel2Active(r.Context(), id, input.IsActive); err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (s *Server) assignService(w http.ResponseWriter, r *http.Request, _ *auth.User) {
@@ -294,6 +440,10 @@ func bearerToken(r *http.Request) string {
 		return strings.TrimSpace(value[7:])
 	}
 	return ""
+}
+
+func pathID(r *http.Request) (int64, error) {
+	return strconv.ParseInt(r.PathValue("id"), 10, 64)
 }
 
 func decodeJSON(w http.ResponseWriter, r *http.Request, target any) bool {
