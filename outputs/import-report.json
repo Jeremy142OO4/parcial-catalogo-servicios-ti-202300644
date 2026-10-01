@@ -1,0 +1,1849 @@
+{
+  "source_file": "data/CatalogoServicios.xlsx",
+  "sheet": "Servicios Externos",
+  "data_range": "A5:L101",
+  "options_range": "E112:H122",
+  "counts": {
+    "level1": 12,
+    "level2": 46,
+    "created": 58,
+    "updated": 0,
+    "omitted": 51,
+    "observed": 4
+  },
+  "services_level1": [
+    {
+      "code": "SE.01",
+      "name": "Suministrar Infraestructura",
+      "source_names": [
+        {
+          "value": "Suministrar Infraestructura",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 5,
+            "range": "B5:B9",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 5,
+        "range": "A5"
+      }
+    },
+    {
+      "code": "SE.02",
+      "name": "Administrar Infraestructura",
+      "source_names": [
+        {
+          "value": "Administrar Infraestructura",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 10,
+            "range": "B10:B15",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 10,
+        "range": "A10"
+      }
+    },
+    {
+      "code": "SE.03",
+      "name": "Atender Soporte de Usuarios",
+      "source_names": [
+        {
+          "value": "Atender Soporte de Usuarios",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 16,
+            "range": "B16:B18",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 16,
+        "range": "A16"
+      }
+    },
+    {
+      "code": "SE.04",
+      "name": "Administrar Comunicaciones",
+      "source_names": [
+        {
+          "value": "Administrar Comunicaciones",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 19,
+            "range": "B19:B23",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 19,
+        "range": "A19"
+      }
+    },
+    {
+      "code": "SE.05",
+      "name": "Administrar y Respaldar Información",
+      "source_names": [
+        {
+          "value": "Administrar y Respaldar Información",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 24,
+            "range": "B24:B25",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 24,
+        "range": "A24"
+      }
+    },
+    {
+      "code": "SE.06",
+      "name": "Administrar Aplicaciones",
+      "source_names": [
+        {
+          "value": "Administrar Aplicaciones",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 26,
+            "range": "B26:B55",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 26,
+        "range": "A26"
+      }
+    },
+    {
+      "code": "SE.07",
+      "name": "Administrar Servicios a Clientes",
+      "source_names": [
+        {
+          "value": "Administrar Servicios a Clientes",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 56,
+            "range": "B56:B57",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 56,
+        "range": "A56"
+      }
+    },
+    {
+      "code": "SE.08",
+      "name": "Administrar Accesos y Configuraciones de Usuarios",
+      "source_names": [
+        {
+          "value": "Administrar Accesos y Configuraciones de Usuarios",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 58,
+            "range": "B58:B62",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 58,
+        "range": "A58"
+      }
+    },
+    {
+      "code": "SE.09",
+      "name": "Aprovisionar Equipo",
+      "source_names": [
+        {
+          "value": "Aprovisionar Equipo",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 63,
+            "range": "B63:B84",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 63,
+        "range": "A63"
+      }
+    },
+    {
+      "code": "SE.10",
+      "name": "Mantener Equipos",
+      "source_names": [
+        {
+          "value": "Mantener Equipos",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 85,
+            "range": "B85:B95",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 85,
+        "range": "A85"
+      }
+    },
+    {
+      "code": "SE.11",
+      "name": "Administrar Proyectos",
+      "source_names": [
+        {
+          "value": "Administrar Proyectos",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 96,
+            "range": "B96:B98",
+            "transformations": [
+              "merged_parent_value_recovered_from_main_cell"
+            ]
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 96,
+        "range": "A96"
+      }
+    },
+    {
+      "code": "SE.12",
+      "name": "Suministrar Analitica",
+      "source_names": [
+        {
+          "value": "Suministrar Analitica",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 99,
+            "range": "A99:B99"
+          }
+        },
+        {
+          "value": "Mantener Tableros de Control",
+          "source": {
+            "sheet": "Servicios Externos",
+            "row": 100,
+            "range": "A100:B100"
+          }
+        }
+      ],
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 99,
+        "range": "A99"
+      }
+    }
+  ],
+  "services_level2": [
+    {
+      "code": "SE.01.01",
+      "name": "Suministrar Puntos de Red Físicos o Inalámbricos",
+      "parent_code": "SE.01",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Back End",
+      "description": "Revele su rollo",
+      "metric": "Número de Puntos Instalados",
+      "minimum": 1,
+      "maximum": 100,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 5,
+        "range": "C5",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.01.02",
+      "name": "Suministrar Corriente Regulada",
+      "parent_code": "SE.01",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Back End",
+      "description": null,
+      "metric": "Número de Puntos Instalados",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 8,
+        "range": "C8",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.01.03",
+      "name": "Suministrar Cámaras de Seguridad",
+      "parent_code": "SE.01",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Back End",
+      "description": null,
+      "metric": "Número de Cámaras Instaladas",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 9,
+        "range": "C9",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.02.01",
+      "name": "Administrar Servicio de Infraestructura de Redes",
+      "parent_code": "SE.02",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 10,
+        "range": "C10",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.02.02",
+      "name": "Administrar Servicio de Internet",
+      "parent_code": "SE.02",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 11,
+        "range": "C11",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.02.03",
+      "name": "Administrar Acceso Remoto VPN",
+      "parent_code": "SE.02",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios con VPN",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 12,
+        "range": "C12",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.02.04",
+      "name": "Administrar Corriente Regulada",
+      "parent_code": "SE.02",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Puestos de Trabajo (2 puntos)",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 13,
+        "range": "C13",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.02.05",
+      "name": "Gestionar Centros de Impresión",
+      "parent_code": "SE.02",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Dispositivos de Impresión",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 14,
+        "range": "C14",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.02.06",
+      "name": "Gestionar Cámaras de Seguridad",
+      "parent_code": "SE.02",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Cámaras de Seguridad",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 15,
+        "range": "C15",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.03.01",
+      "name": "Atender Soporte Usuario 1 Línea (HelpDesk)",
+      "parent_code": "SE.03",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 16,
+        "range": "C16",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.03.02",
+      "name": "Atender Soporte Usuario 2 Línea (FrontOffice)",
+      "parent_code": "SE.03",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 17,
+        "range": "C17",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.03.03",
+      "name": "Atender Soporte Usuario 3 Línea (BackOffice)",
+      "parent_code": "SE.03",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 18,
+        "range": "C18",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.04.01",
+      "name": "Administrar Correo Electrónico",
+      "parent_code": "SE.04",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Cuentas de Correo",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 19,
+        "range": "C19",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.04.02",
+      "name": "Administrar Mensajería Instantánea",
+      "parent_code": "SE.04",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Usuarios con Mensajería Interna",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 20,
+        "range": "C20",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.04.03",
+      "name": "Administrar Sistema de Telefonía Fija",
+      "parent_code": "SE.04",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Extensiones",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 21,
+        "range": "C21",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.05.01",
+      "name": "Administrar y Respaldar Información de Usuarios",
+      "parent_code": "SE.05",
+      "active": "N",
+      "service_class": "A DEMANDA",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de GB asignados",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 24,
+        "range": "C24",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.05.02",
+      "name": "Administrar y Respaldar Información de Aplicaciones",
+      "parent_code": "SE.05",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "High",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de GB respaldados",
+      "minimum": 12,
+      "maximum": 24,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 25,
+        "range": "C25",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.01",
+      "name": "Administrar Aplicaciones - Área 1",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 26,
+        "range": "C26",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.02",
+      "name": "Administrar Aplicaciones - Área 2",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 30,
+        "range": "C30",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.03",
+      "name": "Administrar Aplicaciones - Área 3",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 35,
+        "range": "C35",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.04",
+      "name": "Administrar Aplicaciones - Área 4",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 38,
+        "range": "C38",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.05",
+      "name": "Administrar Aplicaciones - Área 5",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 40,
+        "range": "C40",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.06",
+      "name": "Administrar Aplicaciones - Área 6",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 43,
+        "range": "C43",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.07",
+      "name": "Administrar Aplicaciones - Área 7",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 44,
+        "range": "C44",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.08",
+      "name": "Administrar Aplicaciones - Área Tecnología de Información",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "IT Management",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 48,
+        "range": "C48",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.09",
+      "name": "Administrar Aplicaciones - Area 8",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 50,
+        "range": "C50",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.06.10",
+      "name": "Administrar Aplicaciones - Area 9",
+      "parent_code": "SE.06",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 55,
+        "range": "C55",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.07.01",
+      "name": "Administrar Servicios a Clientes - Medios Digitales",
+      "parent_code": "SE.07",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Clientes",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 56,
+        "range": "C56",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.08.01",
+      "name": "Administrar Accesos y Configuraciones de Usuarios a Aplicaciones",
+      "parent_code": "SE.08",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 58,
+        "range": "C58",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.08.02",
+      "name": "Administrar Accesos y Configuraciones de Usuarios a Bases de Datos",
+      "parent_code": "SE.08",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 59,
+        "range": "C59",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.08.03",
+      "name": "Administrar Accesos y Configuraciones de Usuarios a VPN",
+      "parent_code": "SE.08",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 60,
+        "range": "C60",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.08.04",
+      "name": "Administrar Accesos y Configuraciones de Usuarios a Sistema de Telefonía",
+      "parent_code": "SE.08",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 61,
+        "range": "C61",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.08.05",
+      "name": "Administrar Accesos y Configuraciones de Usuarios a Directorio Activo",
+      "parent_code": "SE.08",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Usuarios",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 62,
+        "range": "C62",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.09.01",
+      "name": "Aprovisionar Equipos de Usuario",
+      "parent_code": "SE.09",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Equipos Tipo Desktop",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 63,
+        "range": "C63",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.09.02",
+      "name": "Aprovisionar Dispositivos Periféricos",
+      "parent_code": "SE.09",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Equipos Tipo Dispositivos Periféricos",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 68,
+        "range": "C68",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.09.03",
+      "name": "Aprovisionar Suministros",
+      "parent_code": "SE.09",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "End User Service",
+      "description": null,
+      "metric": "Número de Suministros",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 74,
+        "range": "C74",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.09.04",
+      "name": "Aprovisionar Licenciamiento Básico",
+      "parent_code": "SE.09",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "IT Operational",
+      "description": null,
+      "metric": "Número de Licencias Instaladas",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 79,
+        "range": "C79",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.09.05",
+      "name": "Aprovisionar Licenciamiento Avanzado",
+      "parent_code": "SE.09",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "IT Operational",
+      "description": null,
+      "metric": "Número de Licencias Instaladas",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 82,
+        "range": "C82",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.10.01",
+      "name": "Mantener Equipos de Usuario",
+      "parent_code": "SE.10",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Equipos Tipo Desktop",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 85,
+        "range": "C85",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.10.02",
+      "name": "Mantener Dispositivos Periféricos",
+      "parent_code": "SE.10",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "Normal",
+      "service_type": "Front End",
+      "description": null,
+      "metric": "Número de Equipos Tipo Dispositivos Periféricos",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 90,
+        "range": "C90",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.11.01",
+      "name": "Administrar Propuestas",
+      "parent_code": "SE.11",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "High",
+      "service_type": "Project",
+      "description": null,
+      "metric": "Costo por Hora",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 96,
+        "range": "C96",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.11.02",
+      "name": "Administrar Proyectos",
+      "parent_code": "SE.11",
+      "active": "S",
+      "service_class": "A DEMANDA",
+      "criticality": "High",
+      "service_type": "Project",
+      "description": null,
+      "metric": "Costo por Proyecto",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 97,
+        "range": "C97",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.11.03",
+      "name": "Administrar Presupuestos de Inversiones y Operaciones",
+      "parent_code": "SE.11",
+      "active": "S",
+      "service_class": "RECURRENTE",
+      "criticality": "High",
+      "service_type": "Project",
+      "description": null,
+      "metric": "Costo por Proyecto",
+      "minimum": null,
+      "maximum": null,
+      "review_required": false,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 98,
+        "range": "C98",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.12.1",
+      "name": "Suministrar Tableros de Control",
+      "parent_code": "SE.12",
+      "active": null,
+      "service_class": null,
+      "criticality": null,
+      "service_type": null,
+      "description": null,
+      "metric": null,
+      "minimum": null,
+      "maximum": null,
+      "review_required": true,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 99,
+        "range": "C99",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.12.2",
+      "name": "Suministrar Análsis de Información",
+      "parent_code": "SE.12",
+      "active": null,
+      "service_class": null,
+      "criticality": null,
+      "service_type": null,
+      "description": null,
+      "metric": null,
+      "minimum": null,
+      "maximum": null,
+      "review_required": true,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 100,
+        "range": "C100",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    },
+    {
+      "code": "SE.12.3",
+      "name": "Mantener Tableros de Control",
+      "parent_code": "SE.12",
+      "active": null,
+      "service_class": null,
+      "criticality": null,
+      "service_type": null,
+      "description": null,
+      "metric": null,
+      "minimum": null,
+      "maximum": null,
+      "review_required": true,
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 101,
+        "range": "C101",
+        "transformations": [
+          "parent_code_derived_from_level2_code_prefix"
+        ]
+      }
+    }
+  ],
+  "observations": [
+    {
+      "code": "N1_NAME_CONFLICT",
+      "severity": "warning",
+      "message": "El código SE.12 aparece con nombres diferentes; se conserva el primer nombre como canónico.",
+      "sources": [
+        {
+          "sheet": "Servicios Externos",
+          "row": 99,
+          "range": "A99"
+        },
+        {
+          "sheet": "Servicios Externos",
+          "row": 100,
+          "range": "A100"
+        }
+      ],
+      "details": [
+        "canónico: Suministrar Analitica",
+        "alternativo: Mantener Tableros de Control"
+      ]
+    },
+    {
+      "code": "INCOMPLETE_SE12_ATTRIBUTES",
+      "severity": "warning",
+      "message": "El servicio SE.12.1 se importó con atributos desconocidos y requiere revisión.",
+      "sources": [
+        {
+          "sheet": "Servicios Externos",
+          "row": 99,
+          "range": "C99"
+        }
+      ],
+      "details": [
+        "active",
+        "service_class",
+        "criticality",
+        "service_type",
+        "description",
+        "metric",
+        "minimum",
+        "maximum"
+      ]
+    },
+    {
+      "code": "INCOMPLETE_SE12_ATTRIBUTES",
+      "severity": "warning",
+      "message": "El servicio SE.12.2 se importó con atributos desconocidos y requiere revisión.",
+      "sources": [
+        {
+          "sheet": "Servicios Externos",
+          "row": 100,
+          "range": "C100"
+        }
+      ],
+      "details": [
+        "active",
+        "service_class",
+        "criticality",
+        "service_type",
+        "description",
+        "metric",
+        "minimum",
+        "maximum"
+      ]
+    },
+    {
+      "code": "INCOMPLETE_SE12_ATTRIBUTES",
+      "severity": "warning",
+      "message": "El servicio SE.12.3 se importó con atributos desconocidos y requiere revisión.",
+      "sources": [
+        {
+          "sheet": "Servicios Externos",
+          "row": 101,
+          "range": "C101"
+        }
+      ],
+      "details": [
+        "active",
+        "service_class",
+        "criticality",
+        "service_type",
+        "description",
+        "metric",
+        "minimum",
+        "maximum"
+      ]
+    }
+  ],
+  "ignored_rows": [
+    {
+      "row": 6,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 6,
+        "range": "A6:L6"
+      }
+    },
+    {
+      "row": 7,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 7,
+        "range": "A7:L7"
+      }
+    },
+    {
+      "row": 22,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 22,
+        "range": "A22:L22"
+      }
+    },
+    {
+      "row": 23,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 23,
+        "range": "A23:L23"
+      }
+    },
+    {
+      "row": 27,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 27,
+        "range": "A27:L27"
+      }
+    },
+    {
+      "row": 28,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 28,
+        "range": "A28:L28"
+      }
+    },
+    {
+      "row": 29,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 29,
+        "range": "A29:L29"
+      }
+    },
+    {
+      "row": 31,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 31,
+        "range": "A31:L31"
+      }
+    },
+    {
+      "row": 32,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 32,
+        "range": "A32:L32"
+      }
+    },
+    {
+      "row": 33,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 33,
+        "range": "A33:L33"
+      }
+    },
+    {
+      "row": 34,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 34,
+        "range": "A34:L34"
+      }
+    },
+    {
+      "row": 36,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 36,
+        "range": "A36:L36"
+      }
+    },
+    {
+      "row": 37,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 37,
+        "range": "A37:L37"
+      }
+    },
+    {
+      "row": 39,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 39,
+        "range": "A39:L39"
+      }
+    },
+    {
+      "row": 41,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 41,
+        "range": "A41:L41"
+      }
+    },
+    {
+      "row": 42,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 42,
+        "range": "A42:L42"
+      }
+    },
+    {
+      "row": 45,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 45,
+        "range": "A45:L45"
+      }
+    },
+    {
+      "row": 46,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 46,
+        "range": "A46:L46"
+      }
+    },
+    {
+      "row": 47,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 47,
+        "range": "A47:L47"
+      }
+    },
+    {
+      "row": 49,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 49,
+        "range": "A49:L49"
+      }
+    },
+    {
+      "row": 51,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 51,
+        "range": "A51:L51"
+      }
+    },
+    {
+      "row": 52,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 52,
+        "range": "A52:L52"
+      }
+    },
+    {
+      "row": 53,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 53,
+        "range": "A53:L53"
+      }
+    },
+    {
+      "row": 54,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 54,
+        "range": "A54:L54"
+      }
+    },
+    {
+      "row": 57,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 57,
+        "range": "A57:L57"
+      }
+    },
+    {
+      "row": 64,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 64,
+        "range": "A64:L64"
+      }
+    },
+    {
+      "row": 65,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 65,
+        "range": "A65:L65"
+      }
+    },
+    {
+      "row": 66,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 66,
+        "range": "A66:L66"
+      }
+    },
+    {
+      "row": 67,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 67,
+        "range": "A67:L67"
+      }
+    },
+    {
+      "row": 69,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 69,
+        "range": "A69:L69"
+      }
+    },
+    {
+      "row": 70,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 70,
+        "range": "A70:L70"
+      }
+    },
+    {
+      "row": 71,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 71,
+        "range": "A71:L71"
+      }
+    },
+    {
+      "row": 72,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 72,
+        "range": "A72:L72"
+      }
+    },
+    {
+      "row": 73,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 73,
+        "range": "A73:L73"
+      }
+    },
+    {
+      "row": 75,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 75,
+        "range": "A75:L75"
+      }
+    },
+    {
+      "row": 76,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 76,
+        "range": "A76:L76"
+      }
+    },
+    {
+      "row": 77,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 77,
+        "range": "A77:L77"
+      }
+    },
+    {
+      "row": 78,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 78,
+        "range": "A78:L78"
+      }
+    },
+    {
+      "row": 80,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 80,
+        "range": "A80:L80"
+      }
+    },
+    {
+      "row": 81,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 81,
+        "range": "A81:L81"
+      }
+    },
+    {
+      "row": 83,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 83,
+        "range": "A83:L83"
+      }
+    },
+    {
+      "row": 84,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 84,
+        "range": "A84:L84"
+      }
+    },
+    {
+      "row": 86,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 86,
+        "range": "A86:L86"
+      }
+    },
+    {
+      "row": 87,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 87,
+        "range": "A87:L87"
+      }
+    },
+    {
+      "row": 88,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 88,
+        "range": "A88:L88"
+      }
+    },
+    {
+      "row": 89,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 89,
+        "range": "A89:L89"
+      }
+    },
+    {
+      "row": 91,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 91,
+        "range": "A91:L91"
+      }
+    },
+    {
+      "row": 92,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 92,
+        "range": "A92:L92"
+      }
+    },
+    {
+      "row": 93,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 93,
+        "range": "A93:L93"
+      }
+    },
+    {
+      "row": 94,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 94,
+        "range": "A94:L94"
+      }
+    },
+    {
+      "row": 95,
+      "reason": "continuation_or_non_service_row_without_level2_code",
+      "source": {
+        "sheet": "Servicios Externos",
+        "row": 95,
+        "range": "A95:L95"
+      }
+    }
+  ]
+}

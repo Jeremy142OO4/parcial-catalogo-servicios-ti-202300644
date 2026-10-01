@@ -1,0 +1,147 @@
+# Resolución de la tarea
+
+## Estado del documento
+
+Este documento es la narración principal del proyecto. Se actualiza con resultados reales y enlaza a las evidencias de respaldo. Los apartados que todavía no tienen implementación se marcan como pendientes.
+
+## 1. Problema, alcance y supuestos
+
+La organización administra sus servicios de TI en un Excel y necesita una aplicación web para consultar y mantener el catálogo, organizar usuarios y unidades, y asignar responsables.
+
+El alcance incluye:
+
+- Autenticación local y dos roles.
+- Jerarquía Empresa → Área → Departamento → Sección → Puesto → Usuario.
+- Catálogo de servicios nivel 1 y nivel 2.
+- Importación repetible del Excel.
+- Asignación de servicios a secciones y usuarios responsables.
+- Docker, PostgreSQL, pruebas y documentación reproducible.
+
+No se implementarán tickets, facturación ni consumo de servicios porque están fuera del alcance del parcial.
+
+## 2. Arquitectura y justificación de tecnologías
+
+Se utilizará un monolito modular con MVC por capas, Service y Repository:
+
+```text
+React/Vite -> Handler/Controller -> Service -> Repository -> PostgreSQL
+```
+
+- React/Vite organiza la vista por funcionalidades.
+- Go concentra la API y las reglas de negocio.
+- Los Services validan permisos, relaciones y reglas del catálogo.
+- Los Repositories encapsulan las consultas SQL.
+- PostgreSQL conserva los datos y la persistencia.
+- Docker Compose reproducirá la aplicación y la base de datos.
+
+## 3. Modelo entidad-relación y diccionario de datos
+
+El esquema inicial ya está implementado en `backend/migrations/001_initial_schema.sql`. La estructura base es:
+
+```mermaid
+erDiagram
+    COMPANY ||--o{ AREA : contains
+    AREA ||--o{ DEPARTMENT : contains
+    DEPARTMENT ||--o{ SECTION : contains
+    SECTION ||--o{ POSITION : contains
+    POSITION ||--o{ USER : has
+    SERVICE_LEVEL1 ||--o{ SERVICE_LEVEL2 : contains
+    SECTION ||--o{ SERVICE_ASSIGNMENT : responsible_for
+    USER ||--o{ SERVICE_ASSIGNMENT : optionally_responsible
+    SERVICE_LEVEL2 ||--o{ SERVICE_ASSIGNMENT : assigned
+```
+
+Tablas previstas:
+
+| Entidad | Restricciones principales |
+|---|---|
+| Empresa | Código único y estado |
+| Área | Código único dentro de la empresa |
+| Departamento | Código único dentro del área |
+| Sección | Código único dentro del departamento |
+| Puesto | Código único dentro de la sección |
+| Usuario | Usuario/correo único, rol, estado y puesto |
+| Servicio nivel 1 | Código único y nombre canónico |
+| Servicio nivel 2 | Código único, nivel 1 obligatorio y atributos del Excel |
+| Asignación | Servicio, sección y usuario opcional de la misma sección |
+| Observación de importación | Hoja, fila, rango, regla y mensaje |
+
+## 4. Mapeo Excel → base de datos
+
+La fuente original se conserva en `data/CatalogoServicios.xlsx` y no se modifica.
+
+- Encabezados: `A4:L4`.
+- Datos: `A5:L101`.
+- Opciones: `E112:H122`.
+- Resultado esperado: 12 códigos de nivel 1 y 46 códigos de nivel 2.
+- Las reglas completas están en [001-reglas-importacion-catalogo.md](decisiones/001-reglas-importacion-catalogo.md).
+- El primer reporte real está en [import-report.json](../outputs/import-report.json).
+
+### Reglas especiales
+
+1. Las celdas combinadas se resuelven desde su celda principal y únicamente dentro de su rango.
+2. Una fila nivel 2 se crea solo cuando `COD.N2` existe físicamente o es la celda principal de una combinación.
+3. `SE.12` conserva como nombre canónico el primer valor encontrado: `Suministrar Analitica`.
+4. `Mantener Tableros de Control` se conserva como evidencia del conflicto de la fila 100.
+5. `SE.12.1`, `SE.12.2` y `SE.12.3` se mantienen como texto.
+6. El padre de un nivel 2 se obtiene del prefijo del código, sin copiar nombres de filas vecinas.
+7. Los atributos vacíos de las filas 99 a 101 quedan desconocidos y requieren revisión.
+8. Las filas de continuación y las listas de opciones no se convierten en servicios.
+9. Cada registro conserva hoja, fila, rango y transformaciones.
+
+## 5. Autenticación, autorización y sesiones
+
+El esquema inicial ya reserva tablas para usuarios y sesiones. La autenticación completa queda pendiente. La solución usará autenticación local, hash especializado, sesiones invalidadas al cerrar sesión y autorización en el servidor para los roles administrador y consulta.
+
+## 6. Evidencias de context engineering, prompt engineering y harness engineering
+
+- Context engineering: [contexto](contexto/).
+- Prompt engineering: [prompts](prompts/).
+- Harness engineering: [evidencias](evidencias/).
+
+Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el diseño del importador, el modelo de datos, Docker y la persistencia del catálogo.
+
+## 7. Matriz requisito → implementación → prueba → evidencia
+
+| Requisito | Implementación | Prueba | Evidencia | Estado |
+|---|---|---|---|---|
+| Importar 12/46 registros | Importador Go | Prueba de conteos | `outputs/import-report.json` | Comprobado |
+| Resolver `SE.12` | Regla de primer valor y observación | Prueba del reporte | Reporte y decisión 001 | Comprobado |
+| Conservar códigos como texto | Modelo del importador | Prueba `SE.12.3` | Pruebas del paquete | Comprobado |
+| Preservar atributos ausentes | Valores nulos y revisión | Prueba de filas 99–101 | Reporte | Comprobado |
+| Login local | Pendiente | P01–P03 | Pendiente | Pendiente |
+| Organización y usuarios | Pendiente | P04–P05 | Pendiente | Pendiente |
+| Búsqueda y asignaciones | Pendiente | P10–P11 | Pendiente | Pendiente |
+| Docker y persistencia | `compose.yaml` y volumen `catalogo_pgdata` | `docker compose up --build -d`, `/api/health`, `/api/ready` | Evidencia de ciclo Compose | Comprobado |
+| Esquema PostgreSQL inicial | Migración `001_initial_schema.sql` | Arranque del servidor y migración | `backend/migrations/` | Comprobado |
+| Persistencia del catálogo | Service/Repository y migración `002_import_idempotency.sql` | Importador con `--database-url` y conteos SQL | Evidencia de ciclo Compose y prompt 004 | Comprobado |
+
+## 8. Resultados reales de pruebas
+
+Fecha del primer ciclo: 2026-10-01.
+
+Resultado actual:
+
+```text
+go test ./...: PASS
+Importación: 12 nivel 1, 46 nivel 2, 4 observaciones y 51 filas omitidas
+Docker Compose: API y PostgreSQL iniciados
+/api/health: {"status":"ok"}
+/api/ready: {"status":"ready"}
+Migraciones aplicadas: 1
+Clases de servicio cargadas: 2
+```
+
+Durante el ciclo se corrigió un error real en el uso de `GetSheetIndex` y se añadió una prueba para conservar ambos nombres originales de `SE.12`. La evidencia está en [2026-10-01-ciclo-importador.md](evidencias/2026-10-01-ciclo-importador.md).
+
+## 9. Docker, persistencia y recuperación
+
+El entorno inicial usa dos servicios: la API Go y PostgreSQL 18. El volumen se monta en `/var/lib/postgresql`, que es la ruta compatible con la estructura de datos de PostgreSQL 18. El procedimiento final deberá explicar la diferencia entre detener contenedores y eliminar datos de prueba.
+
+El primer arranque detectó y corrigió una ruta de volumen incompatible; después se repitió el arranque con éxito. La evidencia está en [2026-10-01-ciclo-compose.md](evidencias/2026-10-01-ciclo-compose.md).
+
+## 10. Limitaciones conocidas, decisiones humanas y reflexión
+
+Hasta ahora, la decisión humana principal fue conservar el primer nombre de `SE.12` como canónico y mantener el segundo como evidencia, en vez de inventar una unificación semántica. También se decidió no corregir automáticamente la escritura original del Excel.
+
+Las limitaciones pendientes son la autenticación completa, la interfaz React, las asignaciones y las pruebas P01–P12. La base PostgreSQL, la migración inicial y el arranque Compose ya están comprobados.
