@@ -15,6 +15,8 @@
 - Se incorporaron repositorio y handlers para nivel 1, nivel 2, catálogos de
   apoyo, búsqueda, filtros y activación/desactivación.
 - La interfaz React ahora permite buscar, filtrar y crear registros de catálogo.
+- La interfaz también permite editar y activar/desactivar unidades, usuarios y
+  servicios desde formularios administrativos.
 - La imagen de la API incluye el importador y `scripts/acceptance.sh` automatiza
   P01–P12 usando credenciales por variables de entorno y datos con prefijo
   propio; P06 y P07 ejecutan el importador dos veces.

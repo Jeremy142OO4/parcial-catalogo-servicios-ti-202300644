@@ -11,6 +11,8 @@ API Go y frontend React/Nginx.
 - Imagen de API con el importador disponible para pruebas reproducibles.
 - Frontend reconstruido con filtros por texto, nivel 1, clase, criticidad,
   tipo y estado.
+- Formularios administrativos reconstruidos para editar unidades, usuarios,
+  nivel 1 y nivel 2, además de activar o desactivar registros.
 - Conteos conservados: 12 códigos de nivel 1 y 46 servicios de nivel 2.
 - `SE.12.1`, `SE.12.2` y `SE.12.3` permanecen como texto.
 - Los tres servicios incompletos mantienen atributos nulos y revisión requerida.

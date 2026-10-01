@@ -121,6 +121,7 @@ Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el
 | Esquema PostgreSQL inicial | Migración `001_initial_schema.sql` | Arranque del servidor y migración | `backend/migrations/` | Comprobado |
 | Persistencia del catálogo | Service/Repository y migración `002_import_idempotency.sql` | Importador con `--database-url` y conteos SQL | Evidencia de ciclo Compose y prompt 004 | Comprobado |
 | CRUD y filtros del catálogo | Repositorio, handlers, migración 003 e interfaz React | Suite P09–P10 y endpoints protegidos | `scripts/acceptance.sh` y evidencia CRUD | Comprobado |
+| Mantenimientos editables | Formularios React para unidades, usuarios, nivel 1 y nivel 2 | Build Vite y handlers PATCH protegidos | `frontend/src/main.jsx` y `backend/internal/httpapi/server.go` | Comprobado |
 | Escenarios de aceptación P01–P12 | Suite reproducible con datos aislados | Ejecución remota completa | Evidencia del ciclo CRUD y pruebas | Comprobado |
 
 ## 8. Resultados reales de pruebas
@@ -161,4 +162,4 @@ El primer arranque detectó y corrigió una ruta de volumen incompatible; despu�
 
 Hasta ahora, la decisión humana principal fue conservar el primer nombre de `SE.12` como canónico y mantener el segundo como evidencia, en vez de inventar una unificación semántica. También se decidió no corregir automáticamente la escritura original del Excel.
 
-La suite P01–P12 ya está automatizada y comprobada en la laptop remota. Como mejora posterior queda ampliar los formularios de edición detallada de catálogo y organización; el CRUD, la búsqueda, los filtros, la persistencia y las reglas de validación principales ya están comprobados.
+La suite P01–P12 ya está automatizada y comprobada en la laptop remota. El CRUD, la búsqueda, los filtros, los formularios de edición, la persistencia y las reglas de validación principales ya están comprobados.
