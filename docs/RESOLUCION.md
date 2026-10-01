@@ -34,6 +34,8 @@ React/Vite -> Handler/Controller -> Service -> Repository -> PostgreSQL
 - PostgreSQL conserva los datos y la persistencia.
 - Docker Compose reproducirá la aplicación y la base de datos.
 
+Las bajas son lógicas. El servidor impide desactivar una unidad que todavía tenga dependencias activas y evita desactivar usuarios que continúan como responsables de servicios; primero debe corregirse la relación.
+
 ## 3. Modelo entidad-relación y diccionario de datos
 
 El esquema inicial ya está implementado en `backend/migrations/001_initial_schema.sql`. La estructura base es:
@@ -91,7 +93,9 @@ La fuente original se conserva en `data/CatalogoServicios.xlsx` y no se modifica
 
 ## 5. Autenticación, autorización y sesiones
 
-El esquema inicial ya reserva tablas para usuarios y sesiones. La autenticación completa queda pendiente. La solución usará autenticación local, hash especializado, sesiones invalidadas al cerrar sesión y autorización en el servidor para los roles administrador y consulta.
+La autenticación local ya está implementada en `backend/internal/auth`: usa bcrypt con sal, sesiones aleatorias almacenadas como hash SHA-256, expiración y cierre de sesión invalidante. El servidor protege las rutas y exige el rol `admin` para crear o modificar organización, usuarios y asignaciones. El rol `consulta` conserva acceso de lectura sin exponer hashes.
+
+El comando `catalogo-seed` crea localmente una jerarquía de demostración, un usuario administrador, un usuario de consulta y tres asignaciones. Las contraseñas se reciben mediante variables de entorno y no se almacenan en Git.
 
 ## 6. Evidencias de context engineering, prompt engineering y harness engineering
 
@@ -109,9 +113,10 @@ Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el
 | Resolver `SE.12` | Regla de primer valor y observación | Prueba del reporte | Reporte y decisión 001 | Comprobado |
 | Conservar códigos como texto | Modelo del importador | Prueba `SE.12.3` | Pruebas del paquete | Comprobado |
 | Preservar atributos ausentes | Valores nulos y revisión | Prueba de filas 99–101 | Reporte | Comprobado |
-| Login local | Pendiente | P01–P03 | Pendiente | Pendiente |
-| Organización y usuarios | Pendiente | P04–P05 | Pendiente | Pendiente |
-| Búsqueda y asignaciones | Pendiente | P10–P11 | Pendiente | Pendiente |
+| Login local y roles | Servicio auth, sesiones y middleware | Login válido/inválido, `/api/me`, logout y rol consulta | Evidencia ciclo auth/UI | Comprobado manualmente |
+| Organización y usuarios | Repositorio de unidades, usuarios y bajas lógicas | Seed, jerarquía y endpoints protegidos | Evidencia ciclo auth/UI | Implementado |
+| Búsqueda y asignaciones | Consulta de servicios y validación de sección/responsable | Tres asignaciones de demostración y validación servidor | Evidencia ciclo auth/UI | Implementado |
+| Interfaz React | Vite, vista de servicios, organización, usuarios y asignaciones | Build Vite y proxy Nginx | `frontend/` y evidencia ciclo auth/UI | Comprobado |
 | Docker y persistencia | `compose.yaml` y volumen `catalogo_pgdata` | `docker compose up --build -d`, `/api/health`, `/api/ready` | Evidencia de ciclo Compose | Comprobado |
 | Esquema PostgreSQL inicial | Migración `001_initial_schema.sql` | Arranque del servidor y migración | `backend/migrations/` | Comprobado |
 | Persistencia del catálogo | Service/Repository y migración `002_import_idempotency.sql` | Importador con `--database-url` y conteos SQL | Evidencia de ciclo Compose y prompt 004 | Comprobado |
@@ -130,6 +135,14 @@ Docker Compose: API y PostgreSQL iniciados
 /api/ready: {"status":"ready"}
 Migraciones aplicadas: 1
 Clases de servicio cargadas: 2
+Login válido: HTTP 200
+Login inválido: HTTP 401
+Modificación con rol consulta: HTTP 403
+Sesión después de logout: HTTP 401
+Frontend y proxy `/api`: HTTP 200
+Sección creada con administrador: HTTP 201
+Responsable de sección distinta: HTTP 400
+Usuario inactivo intentando login: HTTP 401
 ```
 
 Durante el ciclo se corrigió un error real en el uso de `GetSheetIndex` y se añadió una prueba para conservar ambos nombres originales de `SE.12`. La evidencia está en [2026-10-01-ciclo-importador.md](evidencias/2026-10-01-ciclo-importador.md).
@@ -144,4 +157,4 @@ El primer arranque detectó y corrigió una ruta de volumen incompatible; despu�
 
 Hasta ahora, la decisión humana principal fue conservar el primer nombre de `SE.12` como canónico y mantener el segundo como evidencia, en vez de inventar una unificación semántica. También se decidió no corregir automáticamente la escritura original del Excel.
 
-Las limitaciones pendientes son la autenticación completa, la interfaz React, las asignaciones y las pruebas P01–P12. La base PostgreSQL, la migración inicial y el arranque Compose ya están comprobados.
+Las limitaciones pendientes son completar la automatización de P01–P12 y ampliar los mantenimientos de catálogo y organización con formularios de edición más detallados. La base PostgreSQL, autenticación, asignaciones, interfaz inicial y arranque Compose ya están comprobados.

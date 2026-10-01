@@ -40,7 +40,7 @@ No debe modificarse. La importación debe conservar 12 códigos de nivel 1 y 46 
 
 ## Estado actual
 
-Ya está implementado y probado el primer importador de lectura. El reporte validado obtuvo:
+Ya están implementados el importador trazable, la persistencia PostgreSQL, la autenticación local, la organización, las asignaciones y una interfaz React inicial. El reporte validado obtuvo:
 
 ```text
 Nivel 1: 12
@@ -65,9 +65,20 @@ La migración inicial se aplica automáticamente al arrancar la API. La verifica
 ```text
 http://localhost:8080/api/health
 http://localhost:8080/api/ready
+http://localhost:5173
 ```
 
-En la laptop de pruebas, este flujo fue comprobado con PostgreSQL saludable, una migración aplicada y ambos endpoints respondiendo correctamente.
+En la laptop de pruebas, este flujo fue comprobado con PostgreSQL saludable, migraciones aplicadas, login local, roles, logout invalidante y el frontend servido por Nginx.
+
+Para crear las cuentas locales de demostración, configurar contraseñas de al menos ocho caracteres solo en la terminal y ejecutar:
+
+```bash
+docker compose exec -e SEED_ADMIN_PASSWORD='clave-local-admin' \
+  -e SEED_CONSULTA_PASSWORD='clave-local-consulta' \
+  api ./catalogo-seed
+```
+
+El frontend remoto queda disponible en `http://IP_DEL_EQUIPO:5173`; el proxy `/api` evita configurar la IP manualmente en el navegador.
 
 Para validar y persistir el catálogo en un entorno con PostgreSQL disponible:
 
@@ -103,6 +114,8 @@ El sufijo `:Z` es necesario en Fedora/Podman para el etiquetado SELinux del volu
 - [Evidencia del ciclo de pruebas](docs/evidencias/2026-10-01-ciclo-importador.md)
 - [Evidencia del ciclo Docker y PostgreSQL](docs/evidencias/2026-10-01-ciclo-compose.md)
 - [Prompt de persistencia del catálogo](docs/prompts/004-persistencia-importacion.md)
+- [Prompt de autenticación, organización e interfaz](docs/prompts/005-auth-organizacion-interfaz.md)
+- [Evidencia de autenticación e interfaz](docs/evidencias/2026-10-01-ciclo-auth-ui.md)
 
 ## Seguridad
 

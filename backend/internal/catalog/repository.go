@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -15,8 +16,102 @@ type Repository struct {
 	pool *pgxpool.Pool
 }
 
+type ServiceRow struct {
+	ID                  int64    `json:"id"`
+	Code                string   `json:"code"`
+	Name                string   `json:"name"`
+	Level1Code          string   `json:"level1_code"`
+	Level1Name          string   `json:"level1_name"`
+	ActiveValue         *string  `json:"active_value"`
+	ServiceClass        *string  `json:"service_class"`
+	Criticality         *string  `json:"criticality"`
+	ServiceType         *string  `json:"service_type"`
+	Description         *string  `json:"description"`
+	Metric              *string  `json:"metric"`
+	Minimum             *float64 `json:"minimum"`
+	Maximum             *float64 `json:"maximum"`
+	ReviewRequired      bool     `json:"review_required"`
+	SectionID           *int64   `json:"section_id,omitempty"`
+	SectionName         *string  `json:"section_name,omitempty"`
+	ResponsibleUserID   *int64   `json:"responsible_user_id,omitempty"`
+	ResponsibleUserName *string  `json:"responsible_user_name,omitempty"`
+}
+
+type AssignmentInput struct {
+	ServiceID         int64  `json:"service_id"`
+	SectionID         int64  `json:"section_id"`
+	ResponsibleUserID *int64 `json:"responsible_user_id"`
+}
+
 func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{pool: pool}
+}
+
+func (r *Repository) ListServices(ctx context.Context, query string) ([]ServiceRow, error) {
+	query = strings.TrimSpace(query)
+	rows, err := r.pool.Query(ctx, `
+		SELECT s.id, s.code, s.name, l.code, l.canonical_name, s.active_value,
+		       c.name, cr.name, st.name, s.description, s.metric, s.minimum, s.maximum,
+		       s.review_required, a.section_id, sec.name, a.responsible_user_id, u.full_name
+		FROM services_level2 s
+		JOIN services_level1 l ON l.id = s.service_level1_id
+		LEFT JOIN service_classes c ON c.id = s.service_class_id
+		LEFT JOIN criticalities cr ON cr.id = s.criticality_id
+		LEFT JOIN service_types st ON st.id = s.service_type_id
+		LEFT JOIN service_assignments a ON a.service_level2_id = s.id
+		LEFT JOIN sections sec ON sec.id = a.section_id
+		LEFT JOIN app_users u ON u.id = a.responsible_user_id
+		WHERE ($1 = '' OR s.code ILIKE '%' || $1 || '%' OR s.name ILIKE '%' || $1 || '%'
+		       OR l.code ILIKE '%' || $1 || '%' OR l.canonical_name ILIKE '%' || $1 || '%')
+		ORDER BY s.code`, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	services := make([]ServiceRow, 0)
+	for rows.Next() {
+		var service ServiceRow
+		if err := rows.Scan(&service.ID, &service.Code, &service.Name, &service.Level1Code,
+			&service.Level1Name, &service.ActiveValue, &service.ServiceClass, &service.Criticality,
+			&service.ServiceType, &service.Description, &service.Metric, &service.Minimum,
+			&service.Maximum, &service.ReviewRequired, &service.SectionID, &service.SectionName,
+			&service.ResponsibleUserID, &service.ResponsibleUserName); err != nil {
+			return nil, err
+		}
+		services = append(services, service)
+	}
+	return services, rows.Err()
+}
+
+func (r *Repository) Assign(ctx context.Context, input AssignmentInput) error {
+	var sectionActive bool
+	if err := r.pool.QueryRow(ctx, `SELECT is_active FROM sections WHERE id = $1`, input.SectionID).Scan(&sectionActive); err != nil {
+		return fmt.Errorf("sección no encontrada")
+	}
+	if !sectionActive {
+		return fmt.Errorf("la sección está inactiva")
+	}
+	if input.ResponsibleUserID != nil {
+		var valid bool
+		if err := r.pool.QueryRow(ctx, `
+			SELECT EXISTS (
+				SELECT 1 FROM app_users u
+				JOIN positions p ON p.id = u.position_id
+				WHERE u.id = $1 AND p.section_id = $2 AND u.is_active = TRUE
+			)`, *input.ResponsibleUserID, input.SectionID).Scan(&valid); err != nil {
+			return err
+		}
+		if !valid {
+			return fmt.Errorf("el responsable no pertenece a la sección indicada o está inactivo")
+		}
+	}
+	_, err := r.pool.Exec(ctx, `
+		INSERT INTO service_assignments (service_level2_id, section_id, responsible_user_id)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (service_level2_id) DO UPDATE SET
+			section_id = EXCLUDED.section_id,
+			responsible_user_id = EXCLUDED.responsible_user_id`, input.ServiceID, input.SectionID, input.ResponsibleUserID)
+	return err
 }
 
 func (r *Repository) PersistImport(ctx context.Context, report *importer.Report) error {
