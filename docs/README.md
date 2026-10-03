@@ -7,7 +7,7 @@ La narración principal está en `RESOLUCION.md`. Las carpetas contienen únicam
 ## Documentos principales
 
 - [Resolución de la tarea](RESOLUCION.md): problema, arquitectura, reglas, pruebas y estado de cumplimiento.
-- [Referencias](referencias/): consigna, presentación y archivos de referencia originales.
+- La consigna y los archivos de referencia se utilizaron durante el desarrollo, pero no se incluyen en la entrega para evitar duplicar material externo.
 
 ## Evidencias por categoría
 
