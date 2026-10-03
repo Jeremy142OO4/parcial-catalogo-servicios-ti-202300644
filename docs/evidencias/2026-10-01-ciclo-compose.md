@@ -29,7 +29,7 @@ Se ejecutó nuevamente:
 docker compose up --build -d
 ```
 
-Resultado: los contenedores `db` y `api` quedaron activos; PostgreSQL reportó estado saludable y la API publicó el puerto `8080`.
+Resultado: los contenedores `db` y `api` quedaron activos. PostgreSQL reportó estado saludable y la API publicó el puerto `8080`.
 
 Controles funcionales:
 
@@ -41,7 +41,7 @@ service_classes -> 2
 companies -> 0
 ```
 
-También se ejecutó `go test ./...` dentro de un contenedor Go y todos los paquetes finalizaron correctamente. La base quedó preparada para el siguiente ciclo de desarrollo; todavía no se cargan usuarios ni datos de catálogo en PostgreSQL.
+También se ejecutó `go test ./...` dentro de un contenedor Go y todos los paquetes finalizaron correctamente. La base quedó preparada para el siguiente ciclo de desarrollo. Todavía no se cargan usuarios ni datos de catálogo en PostgreSQL.
 
 ## Persistencia del catálogo
 
@@ -64,4 +64,4 @@ import_runs con estado succeeded -> 1 en el primer control
 
 La operación utiliza `ON CONFLICT` para actualizar por código y un índice único para no duplicar la evidencia de nombres fuente al repetir la importación.
 
-Se repitió el mismo comando de importación para comprobar idempotencia. Los conteos permanecieron en 12 servicios nivel 1 y 46 nivel 2; el único incremento fue el esperado en `import_runs`, que pasó a 2 importaciones exitosas.
+Se repitió el mismo comando de importación para comprobar idempotencia. Los conteos permanecieron en 12 servicios nivel 1 y 46 nivel 2. El único incremento fue el esperado en `import_runs`, que pasó a 2 importaciones exitosas.

@@ -25,7 +25,17 @@ POST /api/auth/logout -> 204
 GET /api/me reutilizando sesión cerrada -> 401
 Crear una sección con administrador -> 201
 Asignar responsable de otra sección -> 400
-Desactivar usuario y volver a iniciar sesión -> 204, 401; restauración -> 204
+Desactivar usuario y volver a iniciar sesión -> 204, 401. Restauración -> 204
 ```
 
 El seed creó la jerarquía de demostración, dos usuarios y tres asignaciones válidas. Las contraseñas se entregaron por variables de entorno durante la prueba y no se guardaron en el repositorio.
+
+## Capturas de la aplicación
+
+- ![01 — inicio de sesión](../Imagenes/01-login.png)
+- ![02 — panel de administración](../Imagenes/02-panel-administrador.png)
+- ![04 — servicio SE.12](../Imagenes/04-servicio-se12.png)
+- ![05 — organización](../Imagenes/05-organizacion.png)
+- ![06 — usuarios](../Imagenes/06-usuarios.png)
+- ![07 — asignaciones](../Imagenes/07-asignaciones.png)
+- ![11 — usuario de consulta](../Imagenes/11-usuario-consulta.png)

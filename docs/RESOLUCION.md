@@ -34,7 +34,7 @@ React/Vite -> Handler/Controller -> Service -> Repository -> PostgreSQL
 - PostgreSQL conserva los datos y la persistencia.
 - Docker Compose reproducirá la aplicación y la base de datos.
 
-Las bajas son lógicas. El servidor impide desactivar una unidad que todavía tenga dependencias activas y evita desactivar usuarios que continúan como responsables de servicios; primero debe corregirse la relación.
+Las bajas son lógicas. El servidor impide desactivar una unidad que todavía tenga dependencias activas y evita desactivar usuarios que continúan como responsables de servicios. Primero debe corregirse la relación.
 
 ## 3. Modelo entidad-relación y diccionario de datos
 
@@ -68,6 +68,10 @@ Tablas previstas:
 | Asignación | Servicio, sección y usuario opcional de la misma sección |
 | Observación de importación | Hoja, fila, rango, regla y mensaje |
 
+La ficha de cada servicio muestra el código, los nombres del nivel 1 y nivel 2,
+el indicador de activo del Excel, el estado del registro, clase, criticidad,
+tipo, descripción, métrica, mínimo, máximo, estado de revisión y asignación.
+
 ## 4. Mapeo Excel → base de datos
 
 La fuente original se conserva en `data/CatalogoServicios.xlsx` y no se modifica.
@@ -99,11 +103,21 @@ El comando `catalogo-seed` crea localmente una jerarquía de demostración, un u
 
 ## 6. Evidencias de context engineering, prompt engineering y harness engineering
 
-- Context engineering: [contexto](contexto/).
+- Context engineering: [contexto](contexto/), con dos actualizaciones versionadas motivadas por hallazgos del Excel y por la preparación del harness.
 - Prompt engineering: [prompts](prompts/).
 - Harness engineering: [evidencias](evidencias/).
 
 Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el diseño del importador, el modelo de datos, Docker y la persistencia del catálogo.
+
+Commits de desarrollo relacionados:
+
+| Técnica | Commits relacionados |
+|---|---|
+| Context engineering | `357e69b`, `dddaefc` |
+| Prompt engineering | `357e69b`, `59a02d0`, `10c099f` |
+| Harness engineering | `357e69b`, `10c099f`, `dddaefc` |
+
+Las capturas y actualizaciones documentales de esta auditoría quedarán incluidas en el commit final de entrega.
 
 ## 7. Matriz requisito → implementación → prueba → evidencia
 
@@ -114,8 +128,8 @@ Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el
 | Conservar códigos como texto | Modelo del importador | Prueba `SE.12.3` | Pruebas del paquete | Comprobado |
 | Preservar atributos ausentes | Valores nulos y revisión | Prueba de filas 99–101 | Reporte | Comprobado |
 | Login local y roles | Servicio auth, sesiones y middleware | Login válido/inválido, `/api/me`, logout y rol consulta | Evidencia ciclo auth/UI | Comprobado manualmente |
-| Organización y usuarios | Repositorio de unidades, usuarios y bajas lógicas | Seed, jerarquía y endpoints protegidos | Evidencia ciclo auth/UI | Implementado |
-| Búsqueda y asignaciones | Consulta de servicios y validación de sección/responsable | Tres asignaciones de demostración y validación servidor | Evidencia ciclo auth/UI | Implementado |
+| Organización y usuarios | Repositorio de unidades, usuarios y bajas lógicas | Seed, jerarquía y endpoints protegidos | Evidencia ciclo auth/UI | Comprobado |
+| Búsqueda y asignaciones | Consulta de servicios y validación de sección/responsable | Tres asignaciones de demostración y validación servidor | Evidencia ciclo auth/UI | Comprobado |
 | Interfaz React | Vite, vista de servicios, organización, usuarios y asignaciones | Build Vite y proxy Nginx | `frontend/` y evidencia ciclo auth/UI | Comprobado |
 | Docker y persistencia | `compose.yaml` y volumen `catalogo_pgdata` | `docker compose up --build -d`, `/api/health`, `/api/ready` | Evidencia de ciclo Compose | Comprobado |
 | Esquema PostgreSQL inicial | Migración `001_initial_schema.sql` | Arranque del servidor y migración | `backend/migrations/` | Comprobado |
@@ -128,12 +142,14 @@ Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el
 
 Fecha del primer ciclo: 2026-10-01.
 
+La auditoría final se ejecutó el 2026-10-02 sobre la rama `main`. El último commit publicado antes de esta auditoría es `dddaefc`. Los cambios actuales de documentación, composición y corrección de formularios todavía deben incluirse en el commit final.
+
 Resultado actual:
 
 ```text
 go test ./...: PASS
 Importación: 12 nivel 1, 46 nivel 2, 4 observaciones y 51 filas omitidas
-Docker Compose: API y PostgreSQL iniciados
+Docker Compose: API, PostgreSQL y frontend iniciados
 /api/health: {"status":"ok"}
 /api/ready: {"status":"ready"}
 Migraciones aplicadas: 3
@@ -154,12 +170,25 @@ Durante el ciclo se corrigió un error real en el uso de `GetSheetIndex` y se a�
 
 ## 9. Docker, persistencia y recuperación
 
-El entorno inicial usa dos servicios: la API Go y PostgreSQL 18. El volumen se monta en `/var/lib/postgresql`, que es la ruta compatible con la estructura de datos de PostgreSQL 18. El procedimiento final deberá explicar la diferencia entre detener contenedores y eliminar datos de prueba.
+El entorno usa tres contenedores: la API Go, PostgreSQL 18 y el frontend Nginx. El volumen se monta en `/var/lib/postgresql`, que es la ruta compatible con la estructura de datos de PostgreSQL 18. Las instrucciones de operación normal y reinicio destructivo están en el README principal.
 
-El primer arranque detectó y corrigió una ruta de volumen incompatible; después se repitió el arranque con éxito. La evidencia está en [2026-10-01-ciclo-compose.md](evidencias/2026-10-01-ciclo-compose.md).
+El primer arranque detectó y corrigió una ruta de volumen incompatible. Después se repitió el arranque con éxito. La evidencia está en [2026-10-01-ciclo-compose.md](evidencias/2026-10-01-ciclo-compose.md).
 
 ## 10. Limitaciones conocidas, decisiones humanas y reflexión
 
 Hasta ahora, la decisión humana principal fue conservar el primer nombre de `SE.12` como canónico y mantener el segundo como evidencia, en vez de inventar una unificación semántica. También se decidió no corregir automáticamente la escritura original del Excel.
 
 La suite P01–P12 ya está automatizada y comprobada en la laptop remota. El CRUD, la búsqueda, los filtros, los formularios de edición, la persistencia y las reglas de validación principales ya están comprobados.
+
+El trabajo es individual. La principal corrección atribuible al proceso de desarrollo fue ajustar el uso de `GetSheetIndex` después del primer fallo de compilación. La decisión humana más importante fue conservar `Suministrar Analitica` como nombre canónico de `SE.12` y mantener `Mantener Tableros de Control` como evidencia del conflicto.
+
+## 11. Auditoría final contra la consigna
+
+La funcionalidad, la importación, la persistencia, la autenticación, la organización, los mantenimientos, las asignaciones, Docker y las pruebas P01 a P12 están implementados y cuentan con evidencia en este repositorio.
+
+La entrega externa todavía requiere dos comprobaciones manuales antes del envío final:
+
+1. Confirmar en GitHub que `maldanap-usac` fue agregado como colaborador con permisos suficientes.
+2. Crear el commit final con todos los cambios actuales y mover la etiqueta `parcial-v2.0` a ese commit.
+
+El SHA asociado actualmente a la etiqueta es anterior a las últimas correcciones de interfaz y documentación, por lo que no debe usarse como SHA final hasta cerrar esas dos acciones.

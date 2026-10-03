@@ -8,7 +8,7 @@ Construir un sistema web para administrar el catálogo de servicios de TI, la es
 
 - Monolito modular.
 - Backend en Go.
-- Frontend en React, Vite y TypeScript.
+- Frontend en React, Vite y JSX.
 - PostgreSQL como base de datos.
 - MVC por capas: Handler/Controller -> Service -> Repository.
 - El backend no debe acceder directamente a la base de datos desde los handlers.

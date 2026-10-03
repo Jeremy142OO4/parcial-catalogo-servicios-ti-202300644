@@ -50,9 +50,16 @@ P04 creó una jerarquía aislada, un usuario y servicios de prueba. P06 y P07
 ejecutaron dos veces el importador contra el mismo volumen y no generaron
 duplicados. P11 intentó
 usar ese usuario desde una sección distinta y recibió rechazo del servidor.
-P12 reinició los contenedores sin `down -v`; después del reinicio `/api/health`
+P12 reinició los contenedores sin `down -v`. Después del reinicio `/api/health`
 y `/api/ready` respondieron correctamente y los conteos permanecieron.
 
 Durante el reinicio, Podman mostró advertencias de dependencias detenidas. No
-se eliminaron contenedores de base ni el volumen; el servicio se recuperó y la
+se eliminaron contenedores de base ni el volumen. El servicio se recuperó y la
 prueba terminó aprobada.
+
+## Capturas del CRUD y mantenimiento
+
+- ![03 — catálogo con filtros](../Imagenes/03-catalogo-filtros.png)
+- ![08 — mantenimiento de organización](../Imagenes/08-mantenimiento-organizacion.png)
+- ![09 — mantenimiento de usuarios](../Imagenes/09-mantenimiento-usuarios.png)
+- ![10 — mantenimiento del catálogo](../Imagenes/10-mantenimiento-catalogo.png)

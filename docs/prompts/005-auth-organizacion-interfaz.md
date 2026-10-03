@@ -4,11 +4,27 @@ Fecha de uso: 2026-10-01
 
 Herramienta: Codex desktop.
 
-Modelo/version: no expuesto por la interfaz de esta sesión.
+Modelo: GPT-5.6 Sol.
+
+Modo: High.
 
 ## Prompt utilizado
 
-> Implementa autenticación local con bcrypt, sesiones invalidables, roles administrador/consulta y protección en el servidor. Agrega mantenimiento de la jerarquía Empresa–Área–Departamento–Sección–Puesto, usuarios y asignaciones de servicios con validación de padres activos y responsables pertenecientes a la sección. Construye una interfaz React/Vite conectada a la API, ejecutable mediante Docker Compose y accesible desde otra computadora.
+Actúa como desarrollador full-stack responsable de la seguridad, la API y la experiencia de usuario.
+
+Implementa autenticación local con bcrypt, sesiones invalidables, roles administrador y consulta y protección en el servidor.
+
+El sistema debe manejar la jerarquía Empresa–Área–Departamento–Sección–Puesto, usuarios y asignaciones de servicios. También debe validar padres activos y asegurar que los responsables pertenezcan a la sección seleccionada.
+
+Usa como entrada el esquema PostgreSQL, la API Go, las reglas de autorización, las cuentas de demostración, el frontend React/Vite y la configuración Docker Compose.
+
+Entrega endpoints protegidos, seed de demostración, pantallas React/Vite, validaciones y comandos para levantar y probar el sistema desde otra computadora.
+
+El resultado se acepta si el administrador puede mantener la información, el usuario de consulta puede leer sin modificar, los accesos inválidos se rechazan y la interfaz funciona mediante la IP del host remoto.
+
+## Captura del prompt
+
+![22 — prompt de autenticación, organización e interfaz](../Imagenes/22-prompt-auth-ui.png)
 
 ## Respuesta aplicada
 

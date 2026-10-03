@@ -34,3 +34,12 @@ eliminar el volumen.
 
 La ejecución y sus resultados se documentan en
 `docs/evidencias/ciclo-crud-y-pruebas.md`.
+
+## Tipo de prueba
+
+- P01 a P05, P09 y P11 son pruebas de integración de API. Ejecutan la API real, PostgreSQL real y validan autenticación, permisos, relaciones y reglas de negocio.
+- P06 a P08 son pruebas de integración del importador con PostgreSQL. Ejecutan el binario dentro del contenedor y verifican conteos, trazabilidad, códigos y valores desconocidos.
+- P12 es una prueba de persistencia y recuperación del entorno. Reinicia los contenedores y consulta nuevamente la API y PostgreSQL.
+- `go test ./...` contiene pruebas unitarias del paquete de importación y se ejecuta antes de las pruebas de integración.
+
+La suite no depende de una interfaz gráfica para validar los contratos del servidor. Las capturas de la interfaz y del recorrido manual se conservan en `docs/evidencias/`.

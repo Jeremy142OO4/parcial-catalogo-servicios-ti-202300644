@@ -2,7 +2,7 @@
 
 Asignatura: Software Avanzado
 Repositorio: `parcial-catalogo-servicios-ti-202300644`
-Estado: desarrollo
+Estado: funcional y reproducible, pendiente de cierre de entrega en GitHub
 
 ## Objetivo
 
@@ -11,7 +11,7 @@ Construir una aplicación web para administrar el catálogo de servicios de TI, 
 ## Tecnologías acordadas
 
 - Backend: Go.
-- Frontend: React, Vite y TypeScript.
+- Frontend: React, Vite y JSX.
 - Base de datos: PostgreSQL.
 - Arquitectura: monolito modular con MVC por capas, Service y Repository.
 - Ejecución: Docker Compose.
@@ -78,15 +78,19 @@ docker compose exec -e SEED_ADMIN_PASSWORD='clave-local-admin' \
   api ./catalogo-seed
 ```
 
-El frontend remoto queda disponible en `http://IP_DEL_EQUIPO:5173`; el proxy `/api` evita configurar la IP manualmente en el navegador.
+El frontend remoto queda disponible en `http://IP_DEL_EQUIPO:5173`. El proxy `/api` evita configurar la IP manualmente en el navegador.
 
-Para validar y persistir el catálogo en un entorno con PostgreSQL disponible:
+## Requisitos y operación de Docker
+
+La solución se verificó con Docker Compose compatible con Compose v2. Las imágenes utilizan Go 1.24, Node 22, Nginx 1.27 y PostgreSQL 18. No es necesario instalar Go, Node ni PostgreSQL en el equipo que evalúe el proyecto.
+
+Para validar y persistir el catálogo dentro del contenedor de la API:
 
 ```bash
-go run ./backend/cmd/importer \
-  --input data/CatalogoServicios.xlsx \
-  --report outputs/import-report.json \
-  --database-url "$DATABASE_URL"
+docker compose run --rm api ./catalogo-importer \
+  --input /app/data/CatalogoServicios.xlsx \
+  --report /app/outputs/import-report.json \
+  --database-url 'postgres://catalogo:catalogo@db:5432/catalogo?sslmode=disable'
 ```
 
 En la prueba remota se verificaron 12 registros de nivel 1, 46 de nivel 2, 4 observaciones y una importación exitosa.
@@ -104,6 +108,18 @@ bash scripts/acceptance.sh
 
 La suite cubre P01–P12 y crea datos de prueba aislados. Ver [pruebas de aceptación](tests/README.md) y la [evidencia del ciclo CRUD](docs/evidencias/ciclo-crud-y-pruebas.md).
 
+Comandos de operación habituales:
+
+```bash
+docker compose ps
+docker compose logs -f api
+docker compose stop
+docker compose start
+docker compose down
+```
+
+El comando `docker compose down -v` elimina el volumen y debe reservarse para un entorno de pruebas desechable. No se utiliza durante la suite normal.
+
 ## Verificación actual del importador
 
 La prueba actual se ejecuta en la laptop remota mediante un contenedor de Go:
@@ -116,7 +132,7 @@ docker run --rm \
   go test ./backend/internal/importer
 ```
 
-El sufijo `:Z` es necesario en Fedora/Podman para el etiquetado SELinux del volumen. Esta instrucción es de verificación de desarrollo; el procedimiento final será documentado con Docker Compose.
+El sufijo `:Z` es necesario en Fedora/Podman para el etiquetado SELinux del volumen. Esta instrucción corresponde a la verificación de desarrollo. El procedimiento final está documentado con Docker Compose.
 
 ## Documentación
 
@@ -131,9 +147,19 @@ El sufijo `:Z` es necesario en Fedora/Podman para el etiquetado SELinux del volu
 - [Evidencia de autenticación e interfaz](docs/evidencias/2026-10-01-ciclo-auth-ui.md)
 - [Prompt de CRUD, filtros y pruebas](docs/prompts/006-crud-filtros-pruebas.md)
 - [Evidencia de CRUD y pruebas P01–P12](docs/evidencias/ciclo-crud-y-pruebas.md)
+- [Evidencias de consola, importación y persistencia](docs/evidencias/2026-10-02-evidencias-consola.md)
 
 ## Seguridad
 
 - No subir archivos `.env` reales.
 - No subir contraseñas, tokens ni secretos.
 - Las cuentas de evaluación se crearán localmente mediante un procedimiento documentado.
+
+## Entrega en GitHub
+
+- Repositorio: `https://github.com/Jeremy142OO4/parcial-catalogo-servicios-ti-202300644`
+- Rama de trabajo: `main`
+- Etiqueta de entrega prevista: `parcial-v2.0`
+- Usuario del catedrático: `maldanap-usac`
+
+Antes de entregar, confirmar en la configuración del repositorio que `maldanap-usac` tenga acceso suficiente. El SHA final y la etiqueta deben actualizarse después del último commit que incluya el código y la documentación.
