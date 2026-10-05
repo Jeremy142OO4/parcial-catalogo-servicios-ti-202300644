@@ -67,6 +67,8 @@ function App() {
 
 function Dashboard({ session, onLogout }) {
   const [tab, setTab] = useState('services')
+  const [adminView, setAdminView] = useState('units')
+  const [catalogAction, setCatalogAction] = useState('new-level2')
   const [services, setServices] = useState([])
   const [level1s, setLevel1s] = useState([])
   const [lookups, setLookups] = useState({ service_classes: [], criticalities: [], service_types: [] })
@@ -227,16 +229,27 @@ function Dashboard({ session, onLogout }) {
     {error && <div className="error-banner">{error}</div>}
     {tab === 'services' && <Services services={services} query={query} setQuery={setQuery} filters={filters} setFilters={setFilters} level1s={level1s} lookups={lookups} isAdmin={session.user.role === 'admin'} onToggleService={toggleService} />}
     {tab === 'organization' && <Organization units={units} />}
-    {tab === 'admin' && <><Admin units={units} users={users} services={services} onUnitSubmit={createUnit} onUnitUpdate={updateUnit} onUnitToggle={toggleUnit} onUserSubmit={createUser} onUserUpdate={updateUser} onUserToggle={toggleUser} onAssignmentSubmit={assignService} /><CatalogAdmin level1s={level1s} services={services} lookups={lookups} onLevel1Submit={createLevel1} onLevel1Update={updateLevel1} onLevel2Submit={createLevel2} onLevel2Update={updateLevel2} onToggleService={toggleService} /></>}
+    {tab === 'admin' && <div className={`admin-workspace admin-view-${adminView}`}>
+      <div className="admin-heading"><div><p className="eyebrow">ADMINISTRACIÓN</p><h2>¿Qué necesitas gestionar?</h2><p className="muted">Elige una sección para crear o actualizar sus registros.</p></div></div>
+      <nav className="admin-navigation" aria-label="Secciones de administración">{[['units', 'Organización'], ['users', 'Usuarios'], ['assignments', 'Asignaciones'], ['catalog', 'Servicios'], ['lookups', 'Catálogos auxiliares'], ['states', 'Estados de nivel 1']].map(([value, label]) => <button key={value} aria-pressed={adminView === value} className={adminView === value ? 'active' : ''} onClick={() => setAdminView(value)}>{label}</button>)}</nav>
+      {['lookups', 'states'].includes(adminView) && <CatalogMaintenance token={session.token} level1s={level1s} lookups={lookups} reload={load} />}
+      {['units', 'users', 'assignments'].includes(adminView) && <Admin units={units} users={users} services={services} onUnitSubmit={createUnit} onUnitUpdate={updateUnit} onUnitToggle={toggleUnit} onUserSubmit={createUser} onUserUpdate={updateUser} onUserToggle={toggleUser} onAssignmentSubmit={assignService} />}
+      {adminView === 'catalog' && <div className={`catalog-panel catalog-action-${catalogAction}`}><nav className="catalog-navigation" aria-label="Operaciones de servicios">{[['new-level1', 'Crear nivel 1'], ['new-level2', 'Crear nivel 2'], ['edit-level1', 'Editar nivel 1'], ['edit-level2', 'Editar nivel 2']].map(([value, label]) => <button key={value} aria-pressed={catalogAction === value} className={catalogAction === value ? 'active' : ''} onClick={() => setCatalogAction(value)}>{label}</button>)}</nav><CatalogAdmin level1s={level1s} services={services} lookups={lookups} onLevel1Submit={createLevel1} onLevel1Update={updateLevel1} onLevel2Submit={createLevel2} onLevel2Update={updateLevel2} onToggleService={toggleService} /></div>}
+    </div>}
   </div>
 }
 
 function Services({ services, query, setQuery, filters, setFilters, level1s, lookups, isAdmin, onToggleService }) {
+  const [page, setPage] = useState(1)
+  useEffect(() => { setPage(1) }, [query, filters])
+  const pages = Math.max(1, Math.ceil(services.length / 12))
+  const current = Math.min(page, pages)
   const setFilter = (name, value) => setFilters((current) => ({ ...current, [name]: value }))
   return <section className="content">
     <div className="section-heading"><div><p className="eyebrow">CONSULTA</p><h2>Servicios de nivel 2</h2></div><input className="search" placeholder="Buscar por código o nombre" value={query} onChange={(e) => setQuery(e.target.value)} /></div>
     <div className="filters"><select value={filters.level1_id} onChange={(e) => setFilter('level1_id', e.target.value)}><option value="">Todos los niveles 1</option>{level1s.map((level1) => <option key={level1.id} value={level1.id}>{level1.code} · {level1.name}</option>)}</select><select value={filters.service_class} onChange={(e) => setFilter('service_class', e.target.value)}><option value="">Todas las clases</option>{lookups.service_classes.map((value) => <option key={value}>{value}</option>)}</select><select value={filters.criticality} onChange={(e) => setFilter('criticality', e.target.value)}><option value="">Todas las criticidades</option>{lookups.criticalities.map((value) => <option key={value}>{value}</option>)}</select><select value={filters.service_type} onChange={(e) => setFilter('service_type', e.target.value)}><option value="">Todos los tipos</option>{lookups.service_types.map((value) => <option key={value}>{value}</option>)}</select><select value={filters.is_active} onChange={(e) => setFilter('is_active', e.target.value)}><option value="">Todos los estados</option><option value="true">Activos</option><option value="false">Inactivos</option></select></div>
-    <div className="service-grid">{services.map((service) => <article className="card service-card" key={service.id}>
+    <div className="button-row"><button disabled={current === 1} onClick={() => setPage(current - 1)}>Anterior</button><span>Página {current} de {pages} · {services.length} resultados</span><button disabled={current === pages} onClick={() => setPage(current + 1)}>Siguiente</button></div>
+    <div className="service-grid">{services.slice((current - 1) * 12, current * 12).map((service) => <article className="card service-card" key={service.id}>
       <div className="service-code">{service.code}</div><h3>{service.name || 'Sin nombre'}</h3><p className="muted">{service.level1_code} · {service.level1_name}</p>
       <dl><div><dt>Activo en Excel</dt><dd>{service.active_value || 'Desconocido'}</dd></div><div><dt>Estado del registro</dt><dd>{service.is_active ? 'Activo' : 'Inactivo'}</dd></div><div><dt>Clase</dt><dd>{service.service_class || 'Desconocida'}</dd></div><div><dt>Criticidad</dt><dd>{service.criticality || 'Desconocida'}</dd></div><div><dt>Tipo</dt><dd>{service.service_type || 'Desconocido'}</dd></div><div><dt>Mínimo</dt><dd>{service.minimum ?? 'Desconocido'}</dd></div><div><dt>Máximo</dt><dd>{service.maximum ?? 'Desconocido'}</dd></div><div><dt>Métrica</dt><dd>{service.metric || 'Desconocida'}</dd></div></dl>
       {service.review_required && <span className="badge">Revisión requerida</span>}
@@ -244,6 +257,37 @@ function Services({ services, query, setQuery, filters, setFilters, level1s, loo
       <p className="muted">Descripción: {service.description || 'Sin descripción'}</p>
       {isAdmin && <button className="small-button" onClick={() => onToggleService(service)}>{service.is_active ? 'Desactivar' : 'Activar'}</button>}
     </article>)}</div>
+  </section>
+}
+
+function CatalogMaintenance({ token, level1s, lookups, reload }) {
+  const [kind, setKind] = useState('classes')
+  const [original, setOriginal] = useState('')
+  const [name, setName] = useState('')
+  const [message, setMessage] = useState('')
+  const lists = { classes: lookups.service_classes, criticalities: lookups.criticalities, types: lookups.service_types }
+  async function maintain(method) {
+    try {
+      await request(`/api/catalog/lookups/${kind}`, { method, body: JSON.stringify({ original, name }) }, token)
+      setMessage('Catálogo actualizado')
+      setOriginal(''); setName(''); await reload()
+    } catch (error) { setMessage(error.message) }
+  }
+  async function toggle(item) {
+    try {
+      await request(`/api/catalog/level1/${item.id}/active`, { method: 'PATCH', body: JSON.stringify({ is_active: !item.is_active }) }, token)
+      setMessage('Estado actualizado'); await reload()
+    } catch (error) { setMessage(error.message) }
+  }
+  return <section className="content admin-grid">
+    <div className="card form-card"><h2>Catálogos auxiliares</h2><label>Catálogo<select value={kind} onChange={e => { setKind(e.target.value); setOriginal(''); setName('') }}><option value="classes">Clase</option><option value="criticalities">Criticidad</option><option value="types">Tipo</option></select></label>
+      <label>Opción<select value={original} onChange={e => { setOriginal(e.target.value); setName(e.target.value) }}><option value="">Nueva opción</option>{lists[kind].map(value => <option key={value}>{value}</option>)}</select></label>
+      <label>Nombre<input value={name} onChange={e => setName(e.target.value)} /></label>
+      <div className="button-row"><button onClick={() => maintain(original ? 'PATCH' : 'POST')}>Guardar</button><button disabled={!original} onClick={() => maintain('DELETE')}>Eliminar opción sin uso</button></div>
+      <p>Las etiquetas originales utilizadas por servicios importados están protegidas.</p>
+    </div>
+    <div className="card form-card level1-status-card"><div className="status-heading"><div><h2>Estado de nivel 1</h2><p className="muted">Activa o desactiva un servicio. Sus dependencias se validan al guardar.</p></div><span className="count-badge">{level1s.length} servicios</span></div><div className="level1-status-list">{level1s.map(item => <div className="level1-status-row" key={item.id}><div><strong>{item.code}</strong><span>{item.name}</span></div><span className={`state-pill ${item.is_active ? 'is-active' : ''}`}>{item.is_active ? 'Activo' : 'Inactivo'}</span><button className="secondary" onClick={() => toggle(item)}>{item.is_active ? 'Desactivar' : 'Activar'}</button></div>)}</div></div>
+    {message && <p role="status">{message}</p>}
   </section>
 }
 

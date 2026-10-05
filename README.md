@@ -1,8 +1,10 @@
 # Sistema de gestión del catálogo de servicios de TI
 
 Asignatura: Software Avanzado
+Integrante: Jeremy Estuardo Orellana Aldana
+Carné: 202300644
 Repositorio: `parcial-catalogo-servicios-ti-202300644`
-Estado: funcional y reproducible, pendiente de cierre de entrega en GitHub
+Estado: cierre de auditoría del 4 de octubre de 2026
 
 ## Objetivo
 
@@ -80,6 +82,19 @@ docker compose exec -e SEED_ADMIN_PASSWORD='clave-local-admin' \
 
 El frontend remoto queda disponible en `http://IP_DEL_EQUIPO:5173`. El proxy `/api` evita configurar la IP manualmente en el navegador.
 
+El seed importa primero el Excel original y después crea tres asignaciones.
+
+### Cuentas de evaluación
+
+| Rol | Usuario | Correo alternativo | Contraseña si se usa el comando de ejemplo |
+|---|---|---|---|
+| Administrador | `admin-demo` | `admin-demo@example.local` | `clave-local-admin` |
+| Consulta | `consulta-demo` | `consulta-demo@example.local` | `clave-local-consulta` |
+
+Se puede iniciar sesión con el usuario o el correo. Las contraseñas de la tabla son exclusivamente de demostración y corresponden al comando anterior. Si se proporcionan otros valores al ejecutar `catalogo-seed`, deben utilizarse esas contraseñas.
+
+Acceso local: `http://localhost:5173`. En la laptop de pruebas: `http://192.168.1.23:5173`.
+
 ## Requisitos y operación de Docker
 
 La solución se verificó con Docker Compose compatible con Compose v2. Las imágenes utilizan Go 1.24, Node 22, Nginx 1.27 y PostgreSQL 18. No es necesario instalar Go, Node ni PostgreSQL en el equipo que evalúe el proyecto.
@@ -108,6 +123,21 @@ bash scripts/acceptance.sh
 
 La suite cubre P01–P12 y crea datos de prueba aislados. Ver [pruebas de aceptación](tests/README.md) y la [evidencia del ciclo CRUD](docs/evidencias/ciclo-crud-y-pruebas.md).
 
+Para ejecutar las pruebas sin instalar Python, Bash o curl en el anfitrión, construir el runner:
+
+```bash
+docker build -f tests/Dockerfile -t catalogo-tests .
+docker run --rm --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$PWD:$PWD" -w "$PWD" \
+  -e ADMIN_PASSWORD='clave-local-admin' \
+  -e CONSULTA_PASSWORD='clave-local-consulta' \
+  -e BASE_URL=http://localhost:8080 \
+  catalogo-tests
+```
+
+Este runner se utiliza en Linux con Docker Engine. En Docker Desktop habilitar host networking o usar `BASE_URL=http://host.docker.internal:8080`. El socket permite que P12 reinicie los contenedores del proyecto de pruebas. Ejecutarlo únicamente sobre un entorno de evaluación, ya que también agrega registros aislados. Para Podman, consultar la adaptación en `tests/README.md`.
+
 Comandos de operación habituales:
 
 ```bash
@@ -135,6 +165,9 @@ docker run --rm \
 El sufijo `:Z` es necesario en Fedora/Podman para el etiquetado SELinux del volumen. Esta instrucción corresponde a la verificación de desarrollo. El procedimiento final está documentado con Docker Compose.
 
 ## Documentación
+
+- [Cierre de auditoría del 4 de octubre](docs/evidencias/2026-10-04-cierre-auditoria.md)
+- [Diccionario de datos y mapeo Excel](docs/decisiones/diccionario-y-mapeo.md)
 
 - [Resolución completa de la tarea](docs/RESOLUCION.md)
 - [Índice de documentación](docs/README.md)

@@ -115,6 +115,15 @@ func (r *Repository) SetActive(ctx context.Context, unitType string, id int64, a
 		return fmt.Errorf("tipo de unidad inválido")
 	}
 	if !active {
+		if unitType == "section" {
+			var assigned bool
+			if err := r.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments WHERE section_id=$1)`, id).Scan(&assigned); err != nil {
+				return err
+			}
+			if assigned {
+				return fmt.Errorf("no se puede desactivar: la sección tiene servicios asignados")
+			}
+		}
 		children := map[string]string{"company": "areas", "area": "departments", "department": "sections", "section": "positions", "position": "app_users"}[unitType]
 		column := map[string]string{"company": "company_id", "area": "area_id", "department": "department_id", "section": "section_id", "position": "position_id"}[unitType]
 		var exists bool

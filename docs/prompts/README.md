@@ -57,6 +57,10 @@ Completa el mantenimiento del catálogo, la búsqueda, los filtros y la suite de
 
 ## Convenciones
 
+### 007. Iteraciones del cierre de auditoría
+
+[Abrir las dos mejoras documentadas](007-iteraciones-cierre-auditoria.md). Distingue las solicitudes literales del usuario de las instrucciones operativas formuladas por el asistente y registra los problemas observados.
+
 - El archivo original del catálogo se conserva sin modificaciones.
 - Los resultados se documentan después de cada prompt.
 - Las credenciales no se incluyen dentro de los prompts.

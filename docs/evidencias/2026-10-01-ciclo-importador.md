@@ -62,6 +62,8 @@ El resultado se acepta si `go test ./...` finaliza correctamente, se conservan 1
 
 ## Capturas de las iteraciones
 
+Las imágenes 24 y 25 son reconstrucciones gráficas del resumen de prompts y resultados. No son capturas directas del historial de Codex. Los textos son una documentación retrospectiva y no deben presentarse como mensajes originales literales. Las nuevas iteraciones del cierre de auditoría se registran por separado.
+
 - ![12 — filas 99 a 101 del Excel](../Imagenes/12-excel-filas-99-101.png)
 - ![13 — conflicto del código SE.12](../Imagenes/13-conflicto-se12.png)
 - ![14 — tratamiento de celdas combinadas](../Imagenes/14-celdas-combinadas.png)

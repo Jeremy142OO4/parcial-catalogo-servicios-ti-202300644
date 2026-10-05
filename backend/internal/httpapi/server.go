@@ -47,6 +47,9 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("PATCH /api/users/{id}/active", s.requireAdmin(s.setUserActive))
 	mux.HandleFunc("GET /api/catalog/services", s.requireAuth(s.listServices))
 	mux.HandleFunc("GET /api/catalog/lookups", s.requireAuth(s.listLookups))
+	mux.HandleFunc("POST /api/catalog/lookups/{kind}", s.requireAdmin(s.maintainLookup))
+	mux.HandleFunc("PATCH /api/catalog/lookups/{kind}", s.requireAdmin(s.maintainLookup))
+	mux.HandleFunc("DELETE /api/catalog/lookups/{kind}", s.requireAdmin(s.maintainLookup))
 	mux.HandleFunc("GET /api/catalog/level1", s.requireAuth(s.listLevel1))
 	mux.HandleFunc("POST /api/catalog/level1", s.requireAdmin(s.createLevel1))
 	mux.HandleFunc("PATCH /api/catalog/level1/{id}", s.requireAdmin(s.updateLevel1))
@@ -288,6 +291,21 @@ func (s *Server) listLookups(w http.ResponseWriter, r *http.Request, _ *auth.Use
 	writeJSON(w, http.StatusOK, lookups)
 }
 
+func (s *Server) maintainLookup(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+	var input struct {
+		Name     string `json:"name"`
+		Original string `json:"original"`
+	}
+	if !decodeJSON(w, r, &input) {
+		return
+	}
+	if err := s.catalog.MaintainLookup(r.Context(), r.PathValue("kind"), input.Original, input.Name, r.Method); err != nil {
+		writeDomainError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (s *Server) listLevel1(w http.ResponseWriter, r *http.Request, _ *auth.User) {
 	services, err := s.catalog.ListLevel1(r.Context())
 	if err != nil {
@@ -478,7 +496,7 @@ func cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			return

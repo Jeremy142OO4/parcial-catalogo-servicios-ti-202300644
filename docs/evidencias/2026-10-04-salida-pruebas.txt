@@ -1,0 +1,14 @@
+PASS P01: inicio de sesión válido e inválido
+PASS P02: sesión ausente, logout y usuario inactivo rechazados
+PASS P03: consulta puede leer pero no modificar
+PASS P04: jerarquía, usuario y asignación válidas recuperables
+PASS P05: duplicado y referencia inexistente rechazados
+PASS P06: Excel original, reporte y conteos importados verificados
+PASS P07: repetición idempotente y trazable verificada por restricciones y conteos
+PASS P08: SE.12, códigos de texto y atributos ausentes verificados
+PASS P09: mínimo mayor que máximo rechazado
+PASS P10: búsqueda y filtro de estado verificados
+PASS P11: responsable de otra sección rechazado
+PASS EXTRA: CRUD de opciones, referencias controladas y estado nivel 1
+PASS P12: reinicio sin eliminar volumen conserva los datos
+Todas las pruebas P01-P12 finalizaron correctamente.

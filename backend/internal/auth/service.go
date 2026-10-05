@@ -143,6 +143,13 @@ func (s *Service) UpdateUser(ctx context.Context, userID int64, positionID *int6
 		return User{}, fmt.Errorf("el rol debe ser admin o consulta")
 	}
 	if positionID != nil {
+		var incompatible bool
+		if err := s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments a JOIN positions p ON p.id=$2 WHERE a.responsible_user_id=$1 AND a.section_id<>p.section_id)`, userID, *positionID).Scan(&incompatible); err != nil {
+			return User{}, err
+		}
+		if incompatible {
+			return User{}, fmt.Errorf("no se puede cambiar de sección: el usuario tiene servicios asignados")
+		}
 		var active bool
 		if err := s.pool.QueryRow(ctx, `SELECT is_active FROM positions WHERE id = $1`, *positionID).Scan(&active); err != nil || !active {
 			return User{}, fmt.Errorf("el puesto no existe o está inactivo")

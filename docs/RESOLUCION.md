@@ -2,6 +2,10 @@
 
 ## Estado del documento
 
+Integrante: Jeremy Estuardo Orellana Aldana. Carné: 202300644.
+
+Actualización del 4 de octubre de 2026: las afirmaciones históricas de los ciclos anteriores deben leerse junto con el [cierre de auditoría](evidencias/2026-10-04-cierre-auditoria.md). El commit publicado antes de estos cambios es `751dbd8`, con `main` y `parcial-v2.0` sincronizados. Las correcciones de este cierre requieren un nuevo commit y actualización del tag.
+
 Este documento es la narración principal del proyecto. Se actualiza con resultados reales y enlaza a las evidencias de respaldo. Los apartados que todavía no tienen implementación se marcan como pendientes.
 
 ## 1. Problema, alcance y supuestos
@@ -54,6 +58,8 @@ erDiagram
 ```
 
 Tablas previstas:
+
+El [diccionario completo y mapeo por columna](decisiones/diccionario-y-mapeo.md) detalla tipos, claves, relaciones, restricciones y tratamiento de valores opcionales.
 
 | Entidad | Restricciones principales |
 |---|---|
@@ -191,4 +197,4 @@ La entrega externa todavía requiere dos comprobaciones manuales antes del enví
 1. Confirmar en GitHub que `maldanap-usac` fue agregado como colaborador con permisos suficientes.
 2. Crear el commit final con todos los cambios actuales y mover la etiqueta `parcial-v2.0` a ese commit.
 
-El SHA asociado actualmente a la etiqueta es anterior a las últimas correcciones de interfaz y documentación, por lo que no debe usarse como SHA final hasta cerrar esas dos acciones.
+El SHA remoto `751dbd8` incluye las correcciones anteriores y estaba sincronizado con el tag al comenzar la auditoría del 4 de octubre. Los cambios posteriores de este cierre todavía no están publicados. Confirmar el SHA definitivo mediante `git rev-parse HEAD` y `git ls-remote origin refs/heads/main refs/tags/parcial-v2.0`.

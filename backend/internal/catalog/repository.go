@@ -55,9 +55,10 @@ type ServiceFilters struct {
 }
 
 type Level1Option struct {
-	ID   int64  `json:"id"`
-	Code string `json:"code"`
-	Name string `json:"name"`
+	ID       int64  `json:"id"`
+	Code     string `json:"code"`
+	Name     string `json:"name"`
+	IsActive bool   `json:"is_active"`
 }
 
 type Lookups struct {
@@ -131,7 +132,7 @@ func (r *Repository) ListServices(ctx context.Context, filters ServiceFilters) (
 }
 
 func (r *Repository) ListLevel1(ctx context.Context) ([]Level1Option, error) {
-	rows, err := r.pool.Query(ctx, `SELECT id, code, canonical_name FROM services_level1 WHERE is_active = TRUE ORDER BY code`)
+	rows, err := r.pool.Query(ctx, `SELECT id, code, canonical_name, is_active FROM services_level1 ORDER BY code`)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +140,7 @@ func (r *Repository) ListLevel1(ctx context.Context) ([]Level1Option, error) {
 	result := make([]Level1Option, 0)
 	for rows.Next() {
 		var option Level1Option
-		if err := rows.Scan(&option.ID, &option.Code, &option.Name); err != nil {
+		if err := rows.Scan(&option.ID, &option.Code, &option.Name, &option.IsActive); err != nil {
 			return nil, err
 		}
 		result = append(result, option)
@@ -237,6 +238,9 @@ func (r *Repository) SetLevel1Active(ctx context.Context, id int64, active bool)
 }
 
 func validateLevel2Input(input Level2Input) error {
+	if input.ActiveValue != nil && *input.ActiveValue != "S" && *input.ActiveValue != "N" {
+		return fmt.Errorf("activo debe ser S, N o desconocido")
+	}
 	input.Code, input.Name = strings.TrimSpace(input.Code), strings.TrimSpace(input.Name)
 	if input.Level1ID <= 0 || input.Code == "" || input.Name == "" {
 		return fmt.Errorf("nivel 1, código y nombre son obligatorios")
@@ -385,6 +389,34 @@ func (r *Repository) PersistImport(ctx context.Context, report *importer.Report)
 		return fmt.Errorf("begin catalog import: %w", err)
 	}
 	defer tx.Rollback(ctx)
+	// Serializa importaciones para calcular conteos verificables en la misma transacción.
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(202300644)`); err != nil {
+		return err
+	}
+	created, updated := 0, 0
+	for _, item := range report.ServicesLevel1 {
+		var exists bool
+		if err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM services_level1 WHERE code=$1)`, item.Code).Scan(&exists); err != nil {
+			return err
+		}
+		if exists {
+			updated++
+		} else {
+			created++
+		}
+	}
+	for _, item := range report.ServicesLevel2 {
+		var exists bool
+		if err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM services_level2 WHERE code=$1)`, item.Code).Scan(&exists); err != nil {
+			return err
+		}
+		if exists {
+			updated++
+		} else {
+			created++
+		}
+	}
+	report.Counts.Created, report.Counts.Updated = created, updated
 
 	var runID int64
 	err = tx.QueryRow(ctx, `
@@ -517,12 +549,9 @@ func lookupID(ctx context.Context, tx pgx.Tx, table string, value *string) (*int
 		return nil, fmt.Errorf("invalid lookup table %s", table)
 	}
 	var id int64
-	query := fmt.Sprintf(`
-		INSERT INTO %s (name) VALUES ($1)
-		ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
-		RETURNING id`, table)
+	query := fmt.Sprintf(`SELECT id FROM %s WHERE name=$1`, table)
 	if err := tx.QueryRow(ctx, query, *value).Scan(&id); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("opción desconocida en %s: %s", table, *value)
 	}
 	return &id, nil
 }

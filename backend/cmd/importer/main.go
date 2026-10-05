@@ -45,6 +45,10 @@ func main() {
 		}
 		fmt.Println("Persistencia PostgreSQL: OK")
 	}
+	if err := importer.WriteJSON(report, *reportPath); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Creados: %d, actualizados: %d\n", report.Counts.Created, report.Counts.Updated)
 
 	fmt.Printf("Importación validada: %d nivel 1, %d nivel 2, %d observaciones, %d filas omitidas\n", report.Counts.Level1, report.Counts.Level2, report.Counts.Observed, report.Counts.Omitted)
 }

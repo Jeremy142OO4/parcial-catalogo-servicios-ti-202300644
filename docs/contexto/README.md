@@ -4,6 +4,8 @@ Esta carpeta conserva las actualizaciones del contexto utilizadas durante el des
 
 ## Documentos proporcionados por fase
 
+La [actualización del 4 de octubre](2026-10-04-contexto-cierre.md) incorpora los hallazgos de la auditoría, las reglas nuevas de mantenimiento y la adaptación del runner a Podman.
+
 | Fase | Documentos utilizados | Motivo |
 | --- | --- | --- |
 | Análisis inicial | Consigna y presentación proporcionadas durante el desarrollo, junto con `data/CatalogoServicios.xlsx` | Definir alcance, campos, controles y casos reales del Excel. Los documentos auxiliares no forman parte de la entrega |

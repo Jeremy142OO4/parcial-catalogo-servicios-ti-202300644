@@ -37,6 +37,23 @@ La ejecución y sus resultados se documentan en
 
 ## Tipo de prueba
 
+La suite actual crea un usuario aislado para P02 y nunca desactiva al usuario de consulta de evaluación. P06 lee `outputs/acceptance-import-report.json`, generado por esa ejecución. P07 exige cero creados y 58 actualizados después de repetir la importación. Los datos con prefijos ACPT, P02 y L1 se conservan para inspección y solo se eliminan al reiniciar explícitamente un entorno desechable.
+
+El runner `tests/Dockerfile` incluye Bash, Python, curl y Docker Compose. El comando Docker Engine está en el README principal. En Fedora con Podman:
+
+```bash
+systemctl --user start podman.socket
+docker build -f tests/Dockerfile -t catalogo-tests .
+docker run --rm --network host --security-opt label=disable \
+  -v /run/user/$(id -u)/podman/podman.sock:/var/run/docker.sock \
+  -v "$PWD:$PWD" -w "$PWD" \
+  -e ADMIN_PASSWORD='clave-local-admin' \
+  -e CONSULTA_PASSWORD='clave-local-consulta' \
+  catalogo-tests
+```
+
+El socket se monta solo en el runner de pruebas. No se monta en la aplicación. El contenedor puede administrar los servicios del entorno de evaluación para verificar P12.
+
 - P01 a P05, P09 y P11 son pruebas de integración de API. Ejecutan la API real, PostgreSQL real y validan autenticación, permisos, relaciones y reglas de negocio.
 - P06 a P08 son pruebas de integración del importador con PostgreSQL. Ejecutan el binario dentro del contenedor y verifican conteos, trazabilidad, códigos y valores desconocidos.
 - P12 es una prueba de persistencia y recuperación del entorno. Reinicia los contenedores y consulta nuevamente la API y PostgreSQL.

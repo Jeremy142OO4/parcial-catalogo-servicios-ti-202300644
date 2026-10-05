@@ -8,7 +8,9 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/auth"
+	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/catalog"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/database"
+	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/importer"
 )
 
 func main() {
@@ -37,6 +39,13 @@ func main() {
 	}
 	defer pool.Close()
 	if err := database.ApplyMigrations(ctx, pool, os.Getenv("MIGRATIONS_DIR")); err != nil {
+		log.Fatal(err)
+	}
+	report, err := importer.Run("data/CatalogoServicios.xlsx", importer.DefaultSheet)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := catalog.NewRepository(pool).PersistImport(ctx, report); err != nil {
 		log.Fatal(err)
 	}
 

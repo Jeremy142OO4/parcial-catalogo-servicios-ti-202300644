@@ -1,6 +1,6 @@
 # Evidencias de consola: Docker, importación y pruebas
 
-Estas evidencias fueron ejecutadas en la laptop remota `192.168.1.23` el 2 de octubre de 2026. Las imágenes muestran la salida de consola real con fecha y hora local.
+Las pruebas se ejecutaron en la laptop remota `192.168.1.23` el 2 de octubre de 2026. Las imágenes 26 a 34 son representaciones gráficas de transcripciones preparadas, no capturas directas de una terminal. Sus fechas corresponden a la generación de la imagen y no prueban por sí mismas la hora de ejecución. Los controles actuales y sus resultados se registran en el cierre de auditoría del 4 de octubre.
 
 ## Docker y API
 
