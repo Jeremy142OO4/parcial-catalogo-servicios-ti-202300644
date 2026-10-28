@@ -1,0 +1,37 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mP18 ANTES
+{"ci": 5072, "faq": 2, "classes": 18, "history": 242, "tickets": 56, "ci_digest": "7bbc9cf7dea2cf5f053e683394706495", "attachments": 6, "ticket_digest": "4fc920feb826685d6a9356a6f0d75bec", "history_digest": "57be27d0cf7fde9557bc82b9c5e2f424", "catalogue_level1": 12, "catalogue_level2": 46, "attachment_digest": "3d6d0721d0b7a707cc04854a0d56298a", "catalogue_level1_digest": "6dbbec47314dfea6a18d3a2001858414", "catalogue_level2_digest": "91e71f33d78773a9ba944d94a43c3368"}
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:229: PERSISTENCIA OK ticket_id=30 attachment_id=4 bytes=30
+--- PASS: TestAttachmentPersistenceCheck (0.06s)
+PASS
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mcatalogo-clean-test_api_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mcatalogo-clean-test_db_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mcatalogo-clean-test_api_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mP18 DESPUÉS
+{"ci": 5072, "faq": 2, "classes": 18, "history": 242, "tickets": 56, "ci_digest": "7bbc9cf7dea2cf5f053e683394706495", "attachments": 6, "ticket_digest": "4fc920feb826685d6a9356a6f0d75bec", "history_digest": "57be27d0cf7fde9557bc82b9c5e2f424", "catalogue_level1": 12, "catalogue_level2": 46, "attachment_digest": "3d6d0721d0b7a707cc04854a0d56298a", "catalogue_level1_digest": "6dbbec47314dfea6a18d3a2001858414", "catalogue_level2_digest": "91e71f33d78773a9ba944d94a43c3368"}
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:229: PERSISTENCIA OK ticket_id=30 attachment_id=4 bytes=30
+--- PASS: TestAttachmentPersistenceCheck (0.06s)
+PASS
+PASS P18: conteos, digest de registros y descarga del adjunto conservados

@@ -1,0 +1,104 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m[1/2] STEP 1/6: FROM golang:1.24 AS builder
+[1/2] STEP 2/6: WORKDIR /src
+--> Using cache bc2ae32591a871f1a63062252814a6d7d25eb5f8aa2597118f951d67c445afac
+--> bc2ae32591a8
+[1/2] STEP 3/6: COPY go.mod go.sum ./
+--> Using cache 56b2d6904ff222d3729b78f94ec6f5b127b22dd2a427a0b6a46f48855c7bcb2c
+--> 56b2d6904ff2
+[1/2] STEP 4/6: RUN go mod download
+--> Using cache 16190dddc5566be8ae1a8616eb8b5dfd4f7d93857fd177f6838dc5fd2c20709b
+--> 16190dddc556
+[1/2] STEP 5/6: COPY . .
+--> 645da652e7f2
+[1/2] STEP 6/6: RUN CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-server ./backend/cmd/server     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-seed ./backend/cmd/seed     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-importer ./backend/cmd/importer     && CGO_ENABLED=0 GOOS=linux go build -o /out/cmdb-generator ./backend/cmd/cmdb-generator     && CGO_ENABLED=0 GOOS=linux go test -c -o /out/desk-tests ./backend/internal/desk
+--> 9a729d9509e6
+[2/2] STEP 1/12: FROM alpine:3.21
+[2/2] STEP 2/12: RUN apk add --no-cache ca-certificates
+--> Using cache 203ee0afe881a7f27f0035da38de366464fdc75f39d34a4918a199bf0f44e167
+--> 203ee0afe881
+[2/2] STEP 3/12: WORKDIR /app
+--> Using cache 00587c3bedca90aa816c373825883911ba156c76a80ed5cf923ac6812ba02e49
+--> 00587c3bedca
+[2/2] STEP 4/12: COPY --from=builder /out/catalogo-server ./catalogo-server
+--> Using cache 44ae71e7a51b00817044c76be48ad4483aa92ba62daf9436107666813ed5d363
+--> 44ae71e7a51b
+[2/2] STEP 5/12: COPY --from=builder /out/catalogo-seed ./catalogo-seed
+--> Using cache 19913bfc7afd30a42f1d86a6bb2260c3d7456796fe7b5417f945b2882395ecaf
+--> 19913bfc7afd
+[2/2] STEP 6/12: COPY --from=builder /out/catalogo-importer ./catalogo-importer
+--> Using cache 333b63e424e6f7d9f449405dcba2b3501477fdfeeef0cc33b90015aa07429eb8
+--> 333b63e424e6
+[2/2] STEP 7/12: COPY --from=builder /out/cmdb-generator ./cmdb-generator
+--> Using cache cc78a18489a67a91edc1d09c9c179ccfc1a7ae45f0b4c17985ed08265e47f606
+--> cc78a18489a6
+[2/2] STEP 8/12: COPY --from=builder /out/desk-tests ./desk-tests
+--> Using cache 54589ed614b25e4380e1b41a49be9bc5db713453e97a5a13dffb095046c108c4
+--> 54589ed614b2
+[2/2] STEP 9/12: COPY backend/migrations ./backend/migrations
+--> Using cache 7ed5469c3569690b2d6d83fa283643a87563e52ea22885492534719d4dcb3187
+--> 7ed5469c3569
+[2/2] STEP 10/12: COPY data ./data
+--> Using cache cf62730b6c9a11722952223bbe22cec630213a9508d65b759f3a75a1317f8212
+--> cf62730b6c9a
+[2/2] STEP 11/12: EXPOSE 8080
+--> Using cache f437fa286b64df161e6e1bb9aa11bc9416b939c89babdda62eb6ab2f28a1fbe7
+--> f437fa286b64
+[2/2] STEP 12/12: CMD ["./catalogo-server"]
+--> Using cache ff0f98ee40247ceab861213c40acd8724f3c40317a5e9249572eeaff670bb995
+[2/2] COMMIT catalogo-service-desk-test_api
+--> ff0f98ee4024
+Successfully tagged localhost/catalogo-service-desk-test_api:latest
+ff0f98ee40247ceab861213c40acd8724f3c40317a5e9249572eeaff670bb995
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1
+48c31c24e3774858111c3df8c1dbbf8600c5922aab007b30e0ea1cb8ce5aac7e
+catalogo-service-desk-test_default
+05e8158b4379538b29833ad2a10630747119777a65ce3d18b41f3f6132100faf
+45b834524953e5861f974868e7f276400ad68f084720b8cd575a618b46317c8a
+5bfa40f073ae85b839df9e8ee8d301e0770c883a3579740a9f9ec1cbe11e352c
+catalogo-service-desk-test_db_1
+catalogo-service-desk-test_api_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mDatos de demostración creados: organización, usuarios y tres asignaciones
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestIncidentBoundaries
+--- PASS: TestIncidentBoundaries (0.00s)
+=== RUN   TestEveryRouteAndInvalidJump
+--- PASS: TestEveryRouteAndInvalidJump (0.00s)
+=== RUN   TestDeviceCodes
+--- PASS: TestDeviceCodes (0.00s)
+=== RUN   TestServiceDeskIntegration
+    integration_test.go:57: PASS P01 consulta con roles elevados sigue sin escritura
+    integration_test.go:57: PASS P02 regresión de controles de origen 12/46
+    integration_test.go:57: PASS P04 padres y ciclos de clasificación rechazados
+    integration_test.go:57: PASS P03 5000 dispositivos y repetición idempotente
+    integration_test.go:57: PASS CRUD CI: crear, consultar, editar y baja lógica/reactivación
+    integration_test.go:57: PASS P14 dependencias y ciclos técnicos
+    integration_test.go:166: P16 tiempo consulta paginada 1.793476ms entorno: PostgreSQL aislado en laptop
+    integration_test.go:57: PASS P05 referencias y condición sin CI
+    integration_test.go:57: PASS P07 dos reclamaciones, un ganador
+    integration_test.go:57: PASS P08 transferencia e incompatibilidad de proceso
+    integration_test.go:57: PASS P06 ámbito y notas internas
+    integration_test.go:57: PASS P09 ruta completa nuevos
+    integration_test.go:57: PASS P09 ruta completa cambios
+    integration_test.go:57: PASS P15 cierre y reapertura con ciclos
+    integration_test.go:57: PASS P09 ruta completa incidentes
+    integration_test.go:57: PASS P09 ruta completa eventos
+    integration_test.go:57: PASS P09 ruta completa problemas
+    integration_test.go:57: PASS P09 ruta completa accesos
+    integration_test.go:57: PASS P09 ruta completa servicios
+    integration_test.go:57: PASS P13 incidente vinculado a problema y cambio
+    integration_test.go:57: PASS P10 autoaprobación admin rechazada
+    integration_test.go:57: PASS P11 E0–E3 y deduplicación
+    integration_test.go:57: PASS P01 HTTP sin sesión, consulta y logout
+--- PASS: TestServiceDeskIntegration (1.05s)
+PASS

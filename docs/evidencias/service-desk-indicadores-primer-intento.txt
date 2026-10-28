@@ -1,0 +1,199 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m[1/2] STEP 1/6: FROM golang:1.24 AS builder
+[1/2] STEP 1/6: FROM node:22-alpine AS builder
+[1/2] STEP 2/6: WORKDIR /app
+[1/2] STEP 2/6: WORKDIR /src
+--> Using cache 4dc87d7b2caeecebb9d629a85c9d1bc9d720d46be17d17a0cacf3229b1f69602
+--> 4dc87d7b2cae
+--> Using cache bc2ae32591a871f1a63062252814a6d7d25eb5f8aa2597118f951d67c445afac
+--> bc2ae32591a8
+[1/2] STEP 3/6: COPY go.mod go.sum ./
+[1/2] STEP 3/6: COPY package*.json ./
+--> Using cache 56b2d6904ff222d3729b78f94ec6f5b127b22dd2a427a0b6a46f48855c7bcb2c
+--> 56b2d6904ff2
+[1/2] STEP 4/6: RUN go mod download
+--> Using cache 16190dddc5566be8ae1a8616eb8b5dfd4f7d93857fd177f6838dc5fd2c20709b
+--> 16190dddc556
+[1/2] STEP 5/6: COPY . .
+--> 43cbf0808c14
+[1/2] STEP 4/6: RUN npm ci
+--> 7e1c5f6eb9ac
+[1/2] STEP 6/6: RUN CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-server ./backend/cmd/server     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-seed ./backend/cmd/seed     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-importer ./backend/cmd/importer     && CGO_ENABLED=0 GOOS=linux go build -o /out/cmdb-generator ./backend/cmd/cmdb-generator     && CGO_ENABLED=0 GOOS=linux go test -c -o /out/desk-tests ./backend/internal/desk
+
+added 21 packages, and audited 22 packages in 2s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+--> 23e6f1f59cf3
+[1/2] STEP 5/6: COPY . .
+--> 1cda8a83bdc3
+[1/2] STEP 6/6: RUN npm test && npm run build
+
+> catalogo-servicios-ti-web@0.1.0 test
+> node scripts/smoke.mjs
+
+PASS UI render: solicitante, agente/admin, consulta con roles elevados y siete formularios diferenciados
+Alcance: renderizado de componentes, no interacción real en navegador ni integración HTTP
+
+> catalogo-servicios-ti-web@0.1.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 19 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.41 kB │ gzip:  0.28 kB
+dist/assets/index-ViL8IAUb.css   13.57 kB │ gzip:  3.17 kB
+dist/assets/index-SIsvfi4v.js   298.67 kB │ gzip: 85.87 kB
+
+✓ built in 209ms
+--> aa74bde76f55
+[2/2] STEP 1/4: FROM nginx:1.27-alpine
+[2/2] STEP 2/4: COPY nginx.conf /etc/nginx/conf.d/default.conf
+--> 46690615167c
+[2/2] STEP 3/4: COPY --from=builder /app/dist /usr/share/nginx/html
+--> 2519f52368b7
+[2/2] STEP 4/4: EXPOSE 80
+[2/2] COMMIT catalogo-service-desk-test_frontend
+--> 9e32cc2a0320
+Successfully tagged localhost/catalogo-service-desk-test_frontend:latest
+9e32cc2a03205f85ec7b395c380f8a96878dbe5e0437301647de3fc33d4a9ca4
+--> 4059f7e35b10
+[2/2] STEP 1/12: FROM alpine:3.21
+[2/2] STEP 2/12: RUN apk add --no-cache ca-certificates
+--> Using cache 203ee0afe881a7f27f0035da38de366464fdc75f39d34a4918a199bf0f44e167
+--> 203ee0afe881
+[2/2] STEP 3/12: WORKDIR /app
+--> Using cache 00587c3bedca90aa816c373825883911ba156c76a80ed5cf923ac6812ba02e49
+--> 00587c3bedca
+[2/2] STEP 4/12: COPY --from=builder /out/catalogo-server ./catalogo-server
+--> 2a523e712543
+[2/2] STEP 5/12: COPY --from=builder /out/catalogo-seed ./catalogo-seed
+--> 4e4cb8dfa0a2
+[2/2] STEP 6/12: COPY --from=builder /out/catalogo-importer ./catalogo-importer
+--> 67fe57ea0427
+[2/2] STEP 7/12: COPY --from=builder /out/cmdb-generator ./cmdb-generator
+--> 8e38cdc1dec0
+[2/2] STEP 8/12: COPY --from=builder /out/desk-tests ./desk-tests
+--> 01ddb2f4ac97
+[2/2] STEP 9/12: COPY backend/migrations ./backend/migrations
+--> 9783463f43f1
+[2/2] STEP 10/12: COPY data ./data
+--> 825af4eae570
+[2/2] STEP 11/12: EXPOSE 8080
+--> 6960d5a41e12
+[2/2] STEP 12/12: CMD ["./catalogo-server"]
+[2/2] COMMIT catalogo-service-desk-test_api
+--> ebcfc07cef2b
+Successfully tagged localhost/catalogo-service-desk-test_api:latest
+ebcfc07cef2b8d95195227da7b7ca63f7a9a782b75f6717eca3179f9de54b47f
+Error: no container with name or ID "catalogo-service-desk-test_frontend_1" found: no such container
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1
+Error: no container with ID or name "catalogo-service-desk-test_frontend_1" found: no such container
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1
+42cb0c1218523beb7fbaddcbaa4db5b95c8a4c3235a2dd0475d712fb229dba79
+catalogo-service-desk-test_default
+bb3b5a94dac8122663ce2b75e323c509766c827b232fe39b8fd146e946fcc7ec
+25476ae16d8c3495ab13eb2f36f6a228925c229bfe3cf371d40c6e204e089e6d
+2311691740fb9093a3c2f2ff167093e3ba8d637bd1327a344a6bc5c7e5fe7c21
+167b8ae89d67ce674403eea63664953b6d6d6af1330dcae43b4d986ef4a4f962
+catalogo-service-desk-test_db_1
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_frontend_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mDatos de demostración creados: organización, usuarios y tres asignaciones
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestAttachmentTypes
+=== RUN   TestAttachmentTypes/nota.txt
+=== RUN   TestAttachmentTypes/evidencia.pdf
+=== RUN   TestAttachmentTypes/imagen.png
+=== RUN   TestAttachmentTypes/imagen.jpg
+=== RUN   TestAttachmentTypes/script.html
+=== RUN   TestAttachmentTypes/falso.txt
+=== RUN   TestAttachmentTypes/falso.pdf
+=== RUN   TestAttachmentTypes/virus.exe
+=== RUN   TestAttachmentTypes/../nota.txt
+=== RUN   TestAttachmentTypes/C:\nota.txt
+=== RUN   TestAttachmentTypes/nota__.txt
+--- PASS: TestAttachmentTypes (0.00s)
+    --- PASS: TestAttachmentTypes/nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/evidencia.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.png (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.jpg (0.00s)
+    --- PASS: TestAttachmentTypes/script.html (0.00s)
+    --- PASS: TestAttachmentTypes/falso.txt (0.00s)
+    --- PASS: TestAttachmentTypes/falso.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/virus.exe (0.00s)
+    --- PASS: TestAttachmentTypes/../nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/C:\nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/nota__.txt (0.00s)
+=== RUN   TestIndicatorIntervalsAndObjectives
+    indicators_test.go:24: P17 unión de pausas solapadas, pausa abierta, objetivo desconocido y frontera inclusiva
+--- PASS: TestIndicatorIntervalsAndObjectives (0.00s)
+=== RUN   TestIndicatorControlledCycles
+    indicators_test.go:57: P17 resolución 120-30=90, abierto 60-10=50 sin resolución ficticia, ciclo anterior conservado
+--- PASS: TestIndicatorControlledCycles (0.00s)
+=== RUN   TestApprovedEvidenceDoesNotChangeScope
+--- PASS: TestApprovedEvidenceDoesNotChangeScope (0.00s)
+=== RUN   TestIncidentBoundaries
+--- PASS: TestIncidentBoundaries (0.00s)
+=== RUN   TestEveryRouteAndInvalidJump
+--- PASS: TestEveryRouteAndInvalidJump (0.00s)
+=== RUN   TestDeviceCodes
+--- PASS: TestDeviceCodes (0.00s)
+=== RUN   TestProtectedAttachmentsIntegration
+    attachments_integration_test.go:116: A01 sin sesión, tercero, consulta y nota interna sin permiso rechazados
+    attachments_integration_test.go:141: A02 tipos falsos, rutas, vacíos y límites rechazados sin archivos residuales
+    attachments_integration_test.go:179: A03 descarga fiel, headers seguros, aislamiento por ticket, visibilidad interna y revocación comprobados
+    attachments_integration_test.go:182: A04 tamaño exacto de 10 MiB aceptado
+    attachments_integration_test.go:183: Adjunto persistente de prueba ticket_id=78 attachment_id=7
+--- PASS: TestProtectedAttachmentsIntegration (0.90s)
+=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:191: explicit persistence check only
+--- SKIP: TestAttachmentPersistenceCheck (0.00s)
+=== RUN   TestIndicatorsIntegration
+    indicators_integration_test.go:55: ERROR: record "new" has no field "role" (SQLSTATE 42703)
+--- FAIL: TestIndicatorsIntegration (0.02s)
+=== RUN   TestServiceDeskIntegration
+    integration_test.go:57: PASS P01 consulta con roles elevados sigue sin escritura
+    integration_test.go:57: PASS P02 regresión de controles de origen 12/46
+    integration_test.go:57: PASS P04 padres y ciclos de clasificación rechazados
+    integration_test.go:57: PASS P03 5000 dispositivos y repetición idempotente
+    integration_test.go:57: PASS CRUD CI: crear, consultar, editar y baja lógica/reactivación
+    integration_test.go:57: PASS P14 dependencias y ciclos técnicos
+    integration_test.go:166: P16 tiempo consulta paginada 1.917356ms entorno: PostgreSQL aislado en laptop
+    integration_test.go:57: PASS P05 referencias y condición sin CI
+    integration_test.go:57: PASS P07 dos reclamaciones, un ganador
+    integration_test.go:57: PASS P08 transferencia e incompatibilidad de proceso
+    integration_test.go:57: PASS P06 ámbito y notas internas
+    integration_test.go:57: PASS P09 ruta completa eventos
+    integration_test.go:57: PASS P09 ruta completa problemas
+    integration_test.go:57: PASS P09 ruta completa accesos
+    integration_test.go:57: PASS P09 ruta completa servicios
+    integration_test.go:57: PASS P09 ruta completa nuevos
+    integration_test.go:57: PASS P09 ruta completa cambios
+    integration_test.go:57: PASS P15 cierre y reapertura con ciclos
+    integration_test.go:57: PASS P09 ruta completa incidentes
+    integration_test.go:57: PASS P13 incidente vinculado a problema y cambio
+    integration_test.go:57: PASS P10 autoaprobación admin rechazada
+    integration_test.go:57: PASS P11 E0–E3 y deduplicación
+    integration_test.go:57: PASS P01 HTTP sin sesión, consulta y logout
+--- PASS: TestServiceDeskIntegration (1.05s)
+FAIL
+Error: executing /usr/bin/podman-compose -p catalogo-service-desk-test -f compose.desk-test.yaml exec -T -e DESK_TEST_DATABASE_URL=postgres://catalogo:catalogo@db:5432/catalogo_desk_test?sslmode=disable api ./desk-tests -test.v: exit status 1

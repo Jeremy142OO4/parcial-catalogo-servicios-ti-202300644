@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: catalogo_desk_test
+      POSTGRES_USER: catalogo
+      POSTGRES_PASSWORD: catalogo
+    volumes:
+      - desk_test_data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U catalogo -d catalogo_desk_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgres://catalogo:catalogo@db:5432/catalogo_desk_test?sslmode=disable
+      MIGRATIONS_DIR: /app/backend/migrations
+      APP_PORT: 8080
+      ATTACHMENTS_DIR: /app/storage/attachments
+    volumes:
+      - desk_test_attachments:/app/storage/attachments
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${DESK_TEST_API_PORT:-18081}:8080"
+  frontend:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "${DESK_TEST_WEB_PORT:-18080}:80"
+volumes:
+  desk_test_data:
+  desk_test_attachments:

@@ -4,7 +4,19 @@ Asignatura: Software Avanzado
 Integrante: Jeremy Estuardo Orellana Aldana
 Carné: 202300644
 Repositorio: `parcial-catalogo-servicios-ti-202300644`
-Estado: cierre de auditoría del 4 de octubre de 2026
+Estado: parcial original cerrado el 4 de octubre, ampliación Service Desk verificada el 28 de octubre de 2026, con límites declarados
+
+## Ampliación Service Desk
+
+El parcial se conserva en `parcial-v2.0`. La ampliación comienza en `feature/service-desk` con el [registro de fuentes y decisiones](docs/FUENTES.md) y la [primera actualización de contexto](docs/contexto/service-desk-alcance-y-fuentes.md). Los comandos y resultados del catálogo que siguen no demuestran todavía tickets ni CMDB implementados.
+
+La ampliación incorpora migraciones 004–008, roles múltiples, colas, clasificación/CI, generador de 5,000 dispositivos, siete flujos, adjuntos protegidos, indicadores, FAQ y pantallas React. Consultar [API, comandos y límites](docs/API-SERVICE-DESK.md), [cálculos e interfaz](docs/INDICADORES.md), [demostración con 37 tickets y cuentas por rol](docs/DEMOSTRACION-SERVICE-DESK.md) y [verificación final P01–P18](docs/evidencias/service-desk-final.md). El [cierre documental de P04](docs/decisiones/002-interpretacion-cmdb-p04.md) incorpora la aclaración del usuario: un árbol adicional no enumerado no se considera desarrollo pendiente en el alcance acordado. Las seis subclases complementarias siguen identificadas como decisiones propias y se conserva la salvedad interpretativa del enunciado.
+
+**Demostración preparada:** [192.168.1.23:18090](http://192.168.1.23:18090/), con exactamente 37 tickets, siete colas, ocho artículos FAQ y 5,000 dispositivos. Está separada de las bases que usa la suite de pruebas. Los usuarios y el procedimiento de preparación están en la [guía de demostración](docs/DEMOSTRACION-SERVICE-DESK.md).
+
+Para la presentación: [guía breve de defensa](docs/DEFENSA-SERVICE-DESK.md), [ingenierías y nueve prompts](docs/IA.md) y [cierre con versión y resultados](docs/evidencias/service-desk-cierre.md). La vista administrativa **CMDB → Origen del Excel** muestra las filas originales sin inventar referencias ni modificar el libro.
+
+Para levantar la aplicación normal: `docker compose up --build -d` y abrir [localhost:5173](http://localhost:5173). Para verificar sin tocar la base habitual: `bash scripts/service-desk-test.sh`, con proyecto y volúmenes separados. Esta prueba también construye la interfaz y la publica en [localhost:18080](http://localhost:18080). En la laptop de pruebas: [192.168.1.23:18080](http://192.168.1.23:18080/). Las contraseñas sintéticas del runner son exclusivamente de ese entorno, no sustituyen las cuentas normales del README.
 
 ## Objetivo
 

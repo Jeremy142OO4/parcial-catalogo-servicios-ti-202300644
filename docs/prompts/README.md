@@ -19,6 +19,14 @@ Los prompts siguen una estructura común, integrada dentro del mensaje para mant
 
 ## Índice de prompts
 
+### 009. Implementación del backend Service Desk
+
+[Abrir solicitud real, contexto y resultados](009-implementacion-backend-service-desk.md). Migraciones, autorización, CMDB, generador y siete flujos, con integración aislada real.
+
+### 008. Diseño previo de Service Desk
+
+[Abrir prompt, respuesta seleccionada y captura real](008-diseno-service-desk.md). Primera consulta web de la ampliación, con resumen de requisitos y límites explícitos. No constituye una prueba funcional.
+
 ### 001. Diseño del importador y trazabilidad
 
 Define las reglas para celdas combinadas, conflicto `SE.12`, códigos de nivel 2, atributos incompletos, filas de continuación y trazabilidad.
@@ -56,6 +64,27 @@ Completa el mantenimiento del catálogo, la búsqueda, los filtros y la suite de
 [Abrir prompt 006](006-crud-filtros-pruebas.md)
 
 ## Convenciones
+
+### 013–016. Revisiones reales del cierre
+
+- [013, revisión CMDB inicial](013-revision-cmdb-cierre.md).
+- [014, corrección de atribución y pruebas de origen](014-revision-cmdb-refinada.md).
+- [015, revisión del harness inicial](015-revision-harness-cierre.md).
+- [016, revisión con evidencia y límites](016-revision-harness-refinada.md).
+
+Son cuatro envíos reales a ChatGPT web, con capturas. Los pares 013→014 y 015→016 documentan las mejoras sin inventar conversaciones.
+
+### 012. FAQ, demostración y verificación final
+
+[Abrir solicitud, estructura y resultados reales](012-faq-demostracion-verificacion.md). Incluye aislamiento de la demostración, 37 tickets, ocho artículos y evidencias de P01–P18, con limitaciones explícitas.
+
+### 011. Indicadores e interfaz de Service Desk
+
+[Abrir solicitud, contexto y evaluación](011-indicadores-e-interfaz.md). Registra la implementación, corrección del trigger y pruebas reales, sin reconstruir un chat ficticio.
+
+### 010. Adjuntos protegidos de tickets
+
+[Abrir solicitud, decisiones y resultado](010-adjuntos-protegidos.md). Incluye el registro real de implementación y enlaces a pruebas de carga, tamaño, tipo y descarga autorizada.
 
 ### 007. Iteraciones del cierre de auditoría
 

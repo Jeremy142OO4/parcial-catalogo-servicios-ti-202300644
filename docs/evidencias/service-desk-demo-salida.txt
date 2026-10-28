@@ -1,0 +1,225 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m  current_database  |             now              
+--------------------+------------------------------
+ catalogo_desk_demo | 2026-10-28 06:44:16.14042+00
+(1 row)
+
+ queues | tickets | prepared | devices | faq 
+--------+---------+----------+---------+-----
+      7 |      37 |       37 |    5000 |   8
+(1 row)
+
+ process_code | count 
+--------------+-------
+ accesos      |     5
+ cambios      |     5
+ eventos      |     5
+ incidentes   |     7
+ nuevos       |     5
+ problemas    |     5
+ servicios    |     5
+(7 rows)
+
+ category | count 
+----------+-------
+ I0       |     1
+ I1       |     1
+ I2       |     1
+ I3       |     1
+ I4       |     1
+ I5       |     1
+ I6       |     1
+(7 rows)
+
+     username     |    role     | is_active 
+------------------+-------------+-----------
+ desk-admin       | admin       | t
+ desk-agente1     | agente      | t
+ desk-agente2     | agente      | t
+ desk-aprobador   | aprobador   | t
+ desk-consulta    | consulta    | t
+ desk-solicitante | solicitante | t
+(6 rows)
+
+   case_key    |   number    |         state          | cycle 
+---------------+-------------+------------------------+-------
+ accesos-01    | SD-00000028 | solicitado             |     1
+ accesos-02    | SD-00000029 | validacion             |     1
+ accesos-03    | SD-00000030 | pendiente_aprobacion   |     1
+ accesos-04    | SD-00000031 | provision_o_revocacion |     1
+ accesos-05    | SD-00000032 | rechazado              |     1
+ cambios-01    | SD-00000013 | solicitado             |     1
+ cambios-02    | SD-00000014 | evaluacion             |     1
+ cambios-03    | SD-00000015 | pendiente_aprobacion   |     1
+ cambios-04    | SD-00000016 | ejecucion              |     1
+ cambios-05    | SD-00000017 | cerrado                |     1
+ eventos-01    | SD-00000018 | registrado             |     1
+ eventos-02    | SD-00000019 | evaluado               |     1
+ eventos-03    | SD-00000020 | respuesta              |     1
+ eventos-04    | SD-00000021 | resuelto               |     1
+ eventos-05    | SD-00000022 | cerrado                |     1
+ incidentes-01 | SD-00000001 | registrado             |     1
+ incidentes-02 | SD-00000002 | clasificado            |     1
+ incidentes-03 | SD-00000003 | diagnostico            |     1
+ incidentes-04 | SD-00000004 | atencion               |     1
+ incidentes-05 | SD-00000005 | recuperado             |     1
+ incidentes-06 | SD-00000006 | registrado             |     2
+ incidentes-07 | SD-00000007 | cerrado                |     1
+ nuevos-01     | SD-00000008 | solicitado             |     1
+ nuevos-02     | SD-00000009 | analisis               |     1
+ nuevos-03     | SD-00000010 | pendiente_aprobacion   |     1
+ nuevos-04     | SD-00000011 | implementacion         |     1
+ nuevos-05     | SD-00000012 | cerrado                |     1
+ problemas-01  | SD-00000023 | registrado             |     1
+ problemas-02  | SD-00000024 | investigacion          |     1
+ problemas-03  | SD-00000025 | causa_identificada     |     1
+ problemas-04  | SD-00000026 | solucion_propuesta     |     1
+ problemas-05  | SD-00000027 | cerrado                |     1
+ servicios-01  | SD-00000033 | solicitado             |     1
+ servicios-02  | SD-00000034 | validacion             |     1
+ servicios-03  | SD-00000035 | asignado               |     1
+ servicios-04  | SD-00000036 | cumplimiento           |     1
+ servicios-05  | SD-00000037 | cerrado                |     1
+(37 rows)
+
+          ticket_digest           
+----------------------------------
+ 61ec2e3914dbfe49263ae5e6b1143bb4
+(1 row)
+
+          history_digest          
+----------------------------------
+ ec5b01a1d0256d5df1d6c8f9994156e4
+(1 row)
+
+DO
+PASS demostración: 37 tickets, siete colas, I0–I6, 5000 dispositivos y FAQ
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m{"by_process":{"accesos":5,"cambios":5,"eventos":5,"incidentes":7,"nuevos":5,"problemas":5,"servicios":5},"dataset":"desk-v1","faq":8,"queues":7,"tickets":37}
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m  current_database  |              now              
+--------------------+-------------------------------
+ catalogo_desk_demo | 2026-10-28 06:44:17.108557+00
+(1 row)
+
+ queues | tickets | prepared | devices | faq 
+--------+---------+----------+---------+-----
+      7 |      37 |       37 |    5000 |   8
+(1 row)
+
+ process_code | count 
+--------------+-------
+ accesos      |     5
+ cambios      |     5
+ eventos      |     5
+ incidentes   |     7
+ nuevos       |     5
+ problemas    |     5
+ servicios    |     5
+(7 rows)
+
+ category | count 
+----------+-------
+ I0       |     1
+ I1       |     1
+ I2       |     1
+ I3       |     1
+ I4       |     1
+ I5       |     1
+ I6       |     1
+(7 rows)
+
+     username     |    role     | is_active 
+------------------+-------------+-----------
+ desk-admin       | admin       | t
+ desk-agente1     | agente      | t
+ desk-agente2     | agente      | t
+ desk-aprobador   | aprobador   | t
+ desk-consulta    | consulta    | t
+ desk-solicitante | solicitante | t
+(6 rows)
+
+   case_key    |   number    |         state          | cycle 
+---------------+-------------+------------------------+-------
+ accesos-01    | SD-00000028 | solicitado             |     1
+ accesos-02    | SD-00000029 | validacion             |     1
+ accesos-03    | SD-00000030 | pendiente_aprobacion   |     1
+ accesos-04    | SD-00000031 | provision_o_revocacion |     1
+ accesos-05    | SD-00000032 | rechazado              |     1
+ cambios-01    | SD-00000013 | solicitado             |     1
+ cambios-02    | SD-00000014 | evaluacion             |     1
+ cambios-03    | SD-00000015 | pendiente_aprobacion   |     1
+ cambios-04    | SD-00000016 | ejecucion              |     1
+ cambios-05    | SD-00000017 | cerrado                |     1
+ eventos-01    | SD-00000018 | registrado             |     1
+ eventos-02    | SD-00000019 | evaluado               |     1
+ eventos-03    | SD-00000020 | respuesta              |     1
+ eventos-04    | SD-00000021 | resuelto               |     1
+ eventos-05    | SD-00000022 | cerrado                |     1
+ incidentes-01 | SD-00000001 | registrado             |     1
+ incidentes-02 | SD-00000002 | clasificado            |     1
+ incidentes-03 | SD-00000003 | diagnostico            |     1
+ incidentes-04 | SD-00000004 | atencion               |     1
+ incidentes-05 | SD-00000005 | recuperado             |     1
+ incidentes-06 | SD-00000006 | registrado             |     2
+ incidentes-07 | SD-00000007 | cerrado                |     1
+ nuevos-01     | SD-00000008 | solicitado             |     1
+ nuevos-02     | SD-00000009 | analisis               |     1
+ nuevos-03     | SD-00000010 | pendiente_aprobacion   |     1
+ nuevos-04     | SD-00000011 | implementacion         |     1
+ nuevos-05     | SD-00000012 | cerrado                |     1
+ problemas-01  | SD-00000023 | registrado             |     1
+ problemas-02  | SD-00000024 | investigacion          |     1
+ problemas-03  | SD-00000025 | causa_identificada     |     1
+ problemas-04  | SD-00000026 | solucion_propuesta     |     1
+ problemas-05  | SD-00000027 | cerrado                |     1
+ servicios-01  | SD-00000033 | solicitado             |     1
+ servicios-02  | SD-00000034 | validacion             |     1
+ servicios-03  | SD-00000035 | asignado               |     1
+ servicios-04  | SD-00000036 | cumplimiento           |     1
+ servicios-05  | SD-00000037 | cerrado                |     1
+(37 rows)
+
+          ticket_digest           
+----------------------------------
+ 61ec2e3914dbfe49263ae5e6b1143bb4
+(1 row)
+
+          history_digest          
+----------------------------------
+ ec5b01a1d0256d5df1d6c8f9994156e4
+(1 row)
+
+DO
+PASS demostración: 37 tickets, siete colas, I0–I6, 5000 dispositivos y FAQ
+Linux fedora 7.1.5-101.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Tue Jul 28 14:24:13 UTC 2026 x86_64 GNU/Linux
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  16
+On-line CPU(s) list:                     0-15
+Vendor ID:                               GenuineIntel
+Model name:                              11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz
+CPU family:                              6
+Model:                                   141
+Thread(s) per core:                      2
+Core(s) per socket:                      8
+Socket(s):                               1
+Stepping:                                1
+CPU(s) scaling MHz:                      30%
+CPU max MHz:                             4800.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                4992.00
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l2 cdp_l2 ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b fsrm avx512_vp2intersect md_clear ibt flush_l1d arch_capabilities
+Virtualization:                          VT-x
+               total        used        free      shared  buff/cache   available
+Mem:            31Gi       2.2Gi        20Gi       227Mi       8.6Gi        28Gi
+Swap:          8.0Gi          0B       8.0Gi
+2026-10-28T00:44:17-06:00

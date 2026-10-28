@@ -6,8 +6,18 @@ La narración principal está en `RESOLUCION.md`. Las carpetas contienen únicam
 
 ## Documentos principales
 
+- [API y ejecución del backend Service Desk](API-SERVICE-DESK.md): endpoints, generador, runner aislado, ajustes del diseño y pendientes.
+- [Evidencia de implementación del backend](evidencias/service-desk-backend.md): controles reales, fallo de repetición corregido y persistencia.
+
+- [Modelo de Service Desk y CMDB](MODELO.md): diagrama, diccionario, mapeo del Excel y decisiones complementarias previas a implementar.
+- [Procesos, colas y permisos](PROCESOS.md): siete rutas, autorizaciones, concurrencia, indicadores y datos previstos.
+- [Plan de pruebas de Service Desk](PRUEBAS.md): matriz del enunciado y P01–P18, todavía sin resultados nuevos.
+- [Ingeniería con IA de la ampliación](IA.md): consulta real, contexto y pendientes de harness y loops.
+
+- [Fuentes y alcance de Service Desk](FUENTES.md): enunciado, Excel, aclaraciones y decisiones pendientes. Se conservan únicamente el enunciado y Excel nuevos en `data/fuentes-service-desk/`, sin presentaciones docentes.
+- [Registro real de la fase de fuentes](evidencias/service-desk-fuentes.md): solicitudes utilizadas, resultado y controles documentales, sin atribuir pruebas funcionales a esta fase.
 - [Resolución de la tarea](RESOLUCION.md): problema, arquitectura, reglas, pruebas y estado de cumplimiento.
-- La consigna y los archivos de referencia se utilizaron durante el desarrollo, pero no se incluyen en la entrega para evitar duplicar material externo.
+- La resolución y las evidencias anteriores corresponden al catálogo del parcial. No representan funcionalidad nueva de Service Desk ya terminada. El material docente auxiliar no se incorpora a la ampliación.
 
 ## Evidencias por categoría
 
