@@ -1,8 +1,8 @@
 # Ingeniería asistida por IA en Service Desk
 
-Fecha: 2026-10-27. Estado: diseño en progreso. No confundir evidencias del parcial con resultados nuevos.
+Inicio: 2026-10-27. Actualización: 2026-10-28. Estado vigente: implementación y harness verificados sobre commits publicados, con fidelidad documental de P04 todavía parcial. No confundir evidencias del parcial con resultados nuevos.
 
-Actualización del 28 de octubre: los apartados de planificación que siguen conservan el contexto inicial. El [prompt 012](prompts/012-faq-demostracion-verificacion.md) y la [verificación final](evidencias/service-desk-final.md) registran FAQ, 37 tickets y ejecución real del harness con persistencia. Hubo un loop de corrección del orden de medición SQL y otro por relaciones de un fixture P14 reutilizadas al repetir pruebas. Ambos conservan salida observada y corrección comprobable. No se presentan como conversaciones ficticias de ChatGPT web. Los cambios locales de esta fase aún requieren commit y no prueban por sí mismos los requisitos de entrega o historial Git.
+El índice vigente distingue implementación, revisiones web, loops y commits. Los apartados de planificación archivados más abajo conservan el contexto inicial. El [cierre técnico](evidencias/service-desk-cierre.md) registra las ejecuciones reales de `0b5b8c7` y `461ac08` desde un clon limpio, incluida persistencia, sin confundir una respuesta de IA con una prueba del sistema.
 
 ## Índice vigente de cierre, 28 de octubre
 

@@ -36,7 +36,22 @@ DESK_TEST_PROJECT=catalogo-clean-test DESK_TEST_WEB_PORT=18280 DESK_TEST_API_POR
 
 Control negativo automatizado: `DESK_TEST_PROJECT=catalogo-service-desk-demo bash scripts/service-desk-test.sh` devolvió 1 antes de ejecutar Docker. [Salida de la protección](service-desk-harness-rechazo-demo.txt). Fue una entrada inválida deliberada y no modificó la demostración.
 
-Se amplió después el recibo P18 para incluir también conteos y digest del catálogo nivel 1 y 2. Su siguiente ejecución sobre el commit que guarda ese ajuste se registrará por separado, sin atribuir el campo nuevo al recibo anterior.
+Se amplió después el recibo P18 para incluir también conteos y digest del catálogo nivel 1 y 2. El commit `461ac0886f7c942b18e23a4a2190abd621d3dba4` se obtuvo desde GitHub y se verificó con el mismo clon sin cambios locales, el 28 de octubre a las 08:01, America/Guatemala. Se repitieron el runner completo y la persistencia con código 0. Esta repetición sobre la misma base también comprueba que los fixtures no dependen de borrar el volumen.
+
+Recibos de esa versión: [SHA y volúmenes efectivos](service-desk-version-verificada-metadatos.txt), [suite completa](service-desk-version-verificada-salida.txt), [P18 ampliada](service-desk-version-verificada-persistencia.txt) y [demostración posterior](service-desk-version-verificada-demo.txt).
+
+| Dato en P18 ampliada | Antes | Después |
+| --- | --- | --- |
+| Catálogo nivel 1 | 12 | 12 |
+| Catálogo nivel 2 | 46 | 46 |
+| Tickets temporales de pruebas | 56 | 56 |
+| Historial de tickets | 242 | 242 |
+| CI, incluidos fixtures no dispositivo | 5,072 | 5,072 |
+| Adjuntos | 6 | 6 |
+
+Todos los digest comparados coincidieron. La descarga del adjunto `ticket_id=30`, `attachment_id=4`, conservó sus 30 bytes. La medición de consulta paginada fue 1.803801 ms y la del plan SQL 0.128 ms en esta repetición. La demostración mantuvo sus propios 37 tickets e historial, en el volumen `catalogo-service-desk-demo_desk_demo_data`, distinto de `catalogo-clean-test_desk_test_data`.
+
+El commit posterior que incorpora estos recibos solo cambia documentación y evidencia. El código y scripts verificados son los de `461ac08`, no se atribuye a las salidas un SHA aún desconocido al ejecutarlas.
 
 ## Límites que requieren intervención humana
 

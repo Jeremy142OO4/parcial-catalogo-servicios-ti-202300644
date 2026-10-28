@@ -4,7 +4,7 @@ Asignatura: Software Avanzado
 Integrante: Jeremy Estuardo Orellana Aldana
 Carné: 202300644
 Repositorio: `parcial-catalogo-servicios-ti-202300644`
-Estado: cierre de auditoría del 4 de octubre de 2026
+Estado: parcial original cerrado el 4 de octubre, ampliación Service Desk verificada el 28 de octubre de 2026, con límites declarados
 
 ## Ampliación Service Desk
 
