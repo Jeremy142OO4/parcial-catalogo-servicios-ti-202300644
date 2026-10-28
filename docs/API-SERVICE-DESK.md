@@ -1,10 +1,10 @@
 # Backend de Service Desk: uso y alcance
 
-Fecha: 2026-10-27. Esta fase implementa API, persistencia y controles. La interfaz React del parcial se conserva y todavía no incorpora las pantallas nuevas de tickets y CMDB.
+Inicio: 2026-10-27. Actualización: 2026-10-28. La API y la interfaz React incorporan tickets, colas, CMDB, adjuntos e indicadores. El catálogo del parcial se conserva. El alcance de cada fase y sus pendientes se distinguen en las evidencias.
 
 ## Preparación normal
 
-Las migraciones 001–004 se aplican al arrancar la API. La 004 agrega roles, procesos, colas, clasificación, CI y tickets sin borrar el catálogo. Crear cuentas e importar el catálogo con el seed del README antes de generar dispositivos.
+Las migraciones 001–007 se aplican al arrancar la API. La 004 agrega roles, procesos, colas, clasificación, CI y tickets sin borrar el catálogo. La 005 agrega adjuntos, la 006 snapshots de objetivos y la 007 corrige la validación de dependencias al editar colas. Crear cuentas e importar el catálogo con el seed del README antes de generar dispositivos.
 
 ```bash
 docker compose up --build -d
@@ -102,11 +102,26 @@ Acciones implementadas: claim, assign, transfer, escalate, details, approve, rej
 
 ## Pendientes fuera de estos cinco bloques
 
-Interfaz nueva React, FAQ, indicadores completos y snapshots de objetivos, configuración avanzada de atributos, importación operativa de ejemplos tras revisión, datos de defensa de 37 tickets en estados preparados y cierre integral P01–P18. La API actual no equivale a toda la nueva tarea terminada. El histórico P01–P12 del parcial no se presenta como validación de estos pendientes.
+La confirmación de la taxonomía docente sigue siendo una limitación de P04. Los atributos técnicos dependientes de clase ya se validan y editan, un editor genérico de esquemas es una mejora opcional, no un requisito expreso. Las dos filas del Excel se conservan y consultan en origen, mientras sus referencias ambiguas requieren revisión antes de cualquier alta operativa. No se inventan CI para resolverlas. La FAQ, los 37 tickets y P18 tienen evidencia. Consultar [demostración y cuentas](DEMOSTRACION-SERVICE-DESK.md), [verificación final](evidencias/service-desk-final.md) y [contexto de cierre](contexto/service-desk-cierre-y-fuentes.md).
+
+GET `/api/cmdb/sources` devuelve las filas originales con hash, coordenadas, valores y observaciones, solo al administrador sin rol consulta. No ejecuta escrituras. La preparación de demostración registra la fuente de forma repetible sin generar CI desde referencias no resueltas.
+
+## FAQ y preparación de demostración, migración 008
+
+| Método y ruta | Acceso |
+| --- | --- |
+| GET `/api/desk/faq?q=&process=&limit=10&offset=0` | Sesión válida, solo artículos publicados y activos |
+| GET `/api/desk/faq?manage=true` | Administrador sin rol consulta, incluye borradores e inactivos |
+| POST `/api/desk/faq` | Administrador, validación y auditoría |
+| PUT `/api/desk/faq/{id}` | Administrador, requiere versión vigente y conserva historial |
+
+Campos: `slug`, `title`, `body`, `process_code` y `service_level2_id` opcionales, `is_published`, `is_active` y `version` para actualizar. El cuerpo se representa como texto, no se ejecuta HTML. La baja es lógica. Los artículos no se borran físicamente ni se permite modificar su historial.
+
+El comando `./desk-demo` agrega datos sintéticos únicamente con `DESK_DEMO_ALLOW_WRITE=1`, `DESK_DEMO_PASSWORD` y una base aislada permitida. Las tablas `demo_tickets` y `prepared_at` mantienen identidad y estado de preparación sin reiniciar tickets ya preparados. La guía contiene los comandos y advertencias del seed inicial.
 
 ## Adjuntos protegidos
 
-Implementados en el backend mediante migración 005, Service y controlador HTTP. No se publica el directorio de archivos. La interfaz React para adjuntar y descargar todavía está pendiente.
+Implementados mediante migración 005, Service y controlador HTTP. No se publica el directorio de archivos. La ficha React permite cargar y descargar con sesión y visibilidad autorizada.
 
 Carga mediante `multipart/form-data` con exactamente un campo de archivo `file` y un campo `visibility` con valor `public` o `internal`. No hay asociación a un comentario ni reemplazo o eliminación de adjuntos en esta fase. Se conserva la evidencia histórica.
 

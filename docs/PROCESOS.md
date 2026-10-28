@@ -2,7 +2,7 @@
 
 Fecha: 2026-10-27. Estado: especificación propuesta, pendiente de implementar y verificar. Referencia principal: enunciado Service Desk, apartados 4–7. Reglas complementarias indicadas como decisiones del proyecto.
 
-Actualización: las siete rutas y controles principales ya se ejecutaron en el backend. El [alcance implementado](API-SERVICE-DESK.md) y la [evidencia real](evidencias/service-desk-backend.md) distinguen lo operativo de lo todavía planeado, como adjuntos, objetivos e indicadores. La interfaz nueva sigue pendiente.
+Actualización: las siete rutas y controles principales ya se ejecutaron en el backend. El [alcance implementado](API-SERVICE-DESK.md) distingue lo operativo de lo todavía planeado. Adjuntos, snapshots de objetivos, indicadores y pantallas nuevas están implementados y cuentan con [reglas de cálculo y operación](INDICADORES.md) y [evidencia propia](evidencias/service-desk-indicadores-interfaz.md).
 
 ## Tipos, colas y flujos diferenciados
 

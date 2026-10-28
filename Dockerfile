@@ -4,10 +4,12 @@ WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
+RUN go test -v ./backend/internal/desk -run '^TestSourceIntegrity$'
 RUN CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-server ./backend/cmd/server \
     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-seed ./backend/cmd/seed \
     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-importer ./backend/cmd/importer \
     && CGO_ENABLED=0 GOOS=linux go build -o /out/cmdb-generator ./backend/cmd/cmdb-generator \
+    && CGO_ENABLED=0 GOOS=linux go build -o /out/desk-demo ./backend/cmd/desk-demo \
     && CGO_ENABLED=0 GOOS=linux go test -c -o /out/desk-tests ./backend/internal/desk
 
 FROM alpine:3.21
@@ -18,6 +20,7 @@ COPY --from=builder /out/catalogo-server ./catalogo-server
 COPY --from=builder /out/catalogo-seed ./catalogo-seed
 COPY --from=builder /out/catalogo-importer ./catalogo-importer
 COPY --from=builder /out/cmdb-generator ./cmdb-generator
+COPY --from=builder /out/desk-demo ./desk-demo
 COPY --from=builder /out/desk-tests ./desk-tests
 COPY backend/migrations ./backend/migrations
 COPY data ./data

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/auth"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -137,6 +138,13 @@ func (s *Service) Ticket(ctx context.Context, u *auth.User, id int64) (map[strin
 		return nil, e
 	}
 	t["links"] = links
+	queue := int64(t["queue_id"].(float64))
+	t["permissions"] = map[string]bool{"handle": s.allowed(ctx, s.repo.pool, u, queue, "handle"), "transfer": s.allowed(ctx, s.repo.pool, u, queue, "transfer"), "approve": s.allowed(ctx, s.repo.pool, u, queue, "approve"), "internal": internal, "write": !u.ReadOnly()}
+	var paused bool
+	if e = s.repo.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM ticket_pauses WHERE ticket_id=$1 AND ended_at IS NULL)`, id).Scan(&paused); e != nil {
+		return nil, e
+	}
+	t["paused"] = paused
 	return t, nil
 }
 
@@ -188,6 +196,13 @@ func (s *Service) Act(ctx context.Context, u *auth.User, id int64, in Action) (m
 		}
 		if !queueActive {
 			return conflict("cola inactiva")
+		}
+		var paused bool
+		if e = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM ticket_pauses WHERE ticket_id=$1 AND ended_at IS NULL)`, id).Scan(&paused); e != nil {
+			return e
+		}
+		if paused && in.Action != "resume" {
+			return conflict("reanudar el ticket antes de otra acción")
 		}
 		if (state == "cerrado" || state == "rechazado") && in.Action != "reopen" {
 			return conflict("ticket terminal")
@@ -273,10 +288,10 @@ func (s *Service) Act(ctx context.Context, u *auth.User, id int64, in Action) (m
 			if e = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM ticket_approvals WHERE ticket_id=$1 AND cycle=$2 AND decision='approved')`, id, cycle).Scan(&approved); e != nil {
 				return e
 			}
-			if approved {
+			if approved && !evidenceOnly(process, t["details"].(map[string]any), in.Details) {
 				return conflict("alcance aprobado, usar reevaluate antes de modificar")
 			}
-			if state == "aprobado" || state == "planificado" || state == "ejecucion" || state == "implementacion" || state == "provision_o_revocacion" {
+			if !approved && (state == "aprobado" || state == "planificado" || state == "ejecucion" || state == "implementacion" || state == "provision_o_revocacion") {
 				return conflict("no editar alcance aprobado, reabrir evaluación")
 			}
 			if process == "incidentes" {
@@ -456,6 +471,11 @@ func (s *Service) Act(ctx context.Context, u *auth.User, id int64, in Action) (m
 		default:
 			return bad("acción inválida")
 		}
+		if in.Action == "claim" || in.Action == "transition" || in.Action == "approve" || in.Action == "reject" || in.Action == "process_event" {
+			if _, e = tx.Exec(ctx, `UPDATE tickets SET first_attended_at=coalesce(first_attended_at,now()) WHERE id=$1`, id); e != nil {
+				return e
+			}
+		}
 		_, e = tx.Exec(ctx, `UPDATE tickets SET version=version+1,updated_at=now() WHERE id=$1`, id)
 		if e != nil {
 			return e
@@ -468,6 +488,22 @@ func (s *Service) Act(ctx context.Context, u *auth.User, id int64, in Action) (m
 	})
 	return out, err
 }
+func evidenceOnly(process string, before, after map[string]any) bool {
+	allowed := map[string][]string{"cambios": {"execution_result", "validation_result"}, "accesos": {"provision_evidence", "verification"}, "nuevos": {"implementation_evidence"}}
+	a, b := map[string]any{}, map[string]any{}
+	for k, v := range before {
+		a[k] = v
+	}
+	for k, v := range after {
+		b[k] = v
+	}
+	for _, k := range allowed[process] {
+		delete(a, k)
+		delete(b, k)
+	}
+	return reflect.DeepEqual(a, b)
+}
+
 func (s *Service) loadUser(ctx context.Context, q queryer, id int64) (*auth.User, error) {
 	var u auth.User
 	u.ID = id
@@ -650,6 +686,11 @@ func (s *Service) Comment(ctx context.Context, u *auth.User, id int64, body, vis
 		_, e = tx.Exec(ctx, `INSERT INTO ticket_comments(ticket_id,author_id,body,visibility) VALUES($1,$2,$3,$4)`, id, u.ID, body, visibility)
 		if e != nil {
 			return e
+		}
+		if s.allowed(ctx, tx, u, int64(t["queue_id"].(float64)), "handle") && t["state"] != "cerrado" && t["state"] != "rechazado" {
+			if _, e = tx.Exec(ctx, `UPDATE tickets SET first_attended_at=coalesce(first_attended_at,now()) WHERE id=$1`, id); e != nil {
+				return e
+			}
 		}
 		return s.audit(ctx, tx, id, u.ID, "comment", nil, map[string]any{"visibility": visibility}, "")
 	})

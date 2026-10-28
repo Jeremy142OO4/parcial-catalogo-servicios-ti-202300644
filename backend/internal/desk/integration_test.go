@@ -270,6 +270,12 @@ func TestServiceDeskIntegration(t *testing.T) {
 				current = act(current, &admin, desk.Action{Action: "link_service", Details: map[string]any{"service_id": float64(service)}})
 			}
 			if process == "cambios" && next == "validacion" {
+				evidence := map[string]any{}
+				for k, v := range current["details"].(map[string]any) {
+					evidence[k] = v
+				}
+				evidence["validation_result"] = "Validación posterior a aprobación"
+				current = act(current, &admin, desk.Action{Action: "details", Details: evidence})
 				if _, e = s.Act(ctx, &admin, tid, desk.Action{Action: "details", Version: int64(current["version"].(float64)), Details: map[string]any{"risk": "cambiado"}}); e == nil {
 					t.Fatal("approved scope modified")
 				}

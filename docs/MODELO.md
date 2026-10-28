@@ -77,6 +77,7 @@ Ampliación de roles: reemplazar el CHECK limitado a admin/consulta de forma com
 | `ticket_approvals` | id, ticket_id FK, cycle integer, approver_id FK, decision, reason, decided_at | aprobación específica del ciclo actual, accesos con aprobador distinto del solicitante |
 | `ticket_pauses` | id, ticket_id FK, started_at, ended_at nullable, reason, actor_id FK | fin >= inicio, una pausa abierta por ticket |
 | `ticket_cycles` | id, ticket_id FK, cycle_no, started_at, resolved_at nullable, closed_at nullable | único ticket/cycle, conserva ciclos al reabrir |
+| `ticket_objective_segments` | id, ticket_id, cycle, queue_id, started_at, ended_at, first_response_minutes, resolution_minutes, source | Implementado en 006. FK al ciclo, objetivos positivos o NULL y un tramo abierto por ticket. Histórico anterior marcado como desconocido |
 | `event_incidents` | event_ticket_id PK/FK tickets, incident_ticket_id FK tickets | una asociación automática por evento, validación de procesos |
 | `notifications` | id, ticket_id FK, recipient_id FK, kind, dedup_key, read_at nullable | dedup_key única, autorización de lectura |
 
@@ -98,7 +99,9 @@ Detalles por proceso en tablas 1:1 con PK/FK ticket_id: `new_service_details` (n
 | `ci_documents` | id, ci_id FK, title, url, source_ref, is_placeholder | URL validada, placeholders no convertidos en adjuntos descargables |
 | `source_records` | id, source_file, sha256, sheet, row_start/end, range, raw_values jsonb, normalized_values jsonb, observations jsonb, target_kind/id nullable | conservar origen y transformaciones, resolver destino en Service |
 | `generation_runs` | id, dataset_key, seed bigint, generator_version, requested_count, actual_count, status, started_at, finished_at, summary jsonb | único dataset/seed/version para conjunto determinista, ejecuciones repetidas trazables |
-| `knowledge_articles` | id, title, body, service_level2_id FK nullable, visibility, author_id FK | publicadas visibles en FAQ, sin notas privadas |
+| `faq_articles` | id, slug único, title, body, process_code y service_level2_id FK nullable, is_published, is_active, version, created_by y updated_by FK | migración 008, publicadas activas visibles con sesión, sin notas privadas |
+| `faq_history` | article_id FK, actor_id FK, before_value, after_value, occurred_at | historial inmutable, misma transacción que el artículo |
+| `demo_tickets` | dataset_key y case_key PK, ticket_id FK único, prepared_at | 37 casos estables, repetición sin duplicación ni reinicio |
 
 Los campos operativos obligatorios agregados no deben forzar valores inventados en los dos ejemplos. Importarlos primero a `source_records` con revisión cuando no se pueda resolver clasificación, ubicación o responsable. Los 5,000 dispositivos sintéticos sí cumplen todas las referencias. Los ejemplos no se cuentan como dispositivos válidos hasta resolver sus faltantes.
 

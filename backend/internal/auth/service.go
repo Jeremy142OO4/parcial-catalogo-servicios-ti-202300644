@@ -187,7 +187,8 @@ func valueOrEmpty(value *string) string {
 
 func (s *Service) ListUsers(ctx context.Context) ([]User, error) {
 	rows, err := s.pool.Query(ctx, `
-		SELECT id, full_name, username, email, role, is_active, position_id
+		SELECT id, full_name, username, email, role, is_active, position_id,
+		ARRAY(SELECT role_code FROM user_roles WHERE user_id=app_users.id ORDER BY role_code)
 		FROM app_users ORDER BY full_name`)
 	if err != nil {
 		return nil, err
@@ -196,7 +197,7 @@ func (s *Service) ListUsers(ctx context.Context) ([]User, error) {
 	users := make([]User, 0)
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.ID, &user.FullName, &user.Username, &user.Email, &user.Role, &user.IsActive, &user.PositionID); err != nil {
+		if err := rows.Scan(&user.ID, &user.FullName, &user.Username, &user.Email, &user.Role, &user.IsActive, &user.PositionID, &user.Roles); err != nil {
 			return nil, err
 		}
 		users = append(users, user)

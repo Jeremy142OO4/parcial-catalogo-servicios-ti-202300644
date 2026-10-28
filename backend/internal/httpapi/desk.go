@@ -28,6 +28,48 @@ func idOf(r *http.Request) int64             { id, _ := pathID(r); return id }
 func number(r *http.Request, key string) int { n, _ := strconv.Atoi(r.URL.Query().Get(key)); return n }
 func (s *Server) deskRoutes(mux *http.ServeMux) {
 	s.attachmentRoutes(mux)
+	mux.HandleFunc("GET /api/cmdb/sources", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.CMDBSources(r.Context(), u)
+		deskResult(w, v, e)
+	}))
+	mux.HandleFunc("GET /api/desk/faq", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.FAQs(r.Context(), u, r.URL.Query().Get("q"), r.URL.Query().Get("process"), r.URL.Query().Get("manage") == "true", number(r, "limit"), number(r, "offset"))
+		deskResult(w, v, e)
+	}))
+	for _, pattern := range []string{"POST /api/desk/faq", "PUT /api/desk/faq/{id}"} {
+		mux.HandleFunc(pattern, s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+			var in desk.FAQInput
+			if decodeJSON(w, r, &in) {
+				v, e := s.desk.SaveFAQ(r.Context(), u, idOf(r), in)
+				deskResult(w, v, e)
+			}
+		}))
+	}
+	mux.HandleFunc("GET /api/auth/me", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) { writeJSON(w, 200, u) }))
+	mux.HandleFunc("GET /api/desk/intake-queues", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.IntakeQueues(r.Context())
+		deskResult(w, v, e)
+	}))
+	mux.HandleFunc("GET /api/desk/my-tickets", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.OwnTickets(r.Context(), u, r.URL.Query().Get("q"), r.URL.Query().Get("state"), number(r, "limit"), number(r, "offset"))
+		deskResult(w, v, e)
+	}))
+	mux.HandleFunc("GET /api/desk/queues/{id}/grants", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.QueueGrants(r.Context(), u, idOf(r))
+		deskResult(w, v, e)
+	}))
+	mux.HandleFunc("GET /api/cmdb/items/{id}/tickets", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.CITickets(r.Context(), u, idOf(r))
+		deskResult(w, v, e)
+	}))
+	mux.HandleFunc("GET /api/desk/indicators", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.Indicators(r.Context(), u, 0, r.URL.Query().Get("process"), r.URL.Query().Get("queue"))
+		deskResult(w, v, e)
+	}))
+	mux.HandleFunc("GET /api/desk/tickets/{id}/indicators", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.Indicators(r.Context(), u, idOf(r), "", "")
+		deskResult(w, v, e)
+	}))
 	mux.HandleFunc("PUT /api/users/{id}/roles", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
 		var in struct {
 			Roles []string `json:"roles"`

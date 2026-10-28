@@ -26,6 +26,22 @@ func TestIncidentBoundaries(t *testing.T) {
 	if c, r, _ := IncidentRule(false, true, nil); c != "" || !r {
 		t.Fatal("unknown duration lost")
 	}
+	zero := 0.0
+	if c, r, _ := IncidentRule(false, true, &zero); c != "" || !r {
+		t.Fatal("zero duration must require review")
+	}
+	details := map[string]any{"category": "I1", "security": false, "interrupted": true, "estimated_minutes": float64(60), "redundancy": true}
+	if validateIncident(details) == nil {
+		t.Fatal("contradictory redundancy without justification")
+	}
+	details["redundancy_reason"] = "Respaldo presente pero falló en este caso"
+	if e := validateIncident(details); e != nil {
+		t.Fatal(e)
+	}
+	details["redundancy"] = nil
+	if e := validateIncident(details); e != nil {
+		t.Fatal("unknown redundancy must remain unknown", e)
+	}
 }
 func TestEveryRouteAndInvalidJump(t *testing.T) {
 	if len(Routes) != 7 {

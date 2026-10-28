@@ -8,6 +8,8 @@ Actualización del 4 de octubre de 2026: las afirmaciones históricas de los cic
 
 Este documento es la narración principal del proyecto. Se actualiza con resultados reales y enlaza a las evidencias de respaldo. Los apartados que todavía no tienen implementación se marcan como pendientes.
 
+Actualización de la ampliación, 28 de octubre de 2026: la exclusión de tickets descrita más abajo corresponde al parcial original. En `feature/service-desk` ya se implementaron tickets, siete procesos, CMDB, adjuntos, indicadores, FAQ y pantallas nuevas, sin alterar `parcial-v2.0`. El alcance actual y límites están en [API de Service Desk](API-SERVICE-DESK.md), [cálculos e interfaz](INDICADORES.md) y [demostración de 37 tickets](DEMOSTRACION-SERVICE-DESK.md). La [verificación final](evidencias/service-desk-final.md) distingue resultados funcionales de la limitación de fuente de P04. Los datos y evidencias históricas no se presentan como si fueran pruebas nuevas.
+
 ## 1. Problema, alcance y supuestos
 
 La organización administra sus servicios de TI en un Excel y necesita una aplicación web para consultar y mantener el catálogo, organizar usuarios y unidades, y asignar responsables.

@@ -1,10 +1,10 @@
 # Requisitos y plan de verificación de Service Desk
 
-Fecha: 2026-10-27. Estado: planificación, sin resultados funcionales nuevos. Fuente principal: `data/fuentes-service-desk/Tarea_Service_Desk.pdf`. P01–P18 aquí son de Service Desk. La suite histórica P01–P12 del catálogo conserva sus nombres y resultados por separado.
+Inicio del plan: 2026-10-27. Actualización de resultados: 2026-10-28. Fuente principal: `data/fuentes-service-desk/Tarea_Service_Desk.pdf`. P01–P18 aquí son de Service Desk. La suite histórica P01–P12 del catálogo conserva sus nombres y resultados por separado. Los resultados actuales, comandos y límites están en la [verificación final](evidencias/service-desk-final.md).
 
 ## Matriz requisito → implementación prevista → prueba → evidencia
 
-La matriz describe el alcance objetivo. Hay cobertura parcial real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md) y su salida enlazada. La carga, validación y descarga autorizada cuentan con [pruebas reales de adjuntos](evidencias/service-desk-adjuntos.md). No están completos todos los escenarios nuevos, particularmente indicadores, interfaz y persistencia integral P18 de todas las entidades. Los documentos de diseño no son evidencia de prueba aprobada.
+La matriz describe el alcance objetivo. Hay cobertura real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md), [pruebas de adjuntos](evidencias/service-desk-adjuntos.md), [indicadores e interfaz](evidencias/service-desk-indicadores-interfaz.md) y [verificación final](evidencias/service-desk-final.md). P17 tiene fixtures unitarios y PostgreSQL con valores exactos. P18 ya tiene reinicio real y comparación de registros. La FAQ y los 37 tickets tienen pruebas y recibos propios. La interfaz tiene renderizado automatizado y recorrido real de navegador, que no se confunden con una suite E2E exhaustiva. La correspondencia docente exacta de P04 sigue parcial.
 
 | Requisito del enunciado | Implementación prevista | Prueba nueva | Evidencia a generar |
 | --- | --- | --- | --- |
