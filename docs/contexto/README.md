@@ -4,7 +4,7 @@ Esta carpeta conserva las actualizaciones del contexto utilizadas durante el des
 
 ## Documentos proporcionados por fase
 
-La [segunda actualización de Service Desk](service-desk-modelo-y-validacion.md) registra los hallazgos de diseño: 37 tickets para cubrir categorías, migración de roles y separación entre referencias originales y datos operativos válidos. Ambas actualizaciones de la ampliación requieren commits reales del usuario para completar la evidencia versionada.
+La [segunda actualización de Service Desk](service-desk-modelo-y-validacion.md) registra los hallazgos de diseño: 37 tickets para cubrir categorías, migración de roles y separación entre referencias originales y datos operativos válidos. Las dos primeras actualizaciones se publicaron en `9e3a590`. La [tercera actualización](service-desk-backend-y-aislamiento.md) registra contratos implementados y un fallo real de aislamiento, pendiente de commit propio.
 
 La [primera actualización de Service Desk](service-desk-alcance-y-fuentes.md), del 27 de octubre, registra el cambio de alcance, las fuentes nuevas y las diferencias encontradas. No sustituye las actualizaciones históricas del parcial.
 

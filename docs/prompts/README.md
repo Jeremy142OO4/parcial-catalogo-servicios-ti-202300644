@@ -19,6 +19,10 @@ Los prompts siguen una estructura común, integrada dentro del mensaje para mant
 
 ## Índice de prompts
 
+### 009. Implementación del backend Service Desk
+
+[Abrir solicitud real, contexto y resultados](009-implementacion-backend-service-desk.md). Migraciones, autorización, CMDB, generador y siete flujos, con integración aislada real.
+
 ### 008. Diseño previo de Service Desk
 
 [Abrir prompt, respuesta seleccionada y captura real](008-diseno-service-desk.md). Primera consulta web de la ampliación, con resumen de requisitos y límites explícitos. No constituye una prueba funcional.

@@ -14,13 +14,14 @@ import (
 )
 
 type User struct {
-	ID         int64  `json:"id"`
-	FullName   string `json:"full_name"`
-	Username   string `json:"username"`
-	Email      string `json:"email"`
-	Role       string `json:"role"`
-	IsActive   bool   `json:"is_active"`
-	PositionID int64  `json:"position_id"`
+	Roles      []string `json:"roles"`
+	ID         int64    `json:"id"`
+	FullName   string   `json:"full_name"`
+	Username   string   `json:"username"`
+	Email      string   `json:"email"`
+	Role       string   `json:"role"`
+	IsActive   bool     `json:"is_active"`
+	PositionID int64    `json:"position_id"`
 }
 
 type Session struct {
@@ -63,6 +64,9 @@ func (s *Service) Login(ctx context.Context, identifier, password string) (*Sess
 	if err != nil || !user.IsActive || bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)) != nil {
 		return nil, fmt.Errorf("credenciales inválidas")
 	}
+	if err := s.loadRoles(ctx, &user); err != nil {
+		return nil, err
+	}
 	token, err := randomToken()
 	if err != nil {
 		return nil, err
@@ -90,6 +94,9 @@ func (s *Service) Authenticate(ctx context.Context, token string) (*User, error)
 		Scan(&user.ID, &user.FullName, &user.Username, &user.Email, &user.Role, &user.IsActive, &user.PositionID)
 	if err != nil {
 		return nil, fmt.Errorf("sesión inválida")
+	}
+	if err := s.loadRoles(ctx, &user); err != nil {
+		return nil, err
 	}
 	return &user, nil
 }
@@ -139,8 +146,8 @@ func (s *Service) SetUserActive(ctx context.Context, userID int64, active bool) 
 }
 
 func (s *Service) UpdateUser(ctx context.Context, userID int64, positionID *int64, fullName, email, role *string) (User, error) {
-	if role != nil && *role != "admin" && *role != "consulta" {
-		return User{}, fmt.Errorf("el rol debe ser admin o consulta")
+	if role != nil && !ValidRole(*role) {
+		return User{}, fmt.Errorf("rol inválido")
 	}
 	if positionID != nil {
 		var incompatible bool

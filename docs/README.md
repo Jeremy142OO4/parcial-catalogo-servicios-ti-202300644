@@ -6,6 +6,9 @@ La narración principal está en `RESOLUCION.md`. Las carpetas contienen únicam
 
 ## Documentos principales
 
+- [API y ejecución del backend Service Desk](API-SERVICE-DESK.md): endpoints, generador, runner aislado, ajustes del diseño y pendientes.
+- [Evidencia de implementación del backend](evidencias/service-desk-backend.md): controles reales, fallo de repetición corregido y persistencia.
+
 - [Modelo de Service Desk y CMDB](MODELO.md): diagrama, diccionario, mapeo del Excel y decisiones complementarias previas a implementar.
 - [Procesos, colas y permisos](PROCESOS.md): siete rutas, autorizaciones, concurrencia, indicadores y datos previstos.
 - [Plan de pruebas de Service Desk](PRUEBAS.md): matriz del enunciado y P01–P18, todavía sin resultados nuevos.

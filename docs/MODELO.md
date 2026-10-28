@@ -2,6 +2,8 @@
 
 Fecha: 2026-10-27. Estado: diseño propuesto, todavía sin migraciones ni implementación nueva. El enunciado manda sobre esta propuesta. Las decisiones complementarias se identifican explícitamente.
 
+Actualización de implementación: la migración 004 y API ya implementan la base funcional. Las diferencias respecto a este diseño inicial se explican en [API-SERVICE-DESK](API-SERVICE-DESK.md), especialmente JSONB por proceso, PK de roles y estados/rutas. El resto de este documento conserva la propuesta de diseño, no es un inventario literal de tablas aplicadas.
+
 ## Base conservada y arquitectura
 
 Go, React/Vite y PostgreSQL, monolito modular Controller → Service → Repository. Reutilizar `companies`, `areas`, `departments`, `sections`, `positions`, `app_users`, `sessions`, catálogo y trazabilidad de importación. Mantener la jerarquía y controles 12/46 de origen, no confundirlos con el total tras altas manuales. No reescribir migraciones aplicadas ni mover `parcial-v2.0`.

@@ -4,7 +4,7 @@ Fecha: 2026-10-27. Estado: planificación, sin resultados funcionales nuevos. Fu
 
 ## Matriz requisito → implementación prevista → prueba → evidencia
 
-Todas las filas están pendientes de implementación y ejecución de la ampliación. Los documentos de diseño no son evidencia de prueba aprobada.
+La matriz describe el alcance objetivo. Hay cobertura parcial real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md) y su salida enlazada. No están completos todos los escenarios nuevos, particularmente indicadores y adjuntos. Los documentos de diseño no son evidencia de prueba aprobada.
 
 | Requisito del enunciado | Implementación prevista | Prueba nueva | Evidencia a generar |
 | --- | --- | --- | --- |
@@ -49,7 +49,7 @@ Preparar un clon y proyecto Compose separados con base/volúmenes y puertos dist
 
 ## Comandos y resultados
 
-Todavía no existen comandos implementados para la suite nueva. No ejecutar la suite histórica como si cubriera Service Desk. Los futuros comandos se documentarán cuando existan y puedan verificarse, para preparar, migrar, importar, generar CMDB, cargar tickets, probar y auditar secretos dentro de contenedores.
+El runner inicial nuevo es `bash scripts/service-desk-test.sh`, documentado en [API-SERVICE-DESK](API-SERVICE-DESK.md). Construye un entorno separado, aplica migraciones, ejecuta seed y pruebas del backend. La cobertura adicional pendiente se conserva en esta matriz. No ejecutar la suite histórica como si cubriera Service Desk.
 
 Por cada ejecución conservar: ID, comando exacto sin secretos, entrada/semilla, esperado, obtenido, salida stdout/stderr seleccionada, exit code, fecha y zona, SHA realmente probado, estado del worktree y entorno. P16 debe registrar tiempos observados y hardware, no umbrales de desempeño inventados como mediciones.
 

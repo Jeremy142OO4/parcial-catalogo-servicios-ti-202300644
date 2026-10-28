@@ -2,6 +2,8 @@
 
 Fecha: 2026-10-27. Estado: especificación propuesta, pendiente de implementar y verificar. Referencia principal: enunciado Service Desk, apartados 4–7. Reglas complementarias indicadas como decisiones del proyecto.
 
+Actualización: las siete rutas y controles principales ya se ejecutaron en el backend. El [alcance implementado](API-SERVICE-DESK.md) y la [evidencia real](evidencias/service-desk-backend.md) distinguen lo operativo de lo todavía planeado, como adjuntos, objetivos e indicadores. La interfaz nueva sigue pendiente.
+
 ## Tipos, colas y flujos diferenciados
 
 Seis tipos y siete procesos. Cada cola tiene exactamente un proceso y puede haber más de una cola por proceso. Todas las rutas registran actor, fecha, transición y evidencia. Estados terminales: cerrado y rechazado cuando corresponda. Resuelto requiere una resolución escrita, cerrado requiere confirmación o motivo de cierre autorizado. Un rechazo conserva decisión y motivo y no se disfraza de resolución técnica.

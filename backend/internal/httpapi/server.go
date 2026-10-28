@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/auth"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/catalog"
+	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/desk"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/organization"
 )
 
@@ -19,6 +20,7 @@ type Server struct {
 	auth    *auth.Service
 	org     *organization.Repository
 	catalog *catalog.Repository
+	desk    *desk.Service
 }
 
 func NewServer(pool *pgxpool.Pool) *Server {
@@ -27,6 +29,7 @@ func NewServer(pool *pgxpool.Pool) *Server {
 		auth:    auth.NewService(pool, 8*time.Hour),
 		org:     organization.NewRepository(pool),
 		catalog: catalog.NewRepository(pool),
+		desk:    desk.NewService(pool),
 	}
 }
 
@@ -58,6 +61,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("PATCH /api/catalog/services/{id}", s.requireAdmin(s.updateLevel2))
 	mux.HandleFunc("PATCH /api/catalog/services/{id}/active", s.requireAdmin(s.setLevel2Active))
 	mux.HandleFunc("POST /api/catalog/assignments", s.requireAdmin(s.assignService))
+	s.deskRoutes(mux)
 	return cors(mux)
 }
 
@@ -197,7 +201,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request, _ *auth.User
 	if !decodeJSON(w, r, &input) {
 		return
 	}
-	if input.Role != "admin" && input.Role != "consulta" {
+	if !auth.ValidRole(input.Role) {
 		writeError(w, http.StatusBadRequest, "el rol debe ser admin o consulta")
 		return
 	}
@@ -444,7 +448,7 @@ func (s *Server) requireAuth(next protectedHandler) http.HandlerFunc {
 
 func (s *Server) requireAdmin(next protectedHandler) http.HandlerFunc {
 	return s.requireAuth(func(w http.ResponseWriter, r *http.Request, user *auth.User) {
-		if user.Role != "admin" {
+		if !user.HasRole("admin") || user.ReadOnly() {
 			writeError(w, http.StatusForbidden, "se requiere rol administrador")
 			return
 		}
@@ -496,7 +500,7 @@ func cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			return

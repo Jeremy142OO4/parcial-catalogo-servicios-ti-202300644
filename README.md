@@ -10,6 +10,8 @@ Estado: cierre de auditoría del 4 de octubre de 2026
 
 El parcial se conserva en `parcial-v2.0`. La ampliación comienza en `feature/service-desk` con el [registro de fuentes y decisiones](docs/FUENTES.md) y la [primera actualización de contexto](docs/contexto/service-desk-alcance-y-fuentes.md). Los comandos y resultados del catálogo que siguen no demuestran todavía tickets ni CMDB implementados.
 
+El backend nuevo ya incorpora migración 004, roles múltiples, colas, clasificación/CI, generador de 5,000 dispositivos y siete flujos de tickets. Consultar [API, comandos y límites](docs/API-SERVICE-DESK.md) y [pruebas reales](docs/evidencias/service-desk-backend.md). La interfaz nueva React y otros pendientes del enunciado aún no están completos. Para verificar sin tocar la base habitual: `bash scripts/service-desk-test.sh`, con proyecto y volumen separados.
+
 ## Objetivo
 
 Construir una aplicación web para administrar el catálogo de servicios de TI, la estructura organizacional, los usuarios y los responsables de cada servicio.
