@@ -112,4 +112,4 @@ La primera aserción del selector renderizado encontró comentarios separadores 
 
 ![Numeración y totales del catálogo](../Imagenes/catalogo-servicios-numerados.png)
 
-La FAQ, el dataset de defensa preparado con distribución y categorías exigidas, la correspondencia exacta de jerarquía pendiente de fuente, el cierre integral P01–P18 y los requisitos documentales de IA todavía necesitan revisión propia. El resultado no se presenta como 100 % de toda la nueva tarea. La persistencia integral de todas las entidades no se acredita solo por haber pasado P17.
+Al registrar esta fase, la FAQ, el dataset de defensa, la correspondencia de fuentes y el cierre P01–P18 todavía necesitaban revisión propia. Es un estado histórico, no la lista vigente de pendientes. Las fases posteriores se documentan en [cierre técnico](service-desk-cierre.md) y la aclaración de P04 en la [decisión de alcance](../decisiones/002-interpretacion-cmdb-p04.md). La persistencia integral no se acredita solo por haber pasado P17 y las capturas no garantizan una calificación.

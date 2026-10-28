@@ -117,7 +117,7 @@ func (s *Service) SaveCI(ctx context.Context, u *auth.User, id int64, in CIInput
 	err := s.transaction(ctx, u, func(tx pgx.Tx) error {
 		var device bool
 		var classCode string
-		if e := tx.QueryRow(ctx, `SELECT is_device_class,code FROM ci_classes WHERE id=$1 AND is_active FOR SHARE`, in.ClassID).Scan(&device, &classCode); e != nil {
+		if e := tx.QueryRow(ctx, `SELECT is_device_class,coalesce(technical_profile,'') FROM ci_classes WHERE id=$1 AND is_active FOR SHARE`, in.ClassID).Scan(&device, &classCode); e != nil {
 			return bad("clase inexistente o inactiva")
 		}
 		if in.IsDevice != device {
@@ -215,7 +215,10 @@ func (s *Service) Relation(ctx context.Context, u *auth.User, id, from, to int64
 			from, to = to, from
 		}
 		if id > 0 {
-			_, e := tx.Exec(ctx, `UPDATE ci_relations SET source_ci_id=$2,target_ci_id=$3,kind=$4 WHERE id=$1`, id, from, to, kind)
+			tag, e := tx.Exec(ctx, `UPDATE ci_relations SET source_ci_id=$2,target_ci_id=$3,kind=$4 WHERE id=$1`, id, from, to, kind)
+			if e == nil && tag.RowsAffected() == 0 {
+				return &Error{404, "relación no encontrada"}
+			}
 			return e
 		}
 		_, e := tx.Exec(ctx, `INSERT INTO ci_relations(source_ci_id,target_ci_id,kind) VALUES($1,$2,$3)`, from, to, kind)

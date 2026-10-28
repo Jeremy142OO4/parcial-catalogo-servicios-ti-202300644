@@ -1,6 +1,6 @@
 # Ingeniería asistida por IA en Service Desk
 
-Inicio: 2026-10-27. Actualización: 2026-10-28. Estado vigente: implementación y harness verificados sobre commits publicados, con fidelidad documental de P04 todavía parcial. No confundir evidencias del parcial con resultados nuevos.
+Inicio: 2026-10-27. Actualización: 2026-10-28. Estado vigente: implementación y harness verificados sobre commits publicados. P04 tiene cierre documental en el alcance acordado con Jeremy y salvedad interpretativa, según la [decisión posterior](decisiones/002-interpretacion-cmdb-p04.md). No confundir evidencias del parcial con resultados nuevos.
 
 El índice vigente distingue implementación, revisiones web, loops y commits. Los apartados de planificación archivados más abajo conservan el contexto inicial. El [cierre técnico](evidencias/service-desk-cierre.md) registra las ejecuciones reales de `0b5b8c7` y `461ac08` desde un clon limpio, incluida persistencia, sin confundir una respuesta de IA con una prueba del sistema.
 
@@ -62,7 +62,7 @@ Los fallos anteriores no fueron deliberados. Límite operativo: tres intentos an
 
 ### Grafos y defensa
 
-Árbol de clases sin ciclos, distinto del grafo técnico. `depende_de` y `alojado_en` rechazan ciclos. `conectado_a` es simétrica y admite ciclos. El impacto potencial conserva rutas, relaciona servicios y tiene límites de recorrido, no certifica interrupción efectiva. P04 sigue limitado por correspondencia docente, aunque la integridad tenga pruebas aprobadas.
+Árbol de clases sin ciclos, distinto del grafo técnico. `depende_de` y `alojado_en` rechazan ciclos. `conectado_a` es simétrica y admite ciclos. El impacto potencial conserva rutas, relaciona servicios y tiene límites de recorrido, no certifica interrupción efectiva. La decisión posterior de P04 cierra el pendiente de un árbol docente adicional, con salvedad interpretativa y sin inventar contenido de las fuentes.
 
 Usar la [guía de defensa](DEFENSA-SERVICE-DESK.md) y el [cierre](evidencias/service-desk-cierre.md). La entrega en Wedy y la defensa oral requieren intervención del estudiante.
 
@@ -101,6 +101,10 @@ La falla de acceso web registrada durante esta fase no se contará como defecto 
 El [modelo](MODELO.md) separa clasificación y relaciones técnicas, prevé validación de ciclos y recorrido de impacto potencial. La aclaración reportada de Graph Engineering opcional no elimina los controles funcionales P04/P14 del enunciado. La implementación y demostración de recorridos quedan pendientes.
 
 ## Commits y defensa
+
+La [segunda corrección de permisos](evidencias/service-desk-permisos-y-actor.md) registra un control negativo real sobre una copia temporal con el orden defectuoso, seguido por seis casos concurrentes satisfactorios y la suite completa del código corregido. El [contexto de revocación y usuarios](contexto/service-desk-revocacion-y-usuarios.md) conserva el motivo del cambio. No se simularon conversaciones web ni capturas.
+
+La [corrección posterior a la auditoría](evidencias/service-desk-correcciones-auditoria.md) registra la solicitud real de Jeremy, los cambios de identidad técnica y permisos, las ejecuciones observadas y la actualización probada sobre una copia. La [decisión 003](decisiones/003-identidad-tecnica-y-administracion.md) añade el contexto que motivó la implementación. No se atribuyen a un chat web, una captura, un modelo o un commit que no se produjo.
 
 Actualización 2026-10-28: backend y tercer contexto publicados en `a50ee90`, adjuntos publicados en `55404d1`. El [prompt 010](prompts/010-adjuntos-protegidos.md) y el [prompt 011](prompts/011-indicadores-e-interfaz.md) conservan las solicitudes reales. El [contexto de indicadores](contexto/service-desk-indicadores-e-interfaz.md) y su [loop de edición de colas](evidencias/service-desk-indicadores-interfaz.md) responden a hallazgos nuevos. Indicadores e interfaz todavía están sin commit al registrar esta actualización. Los párrafos anteriores son registros históricos, no un inventario vigente de lo implementado.
 

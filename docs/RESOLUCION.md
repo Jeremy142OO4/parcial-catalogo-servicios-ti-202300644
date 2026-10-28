@@ -10,6 +10,8 @@ Este documento es la narración principal del proyecto. Se actualiza con resulta
 
 Actualización de la ampliación, 28 de octubre de 2026: la exclusión de tickets descrita más abajo corresponde al parcial original. En `feature/service-desk` ya se implementaron tickets, siete procesos, CMDB, adjuntos, indicadores, FAQ y pantallas nuevas, sin alterar `parcial-v2.0`. El alcance actual y límites están en [API de Service Desk](API-SERVICE-DESK.md), [cálculos e interfaz](INDICADORES.md) y [demostración de 37 tickets](DEMOSTRACION-SERVICE-DESK.md). La [verificación final](evidencias/service-desk-final.md) distingue resultados funcionales de la limitación de fuente de P04. Los datos y evidencias históricas no se presentan como si fueran pruebas nuevas.
 
+Tras la aclaración posterior de Jeremy, el pendiente documental de P04 sobre un árbol adicional quedó cerrado en el alcance acordado, con [salvedad interpretativa registrada](decisiones/002-interpretacion-cmdb-p04.md). Se justifican campos y relaciones observables y se mantienen las subclases adicionales como diseño propio. No se presenta la aclaración como una aprobación directa del catedrático ni se cambian las pruebas históricas.
+
 ## 1. Problema, alcance y supuestos
 
 La organización administra sus servicios de TI en un Excel y necesita una aplicación web para consultar y mantener el catálogo, organizar usuarios y unidades, y asignar responsables.

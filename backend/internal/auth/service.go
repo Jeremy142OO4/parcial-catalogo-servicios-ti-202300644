@@ -110,8 +110,15 @@ func (s *Service) Logout(ctx context.Context, token string) error {
 }
 
 func (s *Service) CreateUser(ctx context.Context, positionID int64, fullName, username, email, password, role string) (User, error) {
+	return createUser(ctx, s.pool, positionID, fullName, username, email, password, role)
+}
+
+func createUser(ctx context.Context, q userQuery, positionID int64, fullName, username, email, password, role string) (User, error) {
+	if !ValidRole(role) {
+		return User{}, fmt.Errorf("rol inválido")
+	}
 	var positionActive bool
-	if err := s.pool.QueryRow(ctx, `SELECT is_active FROM positions WHERE id = $1`, positionID).Scan(&positionActive); err != nil || !positionActive {
+	if err := q.QueryRow(ctx, `SELECT is_active FROM positions WHERE id = $1`, positionID).Scan(&positionActive); err != nil || !positionActive {
 		return User{}, fmt.Errorf("el puesto no existe o está inactivo")
 	}
 	hash, err := HashPassword(password)
@@ -119,7 +126,7 @@ func (s *Service) CreateUser(ctx context.Context, positionID int64, fullName, us
 		return User{}, err
 	}
 	var user User
-	err = s.pool.QueryRow(ctx, `
+	err = q.QueryRow(ctx, `
 		INSERT INTO app_users (position_id, full_name, username, email, password_hash, role)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id, full_name, username, email, role, is_active, position_id`,
@@ -132,38 +139,46 @@ func (s *Service) CreateUser(ctx context.Context, positionID int64, fullName, us
 }
 
 func (s *Service) SetUserActive(ctx context.Context, userID int64, active bool) error {
+	return setUserActive(ctx, s.pool, userID, active)
+}
+
+func setUserActive(ctx context.Context, q userQuery, userID int64, active bool) error {
 	if !active {
 		var assigned bool
-		if err := s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments WHERE responsible_user_id = $1)`, userID).Scan(&assigned); err != nil {
+		if err := q.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments WHERE responsible_user_id = $1)`, userID).Scan(&assigned); err != nil {
 			return err
 		}
 		if assigned {
 			return fmt.Errorf("no se puede desactivar: el usuario tiene servicios asignados")
 		}
 	}
-	_, err := s.pool.Exec(ctx, `UPDATE app_users SET is_active = $1 WHERE id = $2`, active, userID)
+	_, err := q.Exec(ctx, `UPDATE app_users SET is_active = $1 WHERE id = $2`, active, userID)
 	return err
 }
 
 func (s *Service) UpdateUser(ctx context.Context, userID int64, positionID *int64, fullName, email, role *string) (User, error) {
+	return updateUser(ctx, s.pool, userID, positionID, fullName, email, role)
+}
+
+func updateUser(ctx context.Context, q userQuery, userID int64, positionID *int64, fullName, email, role *string) (User, error) {
 	if role != nil && !ValidRole(*role) {
 		return User{}, fmt.Errorf("rol inválido")
 	}
 	if positionID != nil {
 		var incompatible bool
-		if err := s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments a JOIN positions p ON p.id=$2 WHERE a.responsible_user_id=$1 AND a.section_id<>p.section_id)`, userID, *positionID).Scan(&incompatible); err != nil {
+		if err := q.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM service_assignments a JOIN positions p ON p.id=$2 WHERE a.responsible_user_id=$1 AND a.section_id<>p.section_id)`, userID, *positionID).Scan(&incompatible); err != nil {
 			return User{}, err
 		}
 		if incompatible {
 			return User{}, fmt.Errorf("no se puede cambiar de sección: el usuario tiene servicios asignados")
 		}
 		var active bool
-		if err := s.pool.QueryRow(ctx, `SELECT is_active FROM positions WHERE id = $1`, *positionID).Scan(&active); err != nil || !active {
+		if err := q.QueryRow(ctx, `SELECT is_active FROM positions WHERE id = $1`, *positionID).Scan(&active); err != nil || !active {
 			return User{}, fmt.Errorf("el puesto no existe o está inactivo")
 		}
 	}
 	var user User
-	err := s.pool.QueryRow(ctx, `
+	err := q.QueryRow(ctx, `
 		UPDATE app_users SET
 			position_id = COALESCE($1, position_id),
 			full_name = COALESCE(NULLIF($2, ''), full_name),

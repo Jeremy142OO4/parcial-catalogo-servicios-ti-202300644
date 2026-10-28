@@ -27,3 +27,5 @@ Aplicación comprobable: `CMDB_original_rows_and_readonly_review` compara cada v
 Mejora respecto al 013: se añadió ubicación concreta y se corrigió una atribución errónea del resultado anterior. Criterio de salida: valores contrastados e integridad verificada, con limitación documental visible.
 
 ![Inicio real de la respuesta refinada](../Imagenes/41-prompt-cmdb-refinado.png)
+
+Nota posterior: el dictamen parcial es parte de la respuesta real recibida antes de la aclaración de Jeremy. El [cierre documental de P04](../decisiones/002-interpretacion-cmdb-p04.md) registra la decisión posterior con salvedad interpretativa. No se cambia el prompt ni se modifica la respuesta o su captura para aparentar otra conclusión del modelo.

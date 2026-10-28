@@ -97,12 +97,24 @@ Acciones implementadas: claim, assign, transfer, escalate, details, approve, rej
 - Los detalles diferenciados de procesos se almacenan en `tickets.details` JSONB con guardas específicas en Service, en lugar de siete tablas 1:1. Las claves utilizadas están en `desk.guard` y PROCESOS.md. No implica siete flujos idénticos.
 - El estado es texto con FK compuesta a `workflow_states`. Las rutas y guardas están en Go, no en una tabla editable de transiciones.
 - `roles.code` es la PK de roles y `user_roles.role_code` la referencia. `app_users.role` queda como proyección primaria compatible, con trigger de sincronización. Los endpoints protegidos usan roles efectivos y consulta deniega escritura.
-- La administración de configuración/grants se reserva al administrador global. `can_admin` queda almacenado para evolución de administración delegada, pero no otorga hoy acceso a configuración. Los permisos read/handle/transfer/approve sí se aplican.
+- `can_admin` permite consultar permisos, editar configuración y gestionar permisos exclusivamente de la cola autorizada. No implica atención, transferencia o aprobación de tickets, que conservan permisos separados. Crear colas, cambiar roles globales y consultar el historial administrativo completo exige administrador global. Consulta no escribe aunque reciba `can_admin`. La autorización de escritura se revalida después de bloquear la cola dentro de la transacción.
+
+## Correcciones administrativas del 28 de octubre
+
+Las seis clases técnicas originales conservan un `technical_profile` inmutable, independiente de su código y nombre editables. La validación de atributos y el generador utilizan ese perfil. Renombrar `servidor` no cambia su identidad, distribución reproducible ni atributos admitidos. Las clases nuevas no reciben perfiles reservados automáticamente por coincidir con un código visible. Desactivar una clase necesaria para generar sigue rechazando la generación con un mensaje explícito.
+
+La migración 009 crea `administration_history` para clases, relaciones entre CI, vínculos CI-servicio, ubicaciones, colas, permisos y roles múltiples. Conserva fecha, operación, actor y valores anteriores y posteriores en la misma transacción. Los cambios de relaciones también aparecen en el historial de ambos CI. Un borrado físico no elimina su evidencia. No reconstruye cambios anteriores a la migración. Las operaciones internas sin actor de aplicación se identifican como `system`, no se atribuyen a un usuario inventado.
+
+`GET /api/desk/admin-history?limit=25&offset=0` permite al administrador global consultar el historial paginado. La aplicación rechaza modificar, eliminar o truncar esta tabla mediante sus protecciones de base de datos. Un propietario de base con capacidad de deshabilitar triggers queda fuera de esa garantía.
+
+Ver [pruebas de regresión y límites](evidencias/service-desk-correcciones-auditoria.md).
+
+Actualización posterior: los endpoints antiguos de usuarios conservan el actor autenticado en creación, edición y activación mediante la migración 010, excluyendo hashes de contraseñas del historial. Las escrituras de tickets comprueban permisos después de bloquear las colas afectadas. Ver [revocación concurrente y actor](evidencias/service-desk-permisos-y-actor.md), con seis casos por usuario o rol y un control negativo deliberado sobre una copia temporal.
 - Los ciclos registran resolución y revisión sin borrar historia. Para cambios aprobados se abre reevaluación con motivo, no se recicla una aprobación antigua.
 
 ## Pendientes fuera de estos cinco bloques
 
-La confirmación de la taxonomía docente sigue siendo una limitación de P04. Los atributos técnicos dependientes de clase ya se validan y editan, un editor genérico de esquemas es una mejora opcional, no un requisito expreso. Las dos filas del Excel se conservan y consultan en origen, mientras sus referencias ambiguas requieren revisión antes de cualquier alta operativa. No se inventan CI para resolverlas. La FAQ, los 37 tickets y P18 tienen evidencia. Consultar [demostración y cuentas](DEMOSTRACION-SERVICE-DESK.md), [verificación final](evidencias/service-desk-final.md) y [contexto de cierre](contexto/service-desk-cierre-y-fuentes.md).
+P04 tiene cierre documental en el alcance acordado con Jeremy, con [salvedad interpretativa registrada](decisiones/002-interpretacion-cmdb-p04.md), no con un árbol adicional inventado. Los atributos técnicos dependientes de clase ya se validan y editan, un editor genérico de esquemas es una mejora opcional, no un requisito expreso. Las dos filas del Excel se conservan y consultan en origen, mientras sus referencias ambiguas requieren revisión antes de cualquier alta operativa. No se inventan CI para resolverlas. La FAQ, los 37 tickets y P18 tienen evidencia. Consultar [demostración y cuentas](DEMOSTRACION-SERVICE-DESK.md), [verificación final](evidencias/service-desk-final.md) y [contexto de cierre](contexto/service-desk-cierre-y-fuentes.md).
 
 GET `/api/cmdb/sources` devuelve las filas originales con hash, coordenadas, valores y observaciones, solo al administrador sin rol consulta. No ejecuta escrituras. La preparación de demostración registra la fuente de forma repetible sin generar CI desde referencias no resueltas.
 

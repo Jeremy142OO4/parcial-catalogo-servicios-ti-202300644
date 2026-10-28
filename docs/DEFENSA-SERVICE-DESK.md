@@ -57,4 +57,4 @@ Para grafos, distinguir el árbol de clasificación, donde no se aceptan ciclos,
 
 ## Qué no debes afirmar
 
-No atribuir las seis subclases técnicas a las fuentes docentes. No afirmar que P04 está completamente resuelto mientras siga sin confirmarse la correspondencia exacta. No presentar una captura, un SKIP o una propuesta de ChatGPT como resultado de una prueba. No asegurar la entrega en Wedy sin haberla realizado y comprobado personalmente.
+No atribuir las seis subclases técnicas a las fuentes docentes. Para P04, explicar que se conservan los campos y relaciones observables y que las clases adicionales son diseño propio. La aclaración de Jeremy cierra el pendiente de obtener un árbol no enumerado, con [salvedad interpretativa](decisiones/002-interpretacion-cmdb-p04.md), no como aprobación directa del catedrático. No presentar una captura, un SKIP o una propuesta de ChatGPT como resultado de una prueba. No asegurar la entrega en Wedy sin haberla realizado y comprobado personalmente.

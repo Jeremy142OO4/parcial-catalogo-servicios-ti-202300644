@@ -196,7 +196,7 @@ type userRequest struct {
 	Role       string `json:"role"`
 }
 
-func (s *Server) createUser(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+func (s *Server) createUser(w http.ResponseWriter, r *http.Request, actor *auth.User) {
 	var input userRequest
 	if !decodeJSON(w, r, &input) {
 		return
@@ -205,7 +205,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request, _ *auth.User
 		writeError(w, http.StatusBadRequest, "el rol debe ser admin o consulta")
 		return
 	}
-	user, err := s.auth.CreateUser(r.Context(), input.PositionID, input.FullName, input.Username, input.Email, input.Password, input.Role)
+	user, err := s.auth.CreateUserBy(r.Context(), actor.ID, input.PositionID, input.FullName, input.Username, input.Email, input.Password, input.Role)
 	if err != nil {
 		writeDomainError(w, err)
 		return
@@ -213,7 +213,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request, _ *auth.User
 	writeJSON(w, http.StatusCreated, user)
 }
 
-func (s *Server) setUserActive(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+func (s *Server) setUserActive(w http.ResponseWriter, r *http.Request, actor *auth.User) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "identificador inválido")
@@ -225,14 +225,14 @@ func (s *Server) setUserActive(w http.ResponseWriter, r *http.Request, _ *auth.U
 	if !decodeJSON(w, r, &input) {
 		return
 	}
-	if err := s.auth.SetUserActive(r.Context(), id, input.IsActive); err != nil {
+	if err := s.auth.SetUserActiveBy(r.Context(), actor.ID, id, input.IsActive); err != nil {
 		writeDomainError(w, err)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (s *Server) updateUser(w http.ResponseWriter, r *http.Request, _ *auth.User) {
+func (s *Server) updateUser(w http.ResponseWriter, r *http.Request, actor *auth.User) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "identificador inválido")
@@ -247,7 +247,7 @@ func (s *Server) updateUser(w http.ResponseWriter, r *http.Request, _ *auth.User
 	if !decodeJSON(w, r, &input) {
 		return
 	}
-	user, err := s.auth.UpdateUser(r.Context(), id, input.PositionID, input.FullName, input.Email, input.Role)
+	user, err := s.auth.UpdateUserBy(r.Context(), actor.ID, id, input.PositionID, input.FullName, input.Email, input.Role)
 	if err != nil {
 		writeDomainError(w, err)
 		return

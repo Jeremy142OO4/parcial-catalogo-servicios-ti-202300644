@@ -4,7 +4,7 @@ Inicio del plan: 2026-10-27. Actualización de resultados: 2026-10-28. Fuente pr
 
 ## Matriz requisito → implementación prevista → prueba → evidencia
 
-La matriz describe el alcance objetivo. Hay cobertura real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md), [pruebas de adjuntos](evidencias/service-desk-adjuntos.md), [indicadores e interfaz](evidencias/service-desk-indicadores-interfaz.md) y [verificación final](evidencias/service-desk-final.md). P17 tiene fixtures unitarios y PostgreSQL con valores exactos. P18 ya tiene reinicio real y comparación de registros. La FAQ y los 37 tickets tienen pruebas y recibos propios. La interfaz tiene renderizado automatizado y recorrido real de navegador, que no se confunden con una suite E2E exhaustiva. La correspondencia docente exacta de P04 sigue parcial.
+La matriz describe el alcance objetivo. Hay cobertura real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md), [pruebas de adjuntos](evidencias/service-desk-adjuntos.md), [indicadores e interfaz](evidencias/service-desk-indicadores-interfaz.md) y [verificación final](evidencias/service-desk-final.md). P17 tiene fixtures unitarios y PostgreSQL con valores exactos. P18 ya tiene reinicio real y comparación de registros. La FAQ y los 37 tickets tienen pruebas y recibos propios. La interfaz tiene renderizado automatizado y recorrido real de navegador, que no se confunden con una suite E2E exhaustiva. P04 está verificado en el alcance disponible, con [cierre documental y salvedad interpretativa](decisiones/002-interpretacion-cmdb-p04.md) posteriores a la aclaración de Jeremy. No se simula otra ejecución ni se transforma esa aclaración en aprobación docente.
 
 | Requisito del enunciado | Implementación prevista | Prueba nueva | Evidencia a generar |
 | --- | --- | --- | --- |
@@ -56,5 +56,9 @@ El runner inicial nuevo es `bash scripts/service-desk-test.sh`, documentado en [
 Por cada ejecución conservar: ID, comando exacto sin secretos, entrada/semilla, esperado, obtenido, salida stdout/stderr seleccionada, exit code, fecha y zona, SHA realmente probado, estado del worktree y entorno. P16 debe registrar tiempos observados y hardware, no umbrales de desempeño inventados como mediciones.
 
 ## Controles documentales de esta fase
+
+Corrección posterior de permisos: `TestConcurrentPermissionRevocation` verifica seis casos de revocación concurrente de atender, aprobar y transferir por usuario y rol. `TestLegacyUserActorAndPermissions` verifica actores autenticados, consulta sin escritura y revocación concurrente del administrador. [Resultados finales y control negativo](evidencias/service-desk-permisos-y-actor.md).
+
+Actualización del 28 de octubre, posterior a la auditoría: [regresiones administrativas](evidencias/service-desk-correcciones-auditoria.md), migración 009 y prueba `TestAdministrationRegressions`. Incluye renombrado de clases, generación repetida, evidencia de eliminación de relaciones, administración por usuario y rol, consulta sin escritura y revocación vigente. Suite completa ejecutada en una base aislada, con salida real y límites explícitos. No equivale a una nueva prueba de reinicio P18 ni a desplegar la demo original.
 
 Verificar enlaces locales, `git diff --check`, integridad de originales y cobertura de P01–P18 en esta matriz. Estas verificaciones solo revisan documentación. Los resultados funcionales históricos están en `docs/evidencias/2026-10-04-salida-pruebas.txt` y no prueban la ampliación.

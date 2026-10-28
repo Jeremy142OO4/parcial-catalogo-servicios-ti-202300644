@@ -13,10 +13,18 @@ func (s *Service) OwnTickets(ctx context.Context, u *auth.User, q, state string,
 	return objects(ctx, s.repo.pool, `SELECT to_jsonb(t) FROM tickets t WHERE requester_id=$1 AND ($2='' OR number ILIKE '%'||$2||'%' OR title ILIKE '%'||$2||'%') AND ($3='' OR state=$3) ORDER BY created_at DESC,id DESC LIMIT $4 OFFSET $5`, u.ID, q, state, limit, offset)
 }
 func (s *Service) QueueGrants(ctx context.Context, u *auth.User, id int64) ([]map[string]any, error) {
+	if u.ReadOnly() || !s.allowed(ctx, s.repo.pool, u, id, "admin") {
+		return nil, forbidden()
+	}
+	return objects(ctx, s.repo.pool, `SELECT to_jsonb(g) FROM queue_grants g WHERE queue_id=$1 ORDER BY id`, id)
+}
+
+func (s *Service) AdministrationHistory(ctx context.Context, u *auth.User, limit, offset int) ([]map[string]any, error) {
 	if e := requireAdmin(u); e != nil {
 		return nil, e
 	}
-	return objects(ctx, s.repo.pool, `SELECT to_jsonb(g) FROM queue_grants g WHERE queue_id=$1 ORDER BY id`, id)
+	limit, offset = page(limit, offset)
+	return objects(ctx, s.repo.pool, `SELECT to_jsonb(h) FROM administration_history h ORDER BY id DESC LIMIT $1 OFFSET $2`, limit, offset)
 }
 
 func (s *Service) CMDBSources(ctx context.Context, u *auth.User) ([]map[string]any, error) {

@@ -36,6 +36,9 @@ func (s *Service) createTicket(ctx context.Context, tx pgx.Tx, u *auth.User, in 
 	if !ok {
 		return nil, bad("proceso inválido")
 	}
+	if e := lockQueuePermissions(ctx, tx, in.Queue); e != nil {
+		return nil, e
+	}
 	if !u.HasRole("admin") && !u.HasRole("solicitante") && !s.allowed(ctx, tx, u, in.Queue, "handle") {
 		return nil, forbidden()
 	}
@@ -175,6 +178,13 @@ func (s *Service) Act(ctx context.Context, u *auth.User, id int64, in Action) (m
 		requester := int64(t["requester_id"].(float64))
 		if in.Version != version {
 			return conflict("versión desactualizada")
+		}
+		queues := []int64{queue}
+		if in.Action == "transfer" || in.Action == "escalate" {
+			queues = append(queues, in.Queue)
+		}
+		if e = lockQueuePermissions(ctx, tx, queues...); e != nil {
+			return e
 		}
 		if !s.readable(ctx, tx, u, t) {
 			return forbidden()
@@ -633,8 +643,11 @@ func (s *Service) eventIncident(ctx context.Context, tx pgx.Tx, u *auth.User, t 
 		return e
 	}
 	if existing > 0 {
-		other, e := object(ctx, tx, `SELECT to_jsonb(t) FROM tickets t WHERE id=$1 AND process_code='incidentes'`, existing)
+		other, e := object(ctx, tx, `SELECT to_jsonb(t) FROM tickets t WHERE id=$1 AND process_code='incidentes' FOR SHARE`, existing)
 		if e != nil {
+			return e
+		}
+		if e = lockQueuePermissions(ctx, tx, int64(other["queue_id"].(float64))); e != nil {
 			return e
 		}
 		if !s.readable(ctx, tx, u, other) {
@@ -645,6 +658,9 @@ func (s *Service) eventIncident(ctx context.Context, tx pgx.Tx, u *auth.User, t 
 		var q int64
 		if e = tx.QueryRow(ctx, `SELECT id FROM queues WHERE process_code='incidentes' AND is_active ORDER BY id LIMIT 1`).Scan(&q); e != nil {
 			return bad("sin cola de incidentes")
+		}
+		if e = lockQueuePermissions(ctx, tx, q); e != nil {
+			return e
 		}
 		if !s.allowed(ctx, tx, u, q, "handle") {
 			return forbidden()
@@ -674,6 +690,9 @@ func (s *Service) Comment(ctx context.Context, u *auth.User, id int64, body, vis
 		if e != nil {
 			return e
 		}
+		if e = lockQueuePermissions(ctx, tx, int64(t["queue_id"].(float64))); e != nil {
+			return e
+		}
 		if !s.readable(ctx, tx, u, t) {
 			return forbidden()
 		}
@@ -701,8 +720,11 @@ func (s *Service) LinkTickets(ctx context.Context, u *auth.User, from, to int64,
 		if e != nil {
 			return e
 		}
-		b, e := object(ctx, tx, `SELECT to_jsonb(t) FROM tickets t WHERE id=$1`, to)
+		b, e := object(ctx, tx, `SELECT to_jsonb(t) FROM tickets t WHERE id=$1 FOR SHARE`, to)
 		if e != nil {
+			return e
+		}
+		if e = lockQueuePermissions(ctx, tx, int64(a["queue_id"].(float64)), int64(b["queue_id"].(float64))); e != nil {
 			return e
 		}
 		if !s.allowed(ctx, tx, u, int64(a["queue_id"].(float64)), "handle") || !s.readable(ctx, tx, u, b) {

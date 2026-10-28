@@ -4,7 +4,7 @@ Fecha: 28 de octubre de 2026, zona America/Guatemala. Estas son pruebas nuevas d
 
 ## Resultado y alcance
 
-La suite ejecutada en PostgreSQL pasó, la interfaz compiló y P18 pasó con reinicio real de base y API. La demostración separada conserva exactamente 37 tickets, siete colas, ocho artículos FAQ y 5,000 dispositivos. **Esto no equivale a certificar toda la tarea al 100 %. P04 sigue parcial por falta de correspondencia confirmada con la taxonomía docente.** Las pruebas de navegador descritas abajo son recorridos concretos, no una suite E2E de todos los formularios.
+La suite ejecutada en PostgreSQL pasó, la interfaz compiló y P18 pasó con reinicio real de base y API. La demostración separada conserva exactamente 37 tickets, siete colas, ocho artículos FAQ y 5,000 dispositivos. Esto no equivale a certificar la calificación al 100 %. P04 tenía una reserva documental al ejecutar esta fase. La aclaración posterior de Jeremy permite su [cierre documental en el alcance disponible, con salvedad interpretativa](../decisiones/002-interpretacion-cmdb-p04.md). No se cambian las salidas originales ni se atribuyen las clases propias al docente. Las pruebas de navegador descritas abajo son recorridos concretos, no una suite E2E de todos los formularios.
 
 La matriz registra lo observado en cada prueba. No convierte una comprobación parcial en evidencia de todos los casos posibles del requisito.
 
@@ -13,7 +13,7 @@ La matriz registra lo observado en cada prueba. No convierte una comprobación p
 | P01 | Verificado en el alcance indicado | HTTP sin sesión y con sesión cerrada retorna 401, consulta con roles elevados no escribe, cuenta inactiva no inicia sesión ni reutiliza sesión |
 | P02 | Verificado | Dos importaciones consecutivas mantienen 12/46 por origen, con regresiones unitarias del importador para SE.12, combinaciones, códigos y ausencias |
 | P03 | Verificado | 5,000 dispositivos del dataset `integration`, semilla `202300644`, repetición con cero altas, códigos deterministas únicos |
-| P04 | **Parcial** | Padre inválido, ciclo indirecto y carrera A→B/B→A rechazados. Falta confirmar la jerarquía exacta docente, las seis clases de dispositivos son decisiones declaradas del proyecto |
+| P04 | Verificado en el alcance disponible, con salvedad interpretativa | Padre inválido, ciclo indirecto y carrera A→B/B→A rechazados. Correspondencia de campos y valores documentada. El pendiente de obtener un árbol adicional queda cerrado por la decisión posterior, sin atribuir las seis subclases propias al material docente |
 | P05 | Verificado en el alcance indicado | Referencia inexistente, servicio/CI/cola inactivos y ausencia injustificada de CI rechazados. Nivel 1 derivado desde nivel 2 |
 | P06 | Verificado en el alcance indicado | Permisos de cola por rol y usuario, notas internas ocultas, revocación de descarga, consulta sin escrituras aun con roles superiores |
 | P07 | Verificado | Empate de prioridad y fecha ordenado por ID, dos reclamaciones sincronizadas con un éxito y exactamente una auditoría |

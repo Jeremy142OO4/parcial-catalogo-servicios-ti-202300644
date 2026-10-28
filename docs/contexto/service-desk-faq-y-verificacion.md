@@ -2,6 +2,8 @@
 
 Fecha: 28 de octubre de 2026. Solicitud: preparar la FAQ, cuentas por rol, siete colas, 37 tickets y verificar P01–P18.
 
+Nota posterior: la reserva de P04 descrita en este registro histórico se resolvió documentalmente en el alcance acordado con Jeremy. Ver [decisión y salvedad interpretativa](../decisiones/002-interpretacion-cmdb-p04.md). No se alteran los resultados obtenidos antes de la aclaración.
+
 ## Decisiones
 
 - Separar la demostración en proyecto, base, volúmenes y puertos propios. Los tests pueden crear fixtures sin alterar los 37 tickets preparados.

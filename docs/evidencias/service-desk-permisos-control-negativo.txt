@@ -1,0 +1,6 @@
+=== RUN   TestConcurrentPermissionRevocation
+=== RUN   TestConcurrentPermissionRevocation/handle_user
+    permission_revocation_integration_test.go:149: revoked handle action accepted or wrong error: <nil>
+--- FAIL: TestConcurrentPermissionRevocation (0.12s)
+    --- FAIL: TestConcurrentPermissionRevocation/handle_user (0.05s)
+FAIL

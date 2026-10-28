@@ -1,0 +1,130 @@
+=== RUN   TestSourceIntegrity
+    artifacts_test.go:33: PASS original hashes: catalogue, CMDB and assignment
+    artifacts_test.go:35: source tree not included in runtime, secret scan runs in image builder
+--- PASS: TestSourceIntegrity (0.00s)
+=== RUN   TestAttachmentTypes
+=== RUN   TestAttachmentTypes/nota.txt
+=== RUN   TestAttachmentTypes/evidencia.pdf
+=== RUN   TestAttachmentTypes/imagen.png
+=== RUN   TestAttachmentTypes/imagen.jpg
+=== RUN   TestAttachmentTypes/script.html
+=== RUN   TestAttachmentTypes/falso.txt
+=== RUN   TestAttachmentTypes/falso.pdf
+=== RUN   TestAttachmentTypes/virus.exe
+=== RUN   TestAttachmentTypes/../nota.txt
+=== RUN   TestAttachmentTypes/C:\nota.txt
+=== RUN   TestAttachmentTypes/nota__.txt
+--- PASS: TestAttachmentTypes (0.00s)
+    --- PASS: TestAttachmentTypes/nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/evidencia.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.png (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.jpg (0.00s)
+    --- PASS: TestAttachmentTypes/script.html (0.00s)
+    --- PASS: TestAttachmentTypes/falso.txt (0.00s)
+    --- PASS: TestAttachmentTypes/falso.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/virus.exe (0.00s)
+    --- PASS: TestAttachmentTypes/../nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/C:\nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/nota__.txt (0.00s)
+=== RUN   TestIndicatorIntervalsAndObjectives
+    indicators_test.go:24: P17 unión de pausas solapadas, pausa abierta, objetivo desconocido y frontera inclusiva
+--- PASS: TestIndicatorIntervalsAndObjectives (0.00s)
+=== RUN   TestIndicatorControlledCycles
+    indicators_test.go:57: P17 resolución 120-30=90, abierto 60-10=50 sin resolución ficticia, ciclo anterior conservado
+--- PASS: TestIndicatorControlledCycles (0.00s)
+=== RUN   TestApprovedEvidenceDoesNotChangeScope
+--- PASS: TestApprovedEvidenceDoesNotChangeScope (0.00s)
+=== RUN   TestIncidentBoundaries
+--- PASS: TestIncidentBoundaries (0.00s)
+=== RUN   TestEveryRouteAndInvalidJump
+--- PASS: TestEveryRouteAndInvalidJump (0.00s)
+=== RUN   TestDeviceCodes
+--- PASS: TestDeviceCodes (0.00s)
+=== RUN   TestAdministrationRegressions
+    administration_integration_test.go:114: PASS delegated queue edit/grants, cross-queue and global denials, consulta denial, live revocation
+    administration_integration_test.go:148: PASS renamed class: CI create/update and repeated 5000-device generation
+    administration_integration_test.go:191: PASS administrative snapshots, actor/date, relation deletion on both CI histories, immutable audit
+--- PASS: TestAdministrationRegressions (0.68s)
+=== RUN   TestProtectedAttachmentsIntegration
+    attachments_integration_test.go:116: A01 sin sesión, tercero, consulta y nota interna sin permiso rechazados
+    attachments_integration_test.go:141: A02 tipos falsos, rutas, vacíos y límites rechazados sin archivos residuales
+    attachments_integration_test.go:179: A03 descarga fiel, headers seguros, aislamiento por ticket, visibilidad interna y revocación comprobados
+    attachments_integration_test.go:182: A04 tamaño exacto de 10 MiB aceptado
+    attachments_integration_test.go:183: Adjunto persistente de prueba ticket_id=59 attachment_id=7
+--- PASS: TestProtectedAttachmentsIntegration (0.90s)
+=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:191: explicit persistence check only
+--- SKIP: TestAttachmentPersistenceCheck (0.00s)
+=== RUN   TestFinalAcceptance
+=== RUN   TestFinalAcceptance/P01_inactive_session
+=== RUN   TestFinalAcceptance/P02_reimport
+    final_integration_test.go:77: two imports, source counts 12/46, importer unit tests verify SE.12 and unknowns
+=== RUN   TestFinalAcceptance/CMDB_original_rows_and_readonly_review
+=== RUN   TestFinalAcceptance/P10_execution_without_approval_and_P15_empty_resolution
+=== RUN   TestFinalAcceptance/FAQ_publication_permissions_versions
+=== RUN   TestFinalAcceptance/P07_order_claim_audit
+=== RUN   TestFinalAcceptance/P05_inactive_references_and_derived_level
+=== RUN   TestFinalAcceptance/P16_query_plan
+    final_integration_test.go:315: dataset integration seed 202300644, active devices 10008
+    final_integration_test.go:322: Limit  (cost=23.29..46.10 rows=100 width=61) (actual time=0.076..0.115 rows=100.00 loops=1)
+    final_integration_test.go:322:   Buffers: shared hit=205
+    final_integration_test.go:322:   ->  Incremental Sort  (cost=0.48..2290.63 rows=10040 width=61) (actual time=0.030..0.107 rows=200.00 loops=1)
+    final_integration_test.go:322:         Sort Key: code, id
+    final_integration_test.go:322:         Presorted Key: code
+    final_integration_test.go:322:         Full-sort Groups: 7  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
+    final_integration_test.go:322:         Buffers: shared hit=205
+    final_integration_test.go:322:         ->  Index Scan using configuration_items_code_key on configuration_items  (cost=0.29..1838.83 rows=10040 width=61) (actual time=0.010..0.067 rows=201.00 loops=1)
+    final_integration_test.go:322:               Filter: is_active
+    final_integration_test.go:322:               Index Searches: 1
+    final_integration_test.go:322:               Buffers: shared hit=205
+    final_integration_test.go:322: Planning:
+    final_integration_test.go:322:   Buffers: shared hit=8
+    final_integration_test.go:322: Planning Time: 0.079 ms
+    final_integration_test.go:322: Execution Time: 0.127 ms
+=== RUN   TestFinalAcceptance/P11_concurrent_events
+=== RUN   TestFinalAcceptance/P04_concurrent_class_cycle
+    final_integration_test.go:389: cycle integrity verified, exact classroom taxonomy remains source-limited
+=== RUN   TestFinalAcceptance/P14_impact_service_and_depth
+=== RUN   TestFinalAcceptance/P15_audit_failure_rolls_back
+--- PASS: TestFinalAcceptance (0.95s)
+    --- PASS: TestFinalAcceptance/P01_inactive_session (0.05s)
+    --- PASS: TestFinalAcceptance/P02_reimport (0.09s)
+    --- PASS: TestFinalAcceptance/CMDB_original_rows_and_readonly_review (0.01s)
+    --- PASS: TestFinalAcceptance/P10_execution_without_approval_and_P15_empty_resolution (0.03s)
+    --- PASS: TestFinalAcceptance/FAQ_publication_permissions_versions (0.01s)
+    --- PASS: TestFinalAcceptance/P07_order_claim_audit (0.02s)
+    --- PASS: TestFinalAcceptance/P05_inactive_references_and_derived_level (0.23s)
+    --- PASS: TestFinalAcceptance/P16_query_plan (0.21s)
+    --- PASS: TestFinalAcceptance/P11_concurrent_events (0.03s)
+    --- PASS: TestFinalAcceptance/P04_concurrent_class_cycle (0.01s)
+    --- PASS: TestFinalAcceptance/P14_impact_service_and_depth (0.20s)
+    --- PASS: TestFinalAcceptance/P15_audit_failure_rolls_back (0.01s)
+=== RUN   TestIndicatorsIntegration
+    indicators_integration_test.go:137: P17 PostgreSQL: primera atención 30, resolución 90, objetivo histórico 90, ciclo nuevo 200, transferencia sin objetivo y pausa controlada
+--- PASS: TestIndicatorsIntegration (0.11s)
+=== RUN   TestServiceDeskIntegration
+    integration_test.go:57: PASS P01 consulta con roles elevados sigue sin escritura
+    integration_test.go:57: PASS P02 regresión de controles de origen 12/46
+    integration_test.go:57: PASS P04 padres y ciclos de clasificación rechazados
+    integration_test.go:57: PASS P03 5000 dispositivos y repetición idempotente
+    integration_test.go:57: PASS CRUD CI: crear, consultar, editar y baja lógica/reactivación
+    integration_test.go:57: PASS P14 dependencias y ciclos técnicos
+    integration_test.go:166: P16 tiempo consulta paginada 1.859553ms entorno: PostgreSQL aislado en laptop
+    integration_test.go:57: PASS P05 referencias y condición sin CI
+    integration_test.go:57: PASS P07 dos reclamaciones, un ganador
+    integration_test.go:57: PASS P08 transferencia e incompatibilidad de proceso
+    integration_test.go:57: PASS P06 ámbito y notas internas
+    integration_test.go:57: PASS P09 ruta completa problemas
+    integration_test.go:57: PASS P09 ruta completa accesos
+    integration_test.go:57: PASS P09 ruta completa servicios
+    integration_test.go:57: PASS P09 ruta completa nuevos
+    integration_test.go:57: PASS P09 ruta completa cambios
+    integration_test.go:57: PASS P15 cierre y reapertura con ciclos
+    integration_test.go:57: PASS P09 ruta completa incidentes
+    integration_test.go:57: PASS P09 ruta completa eventos
+    integration_test.go:57: PASS P13 incidente vinculado a problema y cambio
+    integration_test.go:57: PASS P10 autoaprobación admin rechazada
+    integration_test.go:57: PASS P11 E0–E3 y deduplicación
+    integration_test.go:57: PASS P01 HTTP sin sesión, consulta y logout
+--- PASS: TestServiceDeskIntegration (1.04s)
+PASS

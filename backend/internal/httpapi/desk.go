@@ -54,7 +54,7 @@ func (s *Server) deskRoutes(mux *http.ServeMux) {
 		v, e := s.desk.OwnTickets(r.Context(), u, r.URL.Query().Get("q"), r.URL.Query().Get("state"), number(r, "limit"), number(r, "offset"))
 		deskResult(w, v, e)
 	}))
-	mux.HandleFunc("GET /api/desk/queues/{id}/grants", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+	mux.HandleFunc("GET /api/desk/queues/{id}/grants", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
 		v, e := s.desk.QueueGrants(r.Context(), u, idOf(r))
 		deskResult(w, v, e)
 	}))
@@ -75,7 +75,7 @@ func (s *Server) deskRoutes(mux *http.ServeMux) {
 			Roles []string `json:"roles"`
 		}
 		if decodeJSON(w, r, &in) {
-			deskResult(w, nil, s.auth.SetRoles(r.Context(), idOf(r), in.Roles))
+			deskResult(w, nil, s.auth.SetRolesBy(r.Context(), u.ID, idOf(r), in.Roles))
 		}
 	}))
 	mux.HandleFunc("GET /api/desk/processes", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
@@ -87,7 +87,7 @@ func (s *Server) deskRoutes(mux *http.ServeMux) {
 		deskResult(w, v, e)
 	}))
 	for _, pattern := range []string{"POST /api/desk/queues", "PUT /api/desk/queues/{id}"} {
-		mux.HandleFunc(pattern, s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		mux.HandleFunc(pattern, s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
 			var in desk.QueueInput
 			if decodeJSON(w, r, &in) {
 				v, e := s.desk.SaveQueue(r.Context(), u, idOf(r), in)
@@ -95,11 +95,15 @@ func (s *Server) deskRoutes(mux *http.ServeMux) {
 			}
 		}))
 	}
-	mux.HandleFunc("PUT /api/desk/queues/{id}/grants", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+	mux.HandleFunc("PUT /api/desk/queues/{id}/grants", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
 		var in desk.GrantInput
 		if decodeJSON(w, r, &in) {
 			deskResult(w, nil, s.desk.Grant(r.Context(), u, idOf(r), in))
 		}
+	}))
+	mux.HandleFunc("GET /api/desk/admin-history", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
+		v, e := s.desk.AdministrationHistory(r.Context(), u, number(r, "limit"), number(r, "offset"))
+		deskResult(w, v, e)
 	}))
 	mux.HandleFunc("GET /api/cmdb/classes", s.requireAuth(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
 		v, e := s.desk.Classes(r.Context())

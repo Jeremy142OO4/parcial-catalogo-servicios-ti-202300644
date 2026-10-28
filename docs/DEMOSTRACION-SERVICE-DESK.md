@@ -83,4 +83,4 @@ Los números corresponden a esta base nueva y están respaldados por el recibo S
 
 ## Límites de esta entrega
 
-Las pruebas funcionales y P18 están en [verificación final](evidencias/service-desk-final.md). P04 sigue limitado por falta de confirmación de la taxonomía exacta de la lección 22. No se presenta el conjunto de datos ni las pruebas aprobadas como certificación de ese requisito documental.
+Las pruebas funcionales y P18 están en [verificación final](evidencias/service-desk-final.md). La [decisión de P04](decisiones/002-interpretacion-cmdb-p04.md) registra su cierre documental con la aclaración de Jeremy y la salvedad de interpretación. No se inventa un árbol docente adicional ni se presentan las clases propias o la demostración como certificación de contenido ausente de las fuentes.

@@ -31,6 +31,18 @@ try {
   assert.match(readonly, /Solo lectura/)
   assert.doesNotMatch(readonly, /Crear ticket/)
   assert.doesNotMatch(readonly, /Colas y permisos/)
+  const { DeskAdministration } = await server.ssrLoadModule('/src/desk-admin.jsx')
+  const delegated = renderToString(React.createElement(DeskAdministration,{
+    api:async()=>[],context:{users:[]},reload:()=>{},globalAdmin:false,
+  }))
+  assert.doesNotMatch(delegated,/Nueva cola|Crear nueva cola|Roles múltiples de usuarios/)
+  assert.match(delegated,/Selecciona una cola autorizada/)
+  const global = renderToString(React.createElement(DeskAdministration,{
+    api:async()=>[],context:{users:[]},reload:()=>{},globalAdmin:true,
+  }))
+  assert.match(global,/Nueva cola/)
+  assert.match(global,/Roles múltiples de usuarios/)
+  console.log('PASS administración delegada: sin creación de colas ni edición de roles globales')
   for (const process of ['nuevos','cambios','incidentes','eventos','problemas','accesos','servicios']) {
     const html = renderToString(React.createElement(DetailsFields,{process,details:{},setDetails:()=>{}}))
     assert.ok(html.includes('label'), `Missing differentiated fields: ${process}`)

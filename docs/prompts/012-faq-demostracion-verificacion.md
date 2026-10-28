@@ -39,3 +39,5 @@ Esta formulación documenta cómo se estructuró el trabajo en Codex. No se pres
 Evidencias: [demostración](../DEMOSTRACION-SERVICE-DESK.md), [resultado final](../evidencias/service-desk-final.md), [primer intento](../evidencias/service-desk-final-primer-intento.txt) y [FAQ capturada](../Imagenes/service-desk-faq.png).
 
 Herramienta utilizada: Codex desktop. No se atribuye a esta ejecución un modelo o nivel de razonamiento que no esté confirmado por la sesión. No se realizó una conversación nueva en ChatGPT web para esta fase.
+
+Nota posterior: el estado parcial de P04 mencionado arriba corresponde a esta fase. La aclaración posterior del usuario quedó registrada en la [decisión de alcance](../decisiones/002-interpretacion-cmdb-p04.md). Se conserva el mensaje y la evaluación original sin reescribirlos como si esa aclaración ya existiera.

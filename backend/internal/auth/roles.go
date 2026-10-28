@@ -35,6 +35,11 @@ func (s *Service) loadRoles(ctx context.Context, u *User) error {
 	return err
 }
 func (s *Service) SetRoles(ctx context.Context, id int64, roles []string) error {
+	return s.SetRolesBy(ctx, 0, id, roles)
+}
+
+// Actor zero is reserved for internal setup jobs, never supplied by HTTP input.
+func (s *Service) SetRolesBy(ctx context.Context, actor, id int64, roles []string) error {
 	if len(roles) == 0 {
 		return fmt.Errorf("al menos un rol requerido")
 	}
@@ -50,6 +55,11 @@ func (s *Service) SetRoles(ctx context.Context, id int64, roles []string) error 
 		return err
 	}
 	defer tx.Rollback(ctx)
+	if actor > 0 {
+		if err = lockAdministrator(ctx, tx, actor); err != nil {
+			return err
+		}
+	}
 	var old string
 	if err = tx.QueryRow(ctx, `SELECT role FROM app_users WHERE id=$1 FOR UPDATE`, id).Scan(&old); err != nil {
 		return err

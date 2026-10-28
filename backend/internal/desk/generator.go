@@ -36,7 +36,7 @@ func (s *Service) Generate(ctx context.Context, u *auth.User, dataset string, se
 		if e := tx.QueryRow(ctx, `SELECT id FROM services_level2 WHERE is_active ORDER BY id LIMIT 1`).Scan(&service); e != nil {
 			return bad("importar catálogo antes de generar")
 		}
-		rows, e := tx.Query(ctx, `SELECT id,code FROM ci_classes WHERE code IN('servidor','usuario','red','impresion','almacenamiento','energia') AND is_device_class AND is_active ORDER BY code`)
+		rows, e := tx.Query(ctx, `SELECT id,technical_profile FROM ci_classes WHERE technical_profile IS NOT NULL AND is_device_class AND is_active ORDER BY technical_profile FOR SHARE`)
 		if e != nil {
 			return e
 		}

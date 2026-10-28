@@ -136,7 +136,7 @@ Campos añadidos por la tarea/proyecto: id, code, auditoría, dataset/seed, ubic
 
 ## Clasificación y relaciones: decisión complementaria
 
-El material recibido no enumera una taxonomía completa. Se propone un bosque configurable con raíces Hardware y Software, que sí aparecen en el Excel. Como extensiones propias se proponen Hardware → Servidor, Equipo de usuario, Red, Impresión, Almacenamiento y Energía. Software permanece para aplicaciones y no integra el conteo de dispositivos. No es una transcripción docente. La falta de una taxonomía explícita sigue siendo una limitación frente a la correspondencia exacta pedida por P04.
+El material recibido no enumera una taxonomía completa. Se implementó un bosque configurable con raíces Hardware y Software, que sí aparecen en el Excel. Como extensiones propias se implementaron Hardware → Servidor, Equipo de usuario, Red, Impresión, Almacenamiento y Energía. Software permanece para aplicaciones y no integra el conteo de dispositivos. No es una transcripción docente. Tras la aclaración de Jeremy, no se trata un árbol adicional no enumerado como desarrollo pendiente. La [decisión de P04](decisiones/002-interpretacion-cmdb-p04.md) registra el alcance acordado y la salvedad interpretativa, sin afirmar que las fuentes contienen esas seis subclases.
 
 Antes de insertar o mover una clase, bloquear cambios de clasificación en transacción y recorrer ancestros. Rechazar padres inexistentes/inactivos y ciclos. No reutilizar la organización como árbol de clases.
 

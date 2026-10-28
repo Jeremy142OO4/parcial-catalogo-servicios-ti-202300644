@@ -26,26 +26,26 @@ export const processFields = {
 export default function ServiceDesk({ session }) {
   const roles = rolesOf(session.user), readonly = roles.includes('consulta'), admin = roles.includes('admin') && !readonly
   const [view, setView] = useState('portal')
-  const [context, setContext] = useState({ queues: [], services: [], users: [], processes: [] })
+  const [context, setContext] = useState({ queues: [], services: [], users: [], processes: [], managedQueues: [] })
   const [error, setError] = useState(''), [ticket, setTicket] = useState(null)
   const [revision, setRevision] = useState(0)
   const api = (p, o) => deskRequest(p, session.token, o)
   async function loadContext() {
     try {
-      const [queues, services, users, processes] = await Promise.all(['/api/desk/intake-queues','/api/catalog/services?limit=100','/api/users','/api/desk/processes'].map(p => api(p)))
-      setContext({ queues, services, users, processes })
+      const [queues, services, users, processes, authorized] = await Promise.all(['/api/desk/intake-queues','/api/catalog/services?limit=100','/api/users','/api/desk/processes','/api/desk/queues'].map(p => api(p)))
+      setContext({ queues, services, users, processes, managedQueues: authorized.filter(q => q.can_admin) })
     } catch (e) { setError(e.message) }
   }
   useEffect(() => { loadContext() }, [session.token, revision])
   async function open(id) { try { setError(''); setTicket(await api(`/api/desk/tickets/${id}`)) } catch (e) { setError(e.message) } }
   return <main className="desk-shell">
     <div className="desk-title"><div><p className="eyebrow">SERVICE DESK</p><h2>Un solo lugar para dar seguimiento</h2><p className="muted">Solicitudes, atención y configuración de tus servicios.</p></div><span className="count-badge">{readonly ? 'Solo lectura' : roles.map(words).join(' · ')}</span></div>
-    <nav className="desk-nav" aria-label="Service Desk">{[['portal','Mis solicitudes'],['faq','Centro de ayuda'], ...((roles.some(r => ['admin','agente','aprobador','consulta'].includes(r))) ? [['console','Consola de atención']] : []), ['indicators','Indicadores'], ['cmdb','CMDB'], ...(admin ? [['queues','Colas y permisos']] : [])].map(([key,label]) => <button key={key} className={view === key ? 'active' : 'secondary'} onClick={() => { setView(key); setTicket(null); setError('') }}>{label}</button>)}</nav>
+    <nav className="desk-nav" aria-label="Service Desk">{[['portal','Mis solicitudes'],['faq','Centro de ayuda'], ...((roles.some(r => ['admin','agente','aprobador','consulta'].includes(r))) ? [['console','Consola de atención']] : []), ['indicators','Indicadores'], ['cmdb','CMDB'], ...((admin || context.managedQueues.length > 0) ? [['queues','Colas y permisos']] : [])].map(([key,label]) => <button key={key} className={view === key ? 'active' : 'secondary'} onClick={() => { setView(key); setTicket(null); setError('') }}>{label}</button>)}</nav>
     {error && <p role="alert" className="error-banner">{error}</p>}
     {ticket ? <Ticket key={ticket.id} initial={ticket} api={api} token={session.token} context={context} user={session.user} onBack={() => { setTicket(null); setRevision(x => x + 1) }} /> : <>
       {['portal','console'].includes(view) && <TicketList key={view} api={api} context={context} portal={view === 'portal'} readonly={readonly} user={session.user} onOpen={open} />}
       {view === 'indicators' && <Indicators api={api} context={context} onOpen={open} />}
-      {view === 'queues' && admin && <DeskAdministration api={api} context={context} reload={() => setRevision(x => x + 1)} />}
+      {view === 'queues' && !readonly && (admin || context.managedQueues.length > 0) && <DeskAdministration api={api} context={context} globalAdmin={admin} reload={() => setRevision(x => x + 1)} />}
       {view === 'cmdb' && <CMDB api={api} admin={admin} context={context} onTicket={open} />}
       {view === 'faq' && <FAQ api={api} admin={admin} services={context.services} />}
     </>}

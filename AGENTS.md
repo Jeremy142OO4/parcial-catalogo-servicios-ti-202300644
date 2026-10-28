@@ -46,7 +46,8 @@ El diseño previo está en `docs/MODELO.md`, `docs/PROCESOS.md` y `docs/PRUEBAS.
 - El enunciado y Excel nuevos están en `data/fuentes-service-desk/`. Conservar sus bytes originales y el catálogo existente. No copiar ni reproducir las presentaciones docentes en el repositorio o su documentación, por indicación del usuario.
 - Distinguir requisitos escritos, aclaraciones reportadas por el usuario y decisiones propias. No atribuir a la grabación una verificación que no se realizó.
 - No confundir organización, clasificación de CI y relaciones técnicas. El Excel no enumera una clasificación completa de dispositivos.
-- Conservar como requisitos pendientes 5,000 dispositivos, siete procesos y colas, 35 tickets y los nuevos P01–P18. No confundir esos identificadores con la suite P01–P12 del parcial.
+- Conservar en alcance 5,000 dispositivos, siete procesos y colas, al menos 35 tickets y los nuevos P01–P18. Consultar su estado vigente en `docs/PRUEBAS.md` y evidencias, no asumir que siguen pendientes por esta lista. No confundir esos identificadores con la suite P01–P12 del parcial.
+- Para P04, aplicar `docs/decisiones/002-interpretacion-cmdb-p04.md`: no inventar un árbol docente adicional. Distinguir información observable, subclases propias y aclaración del usuario, sin presentarla como aprobación directa del catedrático.
 - No elevar permisos de consulta por pertenencia a una cola. Validar permisos, aprobaciones, transiciones y concurrencia en el servidor.
 - Registrar prompts realmente utilizados, resultados reales y ciclos de corrección durante el trabajo. No reconstruir conversaciones como si fueran mensajes originales ni inventar modelo, mediciones, capturas o commits.
 - No sobrescribir la copia remota existente. Preparar un entorno de evaluación separado antes de ejecutar pruebas con escrituras.

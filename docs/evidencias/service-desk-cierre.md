@@ -55,6 +55,8 @@ El commit posterior que incorpora estos recibos solo cambia documentación y evi
 
 ## Límites que requieren intervención humana
 
-P04 sigue parcial en la fidelidad exacta de la jerarquía docente. Las pruebas de padres y ciclos pasan, pero no se atribuyen las seis subclases complementarias a una fuente que no las enumera. Se solicitó al usuario confirmar la interpretación comunicada por el catedrático.
+Después de solicitar aclaración, Jeremy respondió: «si no lo viste en las diapositivas no lo enseño». La [decisión de P04](../decisiones/002-interpretacion-cmdb-p04.md) cierra el pendiente documental de obtener un árbol adicional no enumerado. Las pruebas de integridad y el mapeo de información disponible se conservan, con salvedad interpretativa del enunciado. No se atribuyen las seis subclases propias a las fuentes ni se presenta esta respuesta como confirmación directa del catedrático.
+
+Esta actualización es solo documental, posterior a los commits de pruebas identificados arriba. No añade código, no cambia originales y no fabrica una nueva salida de ejecución. Queda por realizar la entrega y defensa por parte del estudiante, no una funcionalidad derivada de un árbol ausente.
 
 No es un requisito expreso tener un editor genérico de esquemas de atributos. Los atributos dependientes de clase sí se validan y editan. Los ejemplos con referencias incompletas no se convierten automáticamente en CI operativos. La entrega en Wedy, la hora límite definitiva y la defensa oral corresponden al estudiante.

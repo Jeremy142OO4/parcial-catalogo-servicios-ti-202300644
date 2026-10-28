@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/auth"
+	"sort"
 )
 
 type Repository struct{ pool *pgxpool.Pool }
@@ -99,6 +100,9 @@ func (s *Service) transaction(ctx context.Context, u *auth.User, run func(pgx.Tx
 			return forbidden()
 		}
 	}
+	if _, err = tx.Exec(ctx, `SELECT set_config('app.actor_id',$1,true)`, fmt.Sprint(u.ID)); err != nil {
+		return err
+	}
 	if err = run(tx); err != nil {
 		return err
 	}
@@ -143,6 +147,24 @@ func page(limit, offset int) (int, int) {
 func requireAdmin(u *auth.User) error {
 	if !u.HasRole("admin") || u.ReadOnly() {
 		return forbidden()
+	}
+	return nil
+}
+
+// Grants are changed under FOR UPDATE on the queue. Hold shared locks before
+// evaluating permissions and until commit, including every affected queue.
+func lockQueuePermissions(ctx context.Context, tx pgx.Tx, ids ...int64) error {
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	var previous int64
+	for _, id := range ids {
+		if id <= 0 || id == previous {
+			continue
+		}
+		var locked int64
+		if e := tx.QueryRow(ctx, `SELECT id FROM queues WHERE id=$1 FOR SHARE`, id).Scan(&locked); e != nil {
+			return &Error{404, "cola no encontrada"}
+		}
+		previous = id
 	}
 	return nil
 }

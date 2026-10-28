@@ -19,14 +19,14 @@ type QueueInput struct {
 }
 
 func (s *Service) Queues(ctx context.Context, u *auth.User) ([]map[string]any, error) {
-	return objects(ctx, s.repo.pool, `SELECT to_jsonb(q) FROM queues q WHERE $1 OR EXISTS(SELECT 1 FROM queue_grants g WHERE g.queue_id=q.id AND g.can_read AND(g.user_id=$2 OR g.role_code IN(SELECT role_code FROM user_roles WHERE user_id=$2))) ORDER BY q.id`, u.HasRole("admin") || u.ReadOnly(), u.ID)
+	return objects(ctx, s.repo.pool, `SELECT to_jsonb(q)||jsonb_build_object('can_admin',($3 AND ($1 OR EXISTS(SELECT 1 FROM queue_grants g WHERE g.queue_id=q.id AND g.can_admin AND(g.user_id=$2 OR g.role_code IN(SELECT role_code FROM user_roles WHERE user_id=$2)))))) FROM queues q WHERE $1 OR $4 OR EXISTS(SELECT 1 FROM queue_grants g WHERE g.queue_id=q.id AND (g.can_read OR ($3 AND g.can_admin)) AND(g.user_id=$2 OR g.role_code IN(SELECT role_code FROM user_roles WHERE user_id=$2))) ORDER BY q.id`, u.HasRole("admin"), u.ID, !u.ReadOnly(), u.ReadOnly())
 }
 func (s *Service) Processes(ctx context.Context) ([]map[string]any, error) {
 	return objects(ctx, s.repo.pool, `SELECT to_jsonb(p)||jsonb_build_object('states',(SELECT jsonb_agg(code ORDER BY code) FROM workflow_states WHERE process_code=p.code)) FROM processes p ORDER BY code`)
 }
 func (s *Service) SaveQueue(ctx context.Context, u *auth.User, id int64, in QueueInput) (map[string]any, error) {
-	if e := requireAdmin(u); e != nil {
-		return nil, e
+	if u.ReadOnly() || (id == 0 && !u.HasRole("admin")) {
+		return nil, forbidden()
 	}
 	if strings.TrimSpace(in.Code) == "" || strings.TrimSpace(in.Name) == "" {
 		return nil, bad("código y nombre requeridos")
@@ -34,6 +34,9 @@ func (s *Service) SaveQueue(ctx context.Context, u *auth.User, id int64, in Queu
 	var out map[string]any
 	err := s.transaction(ctx, u, func(tx pgx.Tx) error {
 		if id > 0 {
+			if e := s.lockQueueAdministration(ctx, tx, u, id); e != nil {
+				return e
+			}
 			var used bool
 			if e := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM tickets WHERE queue_id=$1)`, id).Scan(&used); e != nil {
 				return e
@@ -70,14 +73,14 @@ type GrantInput struct {
 }
 
 func (s *Service) Grant(ctx context.Context, u *auth.User, queue int64, in GrantInput) error {
-	if e := requireAdmin(u); e != nil {
-		return e
+	if u.ReadOnly() {
+		return forbidden()
 	}
 	if (in.UserID == nil) == (in.Role == nil) {
 		return bad("elegir un usuario o un rol")
 	}
 	return s.transaction(ctx, u, func(tx pgx.Tx) error {
-		if _, e := tx.Exec(ctx, `SELECT id FROM queues WHERE id=$1 FOR UPDATE`, queue); e != nil {
+		if e := s.lockQueueAdministration(ctx, tx, u, queue); e != nil {
 			return e
 		}
 		var pending bool
@@ -94,4 +97,16 @@ func (s *Service) Grant(ctx context.Context, u *auth.User, queue int64, in Grant
 		_, e = tx.Exec(ctx, `INSERT INTO queue_grants(queue_id,user_id,role_code,can_read,can_handle,can_transfer,can_approve,can_admin) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, queue, in.UserID, in.Role, in.Read, in.Handle, in.Transfer, in.Approve, in.Admin)
 		return e
 	})
+}
+
+// Check after the lock so a concurrent revocation cannot authorize stale grants.
+func (s *Service) lockQueueAdministration(ctx context.Context, tx pgx.Tx, u *auth.User, id int64) error {
+	var locked int64
+	if e := tx.QueryRow(ctx, `SELECT id FROM queues WHERE id=$1 FOR UPDATE`, id).Scan(&locked); e != nil {
+		return &Error{404, "cola no encontrada"}
+	}
+	if !s.allowed(ctx, tx, u, id, "admin") {
+		return forbidden()
+	}
+	return nil
 }
