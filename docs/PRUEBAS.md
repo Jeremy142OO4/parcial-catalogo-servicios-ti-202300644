@@ -4,7 +4,7 @@ Fecha: 2026-10-27. Estado: planificación, sin resultados funcionales nuevos. Fu
 
 ## Matriz requisito → implementación prevista → prueba → evidencia
 
-La matriz describe el alcance objetivo. Hay cobertura parcial real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md) y su salida enlazada. No están completos todos los escenarios nuevos, particularmente indicadores y adjuntos. Los documentos de diseño no son evidencia de prueba aprobada.
+La matriz describe el alcance objetivo. Hay cobertura parcial real del backend en la [evidencia de implementación](evidencias/service-desk-backend.md) y su salida enlazada. La carga, validación y descarga autorizada cuentan con [pruebas reales de adjuntos](evidencias/service-desk-adjuntos.md). No están completos todos los escenarios nuevos, particularmente indicadores, interfaz y persistencia integral P18 de todas las entidades. Los documentos de diseño no son evidencia de prueba aprobada.
 
 | Requisito del enunciado | Implementación prevista | Prueba nueva | Evidencia a generar |
 | --- | --- | --- | --- |

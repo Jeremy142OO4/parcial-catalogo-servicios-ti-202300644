@@ -27,6 +27,7 @@ func deskResult(w http.ResponseWriter, value any, e error) {
 func idOf(r *http.Request) int64             { id, _ := pathID(r); return id }
 func number(r *http.Request, key string) int { n, _ := strconv.Atoi(r.URL.Query().Get(key)); return n }
 func (s *Server) deskRoutes(mux *http.ServeMux) {
+	s.attachmentRoutes(mux)
 	mux.HandleFunc("PUT /api/users/{id}/roles", s.requireAdmin(func(w http.ResponseWriter, r *http.Request, u *auth.User) {
 		var in struct {
 			Roles []string `json:"roles"`

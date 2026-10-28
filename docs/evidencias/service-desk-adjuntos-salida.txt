@@ -1,0 +1,159 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m[1/2] STEP 1/6: FROM golang:1.24 AS builder
+[1/2] STEP 2/6: WORKDIR /src
+--> Using cache bc2ae32591a871f1a63062252814a6d7d25eb5f8aa2597118f951d67c445afac
+--> bc2ae32591a8
+[1/2] STEP 3/6: COPY go.mod go.sum ./
+--> Using cache 56b2d6904ff222d3729b78f94ec6f5b127b22dd2a427a0b6a46f48855c7bcb2c
+--> 56b2d6904ff2
+[1/2] STEP 4/6: RUN go mod download
+--> Using cache 16190dddc5566be8ae1a8616eb8b5dfd4f7d93857fd177f6838dc5fd2c20709b
+--> 16190dddc556
+[1/2] STEP 5/6: COPY . .
+--> 29bf5838a898
+[1/2] STEP 6/6: RUN CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-server ./backend/cmd/server     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-seed ./backend/cmd/seed     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-importer ./backend/cmd/importer     && CGO_ENABLED=0 GOOS=linux go build -o /out/cmdb-generator ./backend/cmd/cmdb-generator     && CGO_ENABLED=0 GOOS=linux go test -c -o /out/desk-tests ./backend/internal/desk
+--> bb5c145557e2
+[2/2] STEP 1/12: FROM alpine:3.21
+[2/2] STEP 2/12: RUN apk add --no-cache ca-certificates
+--> Using cache 203ee0afe881a7f27f0035da38de366464fdc75f39d34a4918a199bf0f44e167
+--> 203ee0afe881
+[2/2] STEP 3/12: WORKDIR /app
+--> Using cache 00587c3bedca90aa816c373825883911ba156c76a80ed5cf923ac6812ba02e49
+--> 00587c3bedca
+[2/2] STEP 4/12: COPY --from=builder /out/catalogo-server ./catalogo-server
+--> aed286fd4ee5
+[2/2] STEP 5/12: COPY --from=builder /out/catalogo-seed ./catalogo-seed
+--> 9b9ac4bf90cf
+[2/2] STEP 6/12: COPY --from=builder /out/catalogo-importer ./catalogo-importer
+--> 5f3d8a87bad2
+[2/2] STEP 7/12: COPY --from=builder /out/cmdb-generator ./cmdb-generator
+--> a26d26ef3350
+[2/2] STEP 8/12: COPY --from=builder /out/desk-tests ./desk-tests
+--> 5b13658abdde
+[2/2] STEP 9/12: COPY backend/migrations ./backend/migrations
+--> 0679a780b983
+[2/2] STEP 10/12: COPY data ./data
+--> 3930e8929a72
+[2/2] STEP 11/12: EXPOSE 8080
+--> f12225f10eb3
+[2/2] STEP 12/12: CMD ["./catalogo-server"]
+[2/2] COMMIT catalogo-service-desk-test_api
+--> 5a84cbe7dc21
+Successfully tagged localhost/catalogo-service-desk-test_api:latest
+5a84cbe7dc21f325ded0d21d40ad696809b430555c589d5940bc9750c1e92bd6
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1
+c335f5270c55563526b858b9ed0a4966d3d8c02ed103d60574af64b1afbb02f7
+catalogo-service-desk-test_default
+42cb0c1218523beb7fbaddcbaa4db5b95c8a4c3235a2dd0475d712fb229dba79
+5eecab859940e16b930afb669c56788b18fb543b51e68ac65889b611c8afad40
+eb6a478e8808da1a18c7d9a2bbfb9644b6e75885d3f9f3fdaf094dd4a82dd5a1
+catalogo-service-desk-test_db_1
+catalogo-service-desk-test_api_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mDatos de demostración creados: organización, usuarios y tres asignaciones
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestAttachmentTypes
+=== RUN   TestAttachmentTypes/nota.txt
+=== RUN   TestAttachmentTypes/evidencia.pdf
+=== RUN   TestAttachmentTypes/imagen.png
+=== RUN   TestAttachmentTypes/imagen.jpg
+=== RUN   TestAttachmentTypes/script.html
+=== RUN   TestAttachmentTypes/falso.txt
+=== RUN   TestAttachmentTypes/falso.pdf
+=== RUN   TestAttachmentTypes/virus.exe
+=== RUN   TestAttachmentTypes/../nota.txt
+=== RUN   TestAttachmentTypes/C:\nota.txt
+=== RUN   TestAttachmentTypes/nota__.txt
+--- PASS: TestAttachmentTypes (0.00s)
+    --- PASS: TestAttachmentTypes/nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/evidencia.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.png (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.jpg (0.00s)
+    --- PASS: TestAttachmentTypes/script.html (0.00s)
+    --- PASS: TestAttachmentTypes/falso.txt (0.00s)
+    --- PASS: TestAttachmentTypes/falso.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/virus.exe (0.00s)
+    --- PASS: TestAttachmentTypes/../nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/C:\nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/nota__.txt (0.00s)
+=== RUN   TestIncidentBoundaries
+--- PASS: TestIncidentBoundaries (0.00s)
+=== RUN   TestEveryRouteAndInvalidJump
+--- PASS: TestEveryRouteAndInvalidJump (0.00s)
+=== RUN   TestDeviceCodes
+--- PASS: TestDeviceCodes (0.00s)
+=== RUN   TestProtectedAttachmentsIntegration
+    attachments_integration_test.go:116: A01 sin sesión, tercero, consulta y nota interna sin permiso rechazados
+    attachments_integration_test.go:141: A02 tipos falsos, rutas, vacíos y límites rechazados sin archivos residuales
+    attachments_integration_test.go:179: A03 descarga fiel, headers seguros, aislamiento por ticket, visibilidad interna y revocación comprobados
+    attachments_integration_test.go:182: A04 tamaño exacto de 10 MiB aceptado
+    attachments_integration_test.go:183: Adjunto persistente de prueba ticket_id=62 attachment_id=4
+--- PASS: TestProtectedAttachmentsIntegration (0.89s)
+=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:191: explicit persistence check only
+--- SKIP: TestAttachmentPersistenceCheck (0.00s)
+=== RUN   TestServiceDeskIntegration
+    integration_test.go:57: PASS P01 consulta con roles elevados sigue sin escritura
+    integration_test.go:57: PASS P02 regresión de controles de origen 12/46
+    integration_test.go:57: PASS P04 padres y ciclos de clasificación rechazados
+    integration_test.go:57: PASS P03 5000 dispositivos y repetición idempotente
+    integration_test.go:57: PASS CRUD CI: crear, consultar, editar y baja lógica/reactivación
+    integration_test.go:57: PASS P14 dependencias y ciclos técnicos
+    integration_test.go:166: P16 tiempo consulta paginada 2.674444ms entorno: PostgreSQL aislado en laptop
+    integration_test.go:57: PASS P05 referencias y condición sin CI
+    integration_test.go:57: PASS P07 dos reclamaciones, un ganador
+    integration_test.go:57: PASS P08 transferencia e incompatibilidad de proceso
+    integration_test.go:57: PASS P06 ámbito y notas internas
+    integration_test.go:57: PASS P09 ruta completa cambios
+    integration_test.go:57: PASS P15 cierre y reapertura con ciclos
+    integration_test.go:57: PASS P09 ruta completa incidentes
+    integration_test.go:57: PASS P09 ruta completa eventos
+    integration_test.go:57: PASS P09 ruta completa problemas
+    integration_test.go:57: PASS P09 ruta completa accesos
+    integration_test.go:57: PASS P09 ruta completa servicios
+    integration_test.go:57: PASS P09 ruta completa nuevos
+    integration_test.go:57: PASS P13 incidente vinculado a problema y cambio
+    integration_test.go:57: PASS P10 autoaprobación admin rechazada
+    integration_test.go:57: PASS P11 E0–E3 y deduplicación
+    integration_test.go:57: PASS P01 HTTP sin sesión, consulta y logout
+--- PASS: TestServiceDeskIntegration (1.04s)
+PASS
+PERSISTENCIA_ANTES_DEL_REINICIO
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:229: PERSISTENCIA OK ticket_id=62 attachment_id=4 bytes=30
+--- PASS: TestAttachmentPersistenceCheck (0.07s)
+PASS
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mError: some dependencies of container eb6a478e8808da1a18c7d9a2bbfb9644b6e75885d3f9f3fdaf094dd4a82dd5a1 are not started: 5eecab859940e16b930afb669c56788b18fb543b51e68ac65889b611c8afad40: container state improper
+catalogo-service-desk-test_db_1
+PERSISTENCIA_DESPUES_DEL_REINICIO
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:229: PERSISTENCIA OK ticket_id=62 attachment_id=4 bytes=30
+--- PASS: TestAttachmentPersistenceCheck (0.07s)
+PASS
+REINICIO_SECUENCIAL_POR_DEPENDENCIA_PODMAN
+catalogo-service-desk-test_db_1
+catalogo-service-desk-test_api_1
+catalogo-service-desk-test_db_1 2026-10-27 22:16:20.148797801 -0600 CST
+catalogo-service-desk-test_api_1 2026-10-27 22:16:20.492794214 -0600 CST
+=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:229: PERSISTENCIA OK ticket_id=62 attachment_id=4 bytes=30
+--- PASS: TestAttachmentPersistenceCheck (0.06s)
+PASS

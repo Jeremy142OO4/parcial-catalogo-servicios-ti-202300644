@@ -19,8 +19,10 @@ services:
       APP_PORT: 8080
       DATABASE_URL: postgres://catalogo:catalogo@db:5432/catalogo?sslmode=disable
       MIGRATIONS_DIR: /app/backend/migrations
+      ATTACHMENTS_DIR: /app/storage/attachments
     volumes:
       - ./outputs:/app/outputs:Z
+      - catalogo_attachments:/app/storage/attachments
     ports:
       - "8080:8080"
     depends_on:
@@ -36,3 +38,4 @@ services:
 
 volumes:
   catalogo_pgdata:
+  catalogo_attachments:

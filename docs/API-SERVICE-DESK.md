@@ -60,6 +60,9 @@ Usar `Authorization: Bearer TOKEN` obtenido por `/api/auth/login`. Nuevas respue
 | POST `/api/desk/tickets/{id}/comments` | body y visibility public/internal |
 | POST `/api/desk/tickets/{id}/links` | target_id y kind relacionado/incidente_problema/problema_cambio |
 | GET `/api/desk/notifications` | Notificaciones del usuario autenticado |
+| GET `/api/desk/tickets/{id}/attachments` | Metadatos de adjuntos visibles, sin ruta de almacenamiento |
+| POST `/api/desk/tickets/{id}/attachments` | Multipart con un `file` y una `visibility`, devuelve 201 |
+| GET `/api/desk/tickets/{id}/attachments/{attachment}/download` | Descarga autenticada y autorizada por ticket y visibilidad |
 
 Filtros CI: q, class_id, status, limit, offset. Filtros tickets: q, process, state, queue, priority, assignee, service, from, to, limit, offset. Límite máximo 100, orden estable. Los códigos y nombres se consultan por sus endpoints. La ficha no incluye todos los tickets de un CI indiscriminadamente porque deben respetarse los permisos de cada ticket.
 
@@ -99,4 +102,31 @@ Acciones implementadas: claim, assign, transfer, escalate, details, approve, rej
 
 ## Pendientes fuera de estos cinco bloques
 
-Interfaz nueva React, adjuntos protegidos, FAQ, indicadores completos y snapshots de objetivos, configuración avanzada de atributos, importación operativa de ejemplos tras revisión, datos de defensa de 37 tickets en estados preparados y cierre integral P01–P18. La API actual no equivale a toda la nueva tarea terminada. El histórico P01–P12 del parcial no se presenta como validación de estos pendientes.
+Interfaz nueva React, FAQ, indicadores completos y snapshots de objetivos, configuración avanzada de atributos, importación operativa de ejemplos tras revisión, datos de defensa de 37 tickets en estados preparados y cierre integral P01–P18. La API actual no equivale a toda la nueva tarea terminada. El histórico P01–P12 del parcial no se presenta como validación de estos pendientes.
+
+## Adjuntos protegidos
+
+Implementados en el backend mediante migración 005, Service y controlador HTTP. No se publica el directorio de archivos. La interfaz React para adjuntar y descargar todavía está pendiente.
+
+Carga mediante `multipart/form-data` con exactamente un campo de archivo `file` y un campo `visibility` con valor `public` o `internal`. No hay asociación a un comentario ni reemplazo o eliminación de adjuntos en esta fase. Se conserva la evidencia histórica.
+
+Tamaño por archivo: de 1 byte a 10 MiB inclusive. Solicitud multipart: máximo 11 MiB. El proxy Nginx permite este tamaño y la API aplica su propio límite. Respuestas: 400 para multipart, nombre, visibilidad o archivo vacío inválidos, 413 por tamaño y 415 por tipo o contenido incompatible.
+
+Extensiones admitidas: `.pdf`, `.png`, `.jpg`, `.jpeg` y `.txt`. Se exige coincidencia con el tipo detectado a partir del contenido, sin confiar en el MIME declarado por el cliente. Es detección de firma, no un análisis antivirus ni una validación estructural completa de PDF o imágenes. Los archivos siempre se descargan como adjuntos con `nosniff` y `private, no-store`. HTML, SVG, ejecutables y archivos comprimidos no se admiten.
+
+Puede cargar el solicitante del ticket o un administrador/agente con permiso de atención. El rol consulta nunca escribe, aunque tenga otros roles. Solo personal con permiso de atención, sin rol consulta, puede cargar y descargar archivos internos. Para archivos públicos, se requiere acceso de lectura al ticket, no conocer su URL. Público significa visible a lectores autorizados del ticket, no acceso anónimo. Los tickets cerrados o rechazados deben reabrirse antes de adjuntar.
+
+Cada listado y descarga comprueba la sesión y el ámbito del ticket. La carga revalida permisos y estado en la transacción antes de registrar metadatos e historial. Se rechazan nombres con rutas, controles o longitud superior a 180 bytes. El almacenamiento usa nombres aleatorios de 256 bits, archivos con permisos 0600 y una carpeta privada. La descarga comprueba tamaño y SHA-256 antes de enviar contenido. Los metadatos públicos no exponen claves ni rutas físicas.
+
+`ATTACHMENTS_DIR` define la carpeta privada. Por defecto local es `storage/attachments`, excluida de Git. Compose configura `/app/storage/attachments` sobre el volumen `catalogo_attachments`. Las pruebas usan su propio volumen `desk_test_attachments`. Para respaldar se necesitan tanto PostgreSQL como el volumen de adjuntos. Recrear un contenedor conserva el volumen, eliminarlo explícitamente con `down -v` elimina los archivos. No ejecutar ese comando para una demostración de persistencia.
+
+Los rechazos normales eliminan el archivo provisional. Una interrupción abrupta del proceso entre escritura y commit puede dejar un archivo huérfano sin metadatos, que no es accesible por API. No se implementa todavía una limpieza automática de huérfanos, cuotas acumuladas ni antivirus.
+
+Ejemplo en PowerShell, con token e ID obtenidos del entorno local:
+
+```powershell
+curl.exe -H "Authorization: Bearer $token" -F "file=@C:\ruta\evidencia.pdf" -F "visibility=public" "http://localhost:8080/api/desk/tickets/$ticketId/attachments"
+curl.exe -H "Authorization: Bearer $token" -o evidencia-descargada.pdf "http://localhost:8080/api/desk/tickets/$ticketId/attachments/$attachmentId/download"
+```
+
+Pruebas y salida real en [evidencia de adjuntos](evidencias/service-desk-adjuntos.md).
