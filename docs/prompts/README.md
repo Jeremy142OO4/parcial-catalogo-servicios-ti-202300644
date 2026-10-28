@@ -19,6 +19,10 @@ Los prompts siguen una estructura común, integrada dentro del mensaje para mant
 
 ## Índice de prompts
 
+### 008. Diseño previo de Service Desk
+
+[Abrir prompt, respuesta seleccionada y captura real](008-diseno-service-desk.md). Primera consulta web de la ampliación, con resumen de requisitos y límites explícitos. No constituye una prueba funcional.
+
 ### 001. Diseño del importador y trazabilidad
 
 Define las reglas para celdas combinadas, conflicto `SE.12`, códigos de nivel 2, atributos incompletos, filas de continuación y trazabilidad.

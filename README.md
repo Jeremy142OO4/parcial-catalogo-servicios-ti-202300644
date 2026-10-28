@@ -6,6 +6,10 @@ Carné: 202300644
 Repositorio: `parcial-catalogo-servicios-ti-202300644`
 Estado: cierre de auditoría del 4 de octubre de 2026
 
+## Ampliación Service Desk en preparación
+
+El parcial se conserva en `parcial-v2.0`. La ampliación comienza en `feature/service-desk` con el [registro de fuentes y decisiones](docs/FUENTES.md) y la [primera actualización de contexto](docs/contexto/service-desk-alcance-y-fuentes.md). Los comandos y resultados del catálogo que siguen no demuestran todavía tickets ni CMDB implementados.
+
 ## Objetivo
 
 Construir una aplicación web para administrar el catálogo de servicios de TI, la estructura organizacional, los usuarios y los responsables de cada servicio.
