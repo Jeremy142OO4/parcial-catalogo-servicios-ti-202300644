@@ -23,7 +23,20 @@ La prueba inicial de origen comprobaba número de filas y campos. Tras la revisi
 
 ## Reproducibilidad del commit
 
-Pendiente de registrar el SHA creado y la ejecución desde un clon limpio de ese SHA. No se declara cumplido por las pruebas del worktree.
+Código funcional publicado en `0b5b8c7762afe85a309e7ad478f35674ef548bc6`. Se clonó directamente desde GitHub en `/home/jeremy/service-desk-clean-CiYU0F`, con `git status --porcelain` vacío. El 28 de octubre de 2026 a las 07:57, America/Guatemala, se ejecutó el runner sobre un proyecto y volúmenes nuevos `catalogo-clean-test`, puertos 18280/18281. Build, hash de originales, búsqueda heurística, pruebas Go/React, readiness y persistencia terminaron con código 0. La comparación de los 40 valores se ejecutó realmente en ese clon.
+
+Comandos de esa ejecución:
+
+```bash
+DESK_TEST_PROJECT=catalogo-clean-test DESK_TEST_WEB_PORT=18280 DESK_TEST_API_PORT=18281 bash scripts/service-desk-test.sh
+DESK_TEST_PROJECT=catalogo-clean-test DESK_TEST_WEB_PORT=18280 DESK_TEST_API_PORT=18281 bash scripts/service-desk-persistence.sh
+```
+
+[Metadatos del clon](service-desk-clon-metadatos.txt), [salida completa](service-desk-clon-salida.txt) y [persistencia desde clon](service-desk-clon-persistencia.txt). En esa base nueva hubo 28 tickets de pruebas, 121 entradas de historial, 5,036 CI incluyendo fixtures, y tres adjuntos, todos conservados tras reinicio. Se observó 34.348701 ms para la consulta paginada y 0.134 ms en el plan SQL, no se presentan como SLA.
+
+Control negativo automatizado: `DESK_TEST_PROJECT=catalogo-service-desk-demo bash scripts/service-desk-test.sh` devolvió 1 antes de ejecutar Docker. [Salida de la protección](service-desk-harness-rechazo-demo.txt). Fue una entrada inválida deliberada y no modificó la demostración.
+
+Se amplió después el recibo P18 para incluir también conteos y digest del catálogo nivel 1 y 2. Su siguiente ejecución sobre el commit que guarda ese ajuste se registrará por separado, sin atribuir el campo nuevo al recibo anterior.
 
 ## Límites que requieren intervención humana
 

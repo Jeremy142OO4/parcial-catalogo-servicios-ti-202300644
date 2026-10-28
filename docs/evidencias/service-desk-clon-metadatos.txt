@@ -1,0 +1,6 @@
+0b5b8c7762afe85a309e7ad478f35674ef548bc6
+2026-10-28T07:58:19-06:00
+CONTAINER ID  IMAGE                                          COMMAND               CREATED         STATUS                   PORTS                      NAMES
+493ef27c0e25  docker.io/library/postgres:18-alpine           postgres              37 seconds ago  Up 25 seconds (healthy)  5432/tcp                   catalogo-clean-test_db_1
+276285523d0f  localhost/catalogo-clean-test_api:latest       ./catalogo-server     36 seconds ago  Up 25 seconds            127.0.0.1:18281->8080/tcp  catalogo-clean-test_api_1
+0bd5edc372e7  localhost/catalogo-clean-test_frontend:latest  nginx -g daemon o...  35 seconds ago  Up 31 seconds            0.0.0.0:18280->80/tcp      catalogo-clean-test_frontend_1

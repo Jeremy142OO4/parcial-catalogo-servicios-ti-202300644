@@ -6,6 +6,10 @@ dc() { docker compose -p "$PROJECT" -f compose.desk-test.yaml "$@"; }
 snapshot() {
  dc exec -T db psql -U catalogo -d catalogo_desk_test -At <<'SQL'
 SELECT jsonb_build_object(
+ 'catalogue_level1',(SELECT count(*) FROM services_level1),
+ 'catalogue_level2',(SELECT count(*) FROM services_level2),
+ 'catalogue_level1_digest',(SELECT md5(string_agg(row_to_json(t)::text,'' ORDER BY id)) FROM services_level1 t),
+ 'catalogue_level2_digest',(SELECT md5(string_agg(row_to_json(t)::text,'' ORDER BY id)) FROM services_level2 t),
  'tickets',(SELECT count(*) FROM tickets),
  'history',(SELECT count(*) FROM ticket_history),
  'ci',(SELECT count(*) FROM configuration_items),

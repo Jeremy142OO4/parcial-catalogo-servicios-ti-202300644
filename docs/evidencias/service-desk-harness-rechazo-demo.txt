@@ -1,0 +1,2 @@
+El proyecto aislado debe terminar en -test
+guard_exit=1 expected=1

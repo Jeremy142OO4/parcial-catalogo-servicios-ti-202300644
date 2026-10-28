@@ -37,9 +37,9 @@ Las respuestas del modelo son propuestas revisadas, no certificados del sistema.
 | [Alcance y fuentes](contexto/service-desk-alcance-y-fuentes.md) | Separar parcial y ampliación, no inventar taxonomía | `9e3a590` |
 | [Modelo y validación](contexto/service-desk-modelo-y-validacion.md) | Revisar propuesta web y distinguir seis tipos de siete procesos | `9e3a590` |
 | [Backend y aislamiento](contexto/service-desk-backend-y-aislamiento.md) | Contratos reales, roles y fixtures propios | `a50ee90` |
-| [Indicadores e interfaz](contexto/service-desk-indicadores-e-interfaz.md) | Snapshots y corrección del trigger | Commit funcional del cierre, identificado en la evidencia |
-| [FAQ y verificación](contexto/service-desk-faq-y-verificacion.md) | Separar 37 casos de las pruebas | Commit funcional del cierre |
-| [Cierre y fuentes](contexto/service-desk-cierre-y-fuentes.md) | Origen visible y límites contrastados | Commit funcional del cierre |
+| [Indicadores e interfaz](contexto/service-desk-indicadores-e-interfaz.md) | Snapshots y corrección del trigger | `0b5b8c7` |
+| [FAQ y verificación](contexto/service-desk-faq-y-verificacion.md) | Separar 37 casos de las pruebas | `0b5b8c7` |
+| [Cierre y fuentes](contexto/service-desk-cierre-y-fuentes.md) | Origen visible y límites contrastados | `0b5b8c7` |
 
 Las actualizaciones iniciales conservan su fecha y estado histórico. No se transforman en evidencias de funciones que todavía no existían cuando se escribieron. Las diapositivas siguen fuera del repositorio.
 

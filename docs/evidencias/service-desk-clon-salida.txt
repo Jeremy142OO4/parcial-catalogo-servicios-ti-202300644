@@ -1,0 +1,237 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m[1/2] STEP 1/7: FROM golang:1.24 AS builder
+[1/2] STEP 1/6: FROM node:22-alpine AS builder
+[1/2] STEP 2/7: WORKDIR /src
+[1/2] STEP 2/6: WORKDIR /app
+--> Using cache bc2ae32591a871f1a63062252814a6d7d25eb5f8aa2597118f951d67c445afac
+--> bc2ae32591a8
+[1/2] STEP 3/7: COPY go.mod go.sum ./
+--> Using cache 4dc87d7b2caeecebb9d629a85c9d1bc9d720d46be17d17a0cacf3229b1f69602
+--> 4dc87d7b2cae
+[1/2] STEP 3/6: COPY package*.json ./
+--> Using cache 56b2d6904ff222d3729b78f94ec6f5b127b22dd2a427a0b6a46f48855c7bcb2c
+--> 56b2d6904ff2
+[1/2] STEP 4/7: RUN go mod download
+--> Using cache 43cbf0808c144be260979f2be28e08628e30fb5523bd210ba93320856a16f679
+--> 43cbf0808c14
+[1/2] STEP 4/6: RUN npm ci
+--> Using cache 16190dddc5566be8ae1a8616eb8b5dfd4f7d93857fd177f6838dc5fd2c20709b
+--> 16190dddc556
+[1/2] STEP 5/7: COPY . .
+--> Using cache 23e6f1f59cf3b4b91a549a4c2d77f5f482a77aa5538ab0ebc56a5bfec49c9ebf
+--> 23e6f1f59cf3
+[1/2] STEP 5/6: COPY . .
+--> Using cache edba1d51c3a17bb2372fdb94a4b27d83461d23766c648a98168687a21cff3636
+--> edba1d51c3a1
+[1/2] STEP 6/6: RUN npm test && npm run build
+--> Using cache 758ac427d1d260e6b843c2de7c97eea7765b6a3213114364b0937d6e697c5eaa
+--> 758ac427d1d2
+[2/2] STEP 1/4: FROM nginx:1.27-alpine
+--> b6e9e59530b1
+[1/2] STEP 6/7: RUN go test -v ./backend/internal/desk -run '^TestSourceIntegrity$'
+[2/2] STEP 2/4: COPY nginx.conf /etc/nginx/conf.d/default.conf
+--> Using cache 46690615167c80a2bd6bb0349bda6f6baf51e97599bdf63b4ecc7829a3b051b9
+--> 46690615167c
+[2/2] STEP 3/4: COPY --from=builder /app/dist /usr/share/nginx/html
+--> Using cache 58d58ada1e8b08dfea901cf3185d6ebcc263a267a59808433cb689d44a5e8635
+--> 58d58ada1e8b
+[2/2] STEP 4/4: EXPOSE 80
+--> Using cache b8bd7323529caab502022db5cf3c7ca7810185e9253c78aad719328168bc0ba1
+[2/2] COMMIT catalogo-clean-test_frontend
+--> b8bd7323529c
+Successfully tagged localhost/catalogo-clean-test_frontend:latest
+Successfully tagged localhost/catalogo-service-desk-demo_frontend:latest
+Successfully tagged localhost/catalogo-final-test_frontend:latest
+b8bd7323529caab502022db5cf3c7ca7810185e9253c78aad719328168bc0ba1
+=== RUN   TestSourceIntegrity
+    artifacts_test.go:33: PASS original hashes: catalogue, CMDB and assignment
+    artifacts_test.go:72: PASS heuristic scan of source tree for private keys and provider tokens, not a complete secrets audit
+--- PASS: TestSourceIntegrity (0.00s)
+PASS
+ok  	github.com/jeremy/parcial-catalogo-servicios-ti-202300644/backend/internal/desk	0.006s
+--> ef3a541d86f9
+[1/2] STEP 7/7: RUN CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-server ./backend/cmd/server     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-seed ./backend/cmd/seed     && CGO_ENABLED=0 GOOS=linux go build -o /out/catalogo-importer ./backend/cmd/importer     && CGO_ENABLED=0 GOOS=linux go build -o /out/cmdb-generator ./backend/cmd/cmdb-generator     && CGO_ENABLED=0 GOOS=linux go build -o /out/desk-demo ./backend/cmd/desk-demo     && CGO_ENABLED=0 GOOS=linux go test -c -o /out/desk-tests ./backend/internal/desk
+--> 1754d6c5359e
+[2/2] STEP 1/13: FROM alpine:3.21
+[2/2] STEP 2/13: RUN apk add --no-cache ca-certificates
+--> Using cache 203ee0afe881a7f27f0035da38de366464fdc75f39d34a4918a199bf0f44e167
+--> 203ee0afe881
+[2/2] STEP 3/13: WORKDIR /app
+--> Using cache 00587c3bedca90aa816c373825883911ba156c76a80ed5cf923ac6812ba02e49
+--> 00587c3bedca
+[2/2] STEP 4/13: COPY --from=builder /out/catalogo-server ./catalogo-server
+--> Using cache 945e330167de3978cc7c9c3428175cd01d5c0cc8aca0ed02ab9e6e1776c4c9ae
+--> 945e330167de
+[2/2] STEP 5/13: COPY --from=builder /out/catalogo-seed ./catalogo-seed
+--> Using cache d4d1c88761138228081345eb92f5c813caa01dc007ac0cef9d3f1654ca60b3a8
+--> d4d1c8876113
+[2/2] STEP 6/13: COPY --from=builder /out/catalogo-importer ./catalogo-importer
+--> Using cache 7a098c5ae3eccac8165c4735b1fbf3f74629248f98d72da3b419e66e019ad40c
+--> 7a098c5ae3ec
+[2/2] STEP 7/13: COPY --from=builder /out/cmdb-generator ./cmdb-generator
+--> Using cache 94a6e19a37822e8d1ebe66da14102b97e9b260c5ebd449e20ae7ea1dba0b8898
+--> 94a6e19a3782
+[2/2] STEP 8/13: COPY --from=builder /out/desk-demo ./desk-demo
+--> Using cache 087dca64c896223c56ed47c2172ffd5a116211d034b6885216415d8f2df9ed15
+--> 087dca64c896
+[2/2] STEP 9/13: COPY --from=builder /out/desk-tests ./desk-tests
+--> b4d75e828dfa
+[2/2] STEP 10/13: COPY backend/migrations ./backend/migrations
+--> ccb3e509c486
+[2/2] STEP 11/13: COPY data ./data
+--> 43bf11cfff0b
+[2/2] STEP 12/13: EXPOSE 8080
+--> a294691a5680
+[2/2] STEP 13/13: CMD ["./catalogo-server"]
+[2/2] COMMIT catalogo-clean-test_api
+--> a1d4985e35b4
+Successfully tagged localhost/catalogo-clean-test_api:latest
+a1d4985e35b42084267d50ddcf676cddcc3ddff16be55b4b0e850387e5c0b18c
+2b56c9cf915ff59d8847c020683a8c3bba733843c96acebe8b17534b1ecafd25
+493ef27c0e25861498d8c8a69746396a925ba7df631e22cc3397ad18da3815cb
+276285523d0f9245755b9da43f6c03e78756e5012d0627838af5b6932763530b
+0bd5edc372e7fc7e19d0937458eda980492bad2b926316831ab13d3c9e5d1ee6
+catalogo-clean-test_db_1
+catalogo-clean-test_api_1
+catalogo-clean-test_frontend_1
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mDatos de demostración creados: organización, usuarios y tres asignaciones
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m=== RUN   TestSourceIntegrity
+    artifacts_test.go:33: PASS original hashes: catalogue, CMDB and assignment
+    artifacts_test.go:35: source tree not included in runtime, secret scan runs in image builder
+--- PASS: TestSourceIntegrity (0.00s)
+=== RUN   TestAttachmentTypes
+=== RUN   TestAttachmentTypes/nota.txt
+=== RUN   TestAttachmentTypes/evidencia.pdf
+=== RUN   TestAttachmentTypes/imagen.png
+=== RUN   TestAttachmentTypes/imagen.jpg
+=== RUN   TestAttachmentTypes/script.html
+=== RUN   TestAttachmentTypes/falso.txt
+=== RUN   TestAttachmentTypes/falso.pdf
+=== RUN   TestAttachmentTypes/virus.exe
+=== RUN   TestAttachmentTypes/../nota.txt
+=== RUN   TestAttachmentTypes/C:\nota.txt
+=== RUN   TestAttachmentTypes/nota__.txt
+--- PASS: TestAttachmentTypes (0.00s)
+    --- PASS: TestAttachmentTypes/nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/evidencia.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.png (0.00s)
+    --- PASS: TestAttachmentTypes/imagen.jpg (0.00s)
+    --- PASS: TestAttachmentTypes/script.html (0.00s)
+    --- PASS: TestAttachmentTypes/falso.txt (0.00s)
+    --- PASS: TestAttachmentTypes/falso.pdf (0.00s)
+    --- PASS: TestAttachmentTypes/virus.exe (0.00s)
+    --- PASS: TestAttachmentTypes/../nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/C:\nota.txt (0.00s)
+    --- PASS: TestAttachmentTypes/nota__.txt (0.00s)
+=== RUN   TestIndicatorIntervalsAndObjectives
+    indicators_test.go:24: P17 unión de pausas solapadas, pausa abierta, objetivo desconocido y frontera inclusiva
+--- PASS: TestIndicatorIntervalsAndObjectives (0.00s)
+=== RUN   TestIndicatorControlledCycles
+    indicators_test.go:57: P17 resolución 120-30=90, abierto 60-10=50 sin resolución ficticia, ciclo anterior conservado
+--- PASS: TestIndicatorControlledCycles (0.00s)
+=== RUN   TestApprovedEvidenceDoesNotChangeScope
+--- PASS: TestApprovedEvidenceDoesNotChangeScope (0.00s)
+=== RUN   TestIncidentBoundaries
+--- PASS: TestIncidentBoundaries (0.00s)
+=== RUN   TestEveryRouteAndInvalidJump
+--- PASS: TestEveryRouteAndInvalidJump (0.00s)
+=== RUN   TestDeviceCodes
+--- PASS: TestDeviceCodes (0.00s)
+=== RUN   TestProtectedAttachmentsIntegration
+    attachments_integration_test.go:116: A01 sin sesión, tercero, consulta y nota interna sin permiso rechazados
+    attachments_integration_test.go:141: A02 tipos falsos, rutas, vacíos y límites rechazados sin archivos residuales
+    attachments_integration_test.go:179: A03 descarga fiel, headers seguros, aislamiento por ticket, visibilidad interna y revocación comprobados
+    attachments_integration_test.go:182: A04 tamaño exacto de 10 MiB aceptado
+    attachments_integration_test.go:183: Adjunto persistente de prueba ticket_id=1 attachment_id=1
+--- PASS: TestProtectedAttachmentsIntegration (0.90s)
+=== RUN   TestAttachmentPersistenceCheck
+    attachments_integration_test.go:191: explicit persistence check only
+--- SKIP: TestAttachmentPersistenceCheck (0.00s)
+=== RUN   TestFinalAcceptance
+=== RUN   TestFinalAcceptance/P01_inactive_session
+=== RUN   TestFinalAcceptance/P02_reimport
+    final_integration_test.go:77: two imports, source counts 12/46, importer unit tests verify SE.12 and unknowns
+=== RUN   TestFinalAcceptance/CMDB_original_rows_and_readonly_review
+=== RUN   TestFinalAcceptance/P10_execution_without_approval_and_P15_empty_resolution
+=== RUN   TestFinalAcceptance/FAQ_publication_permissions_versions
+=== RUN   TestFinalAcceptance/P07_order_claim_audit
+=== RUN   TestFinalAcceptance/P05_inactive_references_and_derived_level
+=== RUN   TestFinalAcceptance/P16_query_plan
+    final_integration_test.go:315: dataset integration seed 202300644, active devices 5000
+    final_integration_test.go:322: Limit  (cost=66.13..131.35 rows=100 width=72) (actual time=0.076..0.120 rows=100.00 loops=1)
+    final_integration_test.go:322:   Buffers: shared hit=204
+    final_integration_test.go:322:   ->  Incremental Sort  (cost=0.90..949.31 rows=1454 width=72) (actual time=0.031..0.112 rows=200.00 loops=1)
+    final_integration_test.go:322:         Sort Key: code, id
+    final_integration_test.go:322:         Presorted Key: code
+    final_integration_test.go:322:         Full-sort Groups: 7  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
+    final_integration_test.go:322:         Buffers: shared hit=204
+    final_integration_test.go:322:         ->  Index Scan using configuration_items_code_key on configuration_items  (cost=0.28..883.88 rows=1454 width=72) (actual time=0.008..0.061 rows=201.00 loops=1)
+    final_integration_test.go:322:               Filter: is_active
+    final_integration_test.go:322:               Index Searches: 1
+    final_integration_test.go:322:               Buffers: shared hit=204
+    final_integration_test.go:322: Planning Time: 0.027 ms
+    final_integration_test.go:322: Execution Time: 0.134 ms
+=== RUN   TestFinalAcceptance/P11_concurrent_events
+=== RUN   TestFinalAcceptance/P04_concurrent_class_cycle
+    final_integration_test.go:389: cycle integrity verified, exact classroom taxonomy remains source-limited
+=== RUN   TestFinalAcceptance/P14_impact_service_and_depth
+=== RUN   TestFinalAcceptance/P15_audit_failure_rolls_back
+--- PASS: TestFinalAcceptance (1.33s)
+    --- PASS: TestFinalAcceptance/P01_inactive_session (0.06s)
+    --- PASS: TestFinalAcceptance/P02_reimport (0.09s)
+    --- PASS: TestFinalAcceptance/CMDB_original_rows_and_readonly_review (0.01s)
+    --- PASS: TestFinalAcceptance/P10_execution_without_approval_and_P15_empty_resolution (0.03s)
+    --- PASS: TestFinalAcceptance/FAQ_publication_permissions_versions (0.01s)
+    --- PASS: TestFinalAcceptance/P07_order_claim_audit (0.02s)
+    --- PASS: TestFinalAcceptance/P05_inactive_references_and_derived_level (0.59s)
+    --- PASS: TestFinalAcceptance/P16_query_plan (0.22s)
+    --- PASS: TestFinalAcceptance/P11_concurrent_events (0.03s)
+    --- PASS: TestFinalAcceptance/P04_concurrent_class_cycle (0.01s)
+    --- PASS: TestFinalAcceptance/P14_impact_service_and_depth (0.19s)
+    --- PASS: TestFinalAcceptance/P15_audit_failure_rolls_back (0.01s)
+=== RUN   TestIndicatorsIntegration
+    indicators_integration_test.go:137: P17 PostgreSQL: primera atención 30, resolución 90, objetivo histórico 90, ciclo nuevo 200, transferencia sin objetivo y pausa controlada
+--- PASS: TestIndicatorsIntegration (0.10s)
+=== RUN   TestServiceDeskIntegration
+    integration_test.go:57: PASS P01 consulta con roles elevados sigue sin escritura
+    integration_test.go:57: PASS P02 regresión de controles de origen 12/46
+    integration_test.go:57: PASS P04 padres y ciclos de clasificación rechazados
+    integration_test.go:57: PASS P03 5000 dispositivos y repetición idempotente
+    integration_test.go:57: PASS CRUD CI: crear, consultar, editar y baja lógica/reactivación
+    integration_test.go:57: PASS P14 dependencias y ciclos técnicos
+    integration_test.go:166: P16 tiempo consulta paginada 34.348701ms entorno: PostgreSQL aislado en laptop
+    integration_test.go:57: PASS P05 referencias y condición sin CI
+    integration_test.go:57: PASS P07 dos reclamaciones, un ganador
+    integration_test.go:57: PASS P08 transferencia e incompatibilidad de proceso
+    integration_test.go:57: PASS P06 ámbito y notas internas
+    integration_test.go:57: PASS P09 ruta completa nuevos
+    integration_test.go:57: PASS P09 ruta completa cambios
+    integration_test.go:57: PASS P15 cierre y reapertura con ciclos
+    integration_test.go:57: PASS P09 ruta completa incidentes
+    integration_test.go:57: PASS P09 ruta completa eventos
+    integration_test.go:57: PASS P09 ruta completa problemas
+    integration_test.go:57: PASS P09 ruta completa accesos
+    integration_test.go:57: PASS P09 ruta completa servicios
+    integration_test.go:57: PASS P13 incidente vinculado a problema y cambio
+    integration_test.go:57: PASS P10 autoaprobación admin rechazada
+    integration_test.go:57: PASS P11 E0–E3 y deduplicación
+    integration_test.go:57: PASS P01 HTTP sin sesión, consulta y logout
+--- PASS: TestServiceDeskIntegration (1.13s)
+PASS
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0mnginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+[4m>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m{"status":"ready"}

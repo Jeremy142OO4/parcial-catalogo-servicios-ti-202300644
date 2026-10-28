@@ -49,6 +49,8 @@ Preparar un clon y proyecto Compose separados con base/volúmenes y puertos dist
 
 ## Comandos y resultados
 
+Actualización de cierre: la [ejecución desde clon limpio](evidencias/service-desk-cierre.md) verifica el commit publicado `0b5b8c7`, con comparación de los 40 valores de origen, negativas explícitas P10/P15 y build con integridad de fuentes. Las salidas anteriores conservan su SHA y fecha, no se reescriben para atribuirlas a otro commit.
+
 El runner inicial nuevo es `bash scripts/service-desk-test.sh`, documentado en [API-SERVICE-DESK](API-SERVICE-DESK.md). Construye un entorno separado, aplica migraciones, ejecuta seed y pruebas del backend. La cobertura adicional pendiente se conserva en esta matriz. No ejecutar la suite histórica como si cubriera Service Desk.
 
 Por cada ejecución conservar: ID, comando exacto sin secretos, entrada/semilla, esperado, obtenido, salida stdout/stderr seleccionada, exit code, fecha y zona, SHA realmente probado, estado del worktree y entorno. P16 debe registrar tiempos observados y hardware, no umbrales de desempeño inventados como mediciones.
