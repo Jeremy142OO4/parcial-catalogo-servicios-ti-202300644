@@ -10,7 +10,7 @@ Las aprobaciones necesitan revisión vigente por ciclo. Se añadió reevaluate p
 
 ## Contratos implementados
 
-Consultar [API-SERVICE-DESK](../API-SERVICE-DESK.md) antes de editar: `tickets.details` JSONB reemplaza siete tablas de detalle propuestas, las rutas están en Go y roles usan code como PK. Mantener la API y documentación consistentes, no generar código contra nombres de tablas solo planeadas.
+Consultar [API-SERVICE-DESK](../PROCESOS.md#api) antes de editar: `tickets.details` JSONB reemplaza siete tablas de detalle propuestas, las rutas están en Go y roles usan code como PK. Mantener la API y documentación consistentes, no generar código contra nombres de tablas solo planeadas.
 
 CI con campos operativos válidos se distingue de filas originales de Excel capturadas para revisión. No completar referencias ausentes con datos sintéticos como si fueran originales. El generador se identifica como sintético y registra resumen por clase/ancestro.
 

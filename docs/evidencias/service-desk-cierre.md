@@ -9,7 +9,7 @@ Fecha: 28 de octubre de 2026, America/Guatemala. Este registro amplía la [verif
 - Negativas explícitas de cambio sin aprobación, resolución vacía y cierre sin confirmación, con actor de cierre registrado.
 - Build con hashes de originales y búsqueda heurística de claves privadas o tokens. Este control no es una auditoría completa de secretos.
 - Cuatro consultas web reales y dos mejoras comparadas en [013–016](../IA.md). Nueve registros de prompts de esta ampliación en total.
-- [Guía de defensa](../DEFENSA-SERVICE-DESK.md) y cuentas preparadas, sin subir diapositivas docentes ni mover `parcial-v2.0`.
+- [Guía de defensa](../../README.md) y cuentas preparadas, sin subir diapositivas docentes ni mover `parcial-v2.0`.
 
 ## Ejecuciones previas al commit
 

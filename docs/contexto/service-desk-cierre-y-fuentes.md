@@ -16,4 +16,4 @@ Las dos filas originales tienen referencias que requieren decisión humana antes
 
 El build ejecuta comprobación SHA-256 de los originales y una búsqueda heurística de patrones de claves privadas o tokens en el árbol fuente. No se presenta esa búsqueda como una auditoría completa de secretos. Se añadieron negativas explícitas de P10 y P15. La intervención SQL que prepara un cambio planificado sin aprobación es un fixture deliberadamente inconsistente, exclusivo de la base de pruebas.
 
-Se preparó la [guía de defensa](../DEFENSA-SERVICE-DESK.md) y se asociará la validación desde clon limpio al SHA real del código, sin inventar commits ni modificar el tag del parcial.
+Se preparó la [guía de defensa](../../README.md) y se asociará la validación desde clon limpio al SHA real del código, sin inventar commits ni modificar el tag del parcial.

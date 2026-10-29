@@ -89,7 +89,7 @@ Estos 120 tickets no son los 37 de defensa. Son residuos identificados de varias
 - [Persistencia antes y después](service-desk-persistencia-salida.txt).
 - [Conteos, cuentas y repetición de la demostración](service-desk-demo-salida.txt).
 - [Prompt y contexto de la implementación](../prompts/012-faq-demostracion-verificacion.md).
-- [Guía de demostración](../DEMOSTRACION-SERVICE-DESK.md).
+- [Guía de demostración](../../README.md#demo-completa-seis-cuentas-y-37-tickets).
 
 En navegador se inició sesión como solicitante, se abrió una respuesta publicada y se verificó la búsqueda `acceso`. Como administrador se abrió la edición de un artículo y se comprobó que cargara sus datos, cancelando sin modificar el contenido. También se abrió la consola con tickets `[DEMO]`. Las capturas son reales, no reconstrucciones de consola ni maquetas.
 

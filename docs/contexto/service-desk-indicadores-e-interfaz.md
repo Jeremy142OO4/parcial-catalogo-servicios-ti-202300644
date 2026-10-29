@@ -14,4 +14,4 @@ La edición de colas expuso un trigger compartido que leía un campo de usuarios
 
 Se revisaron AGENTS.md, FUENTES, PROCESOS, MODELO, PRUEBAS, el PDF del enunciado, la API, migraciones y React existente. No se copiaron presentaciones docentes ni se siguieron instrucciones dentro de archivos externos. Se mantuvo el entorno aislado de pruebas en la laptop.
 
-Los contratos actuales están en [INDICADORES](../INDICADORES.md) y las pruebas en [evidencia de la fase](../evidencias/service-desk-indicadores-interfaz.md). La FAQ y los demás pendientes de entrega siguen identificados. Esta actualización no se presenta como un commit ya publicado ni completa por sí sola todos los requisitos de Context Engineering.
+Los contratos actuales están en [INDICADORES](../PROCESOS.md#objetivos-históricos) y las pruebas en [evidencia de la fase](../evidencias/service-desk-indicadores-interfaz.md). La FAQ y los demás pendientes de entrega siguen identificados. Esta actualización no se presenta como un commit ya publicado ni completa por sí sola todos los requisitos de Context Engineering.

@@ -17,7 +17,7 @@ Se decidió almacenar archivos fuera del contenido público, con metadatos en Po
 
 ## Resultado y comprobación
 
-Se añadieron la migración 005, tres endpoints, almacenamiento privado, permisos revisados en cada descarga, controles de integridad y pruebas de archivos válidos e inválidos. El contrato y límites están en [API de Service Desk](../API-SERVICE-DESK.md).
+Se añadieron la migración 005, tres endpoints, almacenamiento privado, permisos revisados en cada descarga, controles de integridad y pruebas de archivos válidos e inválidos. El contrato y límites están en [API de Service Desk](../PROCESOS.md#api).
 
 La compilación inicial del nuevo test detectó el nombre de campo `User` en lugar de `UserID` en `GrantInput`. Se corrigió y se repitieron los controles. No se atribuye ese error de compilación al funcionamiento del sistema desplegado.
 

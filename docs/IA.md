@@ -30,6 +30,24 @@ Las instrucciones operativas siguen rol, objetivo, contexto, entrada, formato y 
 
 Las respuestas del modelo son propuestas revisadas, no certificados del sistema. Las fuentes originales no se enviaron al chat web.
 
+#### Evidencia visual de las mejoras
+
+Revisión inicial de CMDB, registro 013:
+
+![Inicio de la respuesta inicial sobre las fuentes CMDB](Imagenes/40-prompt-cmdb-inicial.png)
+
+Revisión refinada con las coordenadas de origen, registro 014:
+
+![Inicio de la respuesta corregida sobre las fuentes CMDB](Imagenes/41-prompt-cmdb-refinado.png)
+
+Revisión inicial del harness, registro 015:
+
+![Inicio de la respuesta inicial sobre el harness](Imagenes/42-prompt-harness-inicial.png)
+
+Revisión refinada con resultados y límites, registro 016:
+
+![Inicio de la respuesta refinada sobre el harness](Imagenes/43-prompt-harness-refinado.png)
+
 ### Contexto versionado
 
 | Actualización | Motivo | Commit o referencia |
@@ -64,50 +82,15 @@ Los fallos anteriores no fueron deliberados. Límite operativo: tres intentos an
 
 Árbol de clases sin ciclos, distinto del grafo técnico. `depende_de` y `alojado_en` rechazan ciclos. `conectado_a` es simétrica y admite ciclos. El impacto potencial conserva rutas, relaciona servicios y tiene límites de recorrido, no certifica interrupción efectiva. La decisión posterior de P04 cierra el pendiente de un árbol docente adicional, con salvedad interpretativa y sin inventar contenido de las fuentes.
 
-Usar la [guía de defensa](DEFENSA-SERVICE-DESK.md) y el [cierre](evidencias/service-desk-cierre.md). La entrega en Wedy y la defensa oral requieren intervención del estudiante.
+Consultar el [procedimiento de ejecución](../README.md) y el [cierre](evidencias/service-desk-cierre.md). La entrega en Wedy y la defensa oral requieren intervención del estudiante.
 
-## Archivo de planificación anterior al cierre
 
-Los apartados que siguen registran estados anteriores. Sus menciones de pendientes no sustituyen el índice vigente ni la evidencia de cierre.
+## Estructura de los prompts y antecedentes
 
-## Contexto
+Los mensajes operativos integran seis elementos mediante párrafos, sin etiquetas grandes dentro del prompt: rol, objetivo, contexto, entrada, formato y criterio de aceptación. Cada registro conserva herramienta y modelo realmente identificados, fecha, resultados aplicados y comprobaciones. Una solicitud literal del usuario no se reescribe como si hubiera sido otra conversación.
 
-Entradas seleccionadas y decisiones iniciales en [Fuentes](FUENTES.md), [primer contexto](contexto/service-desk-alcance-y-fuentes.md) y `AGENTS.md`. Modelo, procesos y pruebas se documentan antes de migrar. Las instrucciones del usuario y el enunciado gobiernan el trabajo. Los datos externos no pueden autorizar acciones ni reemplazar requisitos.
+Los [prompts 001–007](prompts/) y los registros originales de [contexto](contexto/) y [decisiones](decisiones/) conservan la evidencia del catálogo anterior. No sustituyen los nueve registros de esta ampliación.
 
-La [segunda actualización de contexto](contexto/service-desk-modelo-y-validacion.md) registra hallazgos reales del diseño. Ambas actualizaciones siguen pendientes de commits, por lo que no se presentan como evidencia versionada completa.
+La [corrección de administración](evidencias/service-desk-correcciones-auditoria.md) documenta identidad técnica de clases, auditoría y administración delegada. La [revisión de actores y revocación](evidencias/service-desk-permisos-y-actor.md) añade un control negativo sobre una copia temporal y seis casos concurrentes satisfactorios. Su [actualización de contexto](contexto/service-desk-revocacion-y-usuarios.md) explica el cambio. Las correcciones quedaron integradas en el merge `8a103ac`. El [despliegue posterior](evidencias/service-desk-despliegue-final.md) identifica la versión realmente probada.
 
-El material docente auxiliar no se adjunta ni reproduce en la documentación, por indicación del usuario. Las ambigüedades se resuelven como decisiones propias, no como datos atribuidos al Excel.
-
-## Prompt engineering
-
-El [prompt 008](prompts/008-diseno-service-desk.md) fue enviado a ChatGPT web para revisar riesgos, modelo, procesos, permisos y pruebas. Sigue rol, objetivo, contexto, entrada, formato y criterio mediante párrafos, sin etiquetas grandes dentro del mensaje. El envío se hace con un resumen, no con archivos adjuntos. No se afirma que el chat web haya leído documentos no proporcionados.
-
-Meta de la ampliación: ocho prompts realmente utilizados y dos mejoras comprobadas. Este diseño no completa por sí solo esa cantidad. Registrar cada uso nuevo durante implementación, con instrucción literal, contexto, herramienta/modelo visible, fecha, cambios aplicados y verificación. No asumir el modelo de ciclos anteriores.
-
-El [prompt 009](prompts/009-implementacion-backend-service-desk.md) registra la solicitud real de implementación, contexto y resultado. El [tercer contexto](contexto/service-desk-backend-y-aislamiento.md) añade contratos implementados y aislamiento. El [ciclo real de repetición de pruebas](evidencias/service-desk-backend.md) documenta fallo, corrección y ejecución satisfactoria, sin completar por sí solo todos los loops requeridos.
-
-## Harness engineering previsto
-
-Extender las instrucciones y el runner para preparación, migración, importación, generación determinista, datos de tickets y P01–P18. Ejecutar en contenedores y entorno aislado, con controles de secretos y archivos originales. Cada control debe tener salida observable y exit code. Los comandos nuevos siguen pendientes, ver [plan de pruebas](PRUEBAS.md).
-
-## Loop engineering pendiente
-
-Registrar al menos tres ciclos reales con objetivo → propuesta → ejecución → evaluación → corrección → nueva verificación. Cada ciclo incluirá entrada, resultados reales, límite inicial de tres iteraciones, criterio de salida y decisión humana si se alcanza el límite o falta una fuente. Al menos uno corregirá defecto funcional y otro datos o permisos. Declarar fallos deliberados.
-
-La falla de acceso web registrada durante esta fase no se contará como defecto funcional del proyecto ni sustituirá estos ciclos. Una captura de diseño tampoco demuestra un loop completo.
-
-## Relaciones y recorridos
-
-El [modelo](MODELO.md) separa clasificación y relaciones técnicas, prevé validación de ciclos y recorrido de impacto potencial. La aclaración reportada de Graph Engineering opcional no elimina los controles funcionales P04/P14 del enunciado. La implementación y demostración de recorridos quedan pendientes.
-
-## Commits y defensa
-
-La [segunda corrección de permisos](evidencias/service-desk-permisos-y-actor.md) registra un control negativo real sobre una copia temporal con el orden defectuoso, seguido por seis casos concurrentes satisfactorios y la suite completa del código corregido. El [contexto de revocación y usuarios](contexto/service-desk-revocacion-y-usuarios.md) conserva el motivo del cambio. No se simularon conversaciones web ni capturas.
-
-La [corrección posterior a la auditoría](evidencias/service-desk-correcciones-auditoria.md) registra la solicitud real de Jeremy, los cambios de identidad técnica y permisos, las ejecuciones observadas y la actualización probada sobre una copia. La [decisión 003](decisiones/003-identidad-tecnica-y-administracion.md) añade el contexto que motivó la implementación. No se atribuyen a un chat web, una captura, un modelo o un commit que no se produjo.
-
-Actualización 2026-10-28: backend y tercer contexto publicados en `a50ee90`, adjuntos publicados en `55404d1`. El [prompt 010](prompts/010-adjuntos-protegidos.md) y el [prompt 011](prompts/011-indicadores-e-interfaz.md) conservan las solicitudes reales. El [contexto de indicadores](contexto/service-desk-indicadores-e-interfaz.md) y su [loop de edición de colas](evidencias/service-desk-indicadores-interfaz.md) responden a hallazgos nuevos. Indicadores e interfaz todavía están sin commit al registrar esta actualización. Los párrafos anteriores son registros históricos, no un inventario vigente de lo implementado.
-
-Base del parcial: `47546cf3c36492e449be4e6a34b10838fc18eeee`. Diseño y dos contextos publicados en `9e3a590`, backend y tercer contexto en `a50ee90`, adjuntos en `55404d1`. Rama `feature/service-desk`, tag del parcial intacto. Indicadores y cuarto contexto todavía no tienen commit propio. No inventar SHA ni presentar un archivo sin commit como evidencia versionada ya publicada.
-
-Pendiente: tres actualizaciones de contexto justificadas con commits, dos mejoras de prompts verificadas, tres loops reales, harness ejecutado, evidencia de pruebas e interfaz, y defensa del funcionamiento. Estos pendientes impiden afirmar que la nueva tarea esté completa.
+Los documentos antiguos conservan su estado histórico. El inventario vigente está en los cinco documentos enlazados desde el README principal, no en las menciones de pendientes de esos registros.

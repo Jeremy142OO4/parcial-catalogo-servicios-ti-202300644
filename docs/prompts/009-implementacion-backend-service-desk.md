@@ -24,7 +24,7 @@ Salida esperada: migración incremental, módulos Go, endpoints HTTP, generador 
 
 ## Resultado y evaluación
 
-Se implementaron los componentes descritos en [API de Service Desk](../API-SERVICE-DESK.md). La [evidencia del backend](../evidencias/service-desk-backend.md) incluye entorno, comandos, cobertura y fallo real de repetición corregido. La [salida del contenedor](../evidencias/service-desk-backend-salida.txt) es el resultado real de la suite.
+Se implementaron los componentes descritos en [API de Service Desk](../PROCESOS.md#api). La [evidencia del backend](../evidencias/service-desk-backend.md) incluye entorno, comandos, cobertura y fallo real de repetición corregido. La [salida del contenedor](../evidencias/service-desk-backend-salida.txt) es el resultado real de la suite.
 
 Se ajustó el diseño: detalles por proceso en JSONB con guardas distintas, estados con FK compuesta y rutas en Go, roles con clave de código. No se afirma que las tablas previstas de detalles 1:1 hayan sido creadas. No hay interfaz nueva, adjuntos ni indicadores completos en esta fase.
 

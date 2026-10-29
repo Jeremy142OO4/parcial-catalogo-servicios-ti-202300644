@@ -4,9 +4,9 @@
 
 Construir un sistema web para administrar el catálogo de servicios de TI, la estructura organizacional, los usuarios y las asignaciones de responsables.
 
-La ampliación Service Desk incorpora tickets, colas, procesos y CMDB sin sustituir la base del parcial. Antes de implementar, leer `docs/FUENTES.md` y `docs/contexto/service-desk-alcance-y-fuentes.md`. El estado documental actual no demuestra funcionalidad nueva implementada.
+La ampliación Service Desk incorpora tickets, colas, procesos y CMDB sin sustituir la base del parcial. Antes de implementar, leer `docs/MODELO.md` y `docs/contexto/service-desk-alcance-y-fuentes.md`. Consultar resultados observados y limitaciones en `docs/PRUEBAS.md`.
 
-El diseño previo está en `docs/MODELO.md`, `docs/PROCESOS.md` y `docs/PRUEBAS.md`. Las decisiones complementarias allí descritas son del proyecto, no atributos inventados del Excel. El registro de IA está en `docs/IA.md` y el prompt web real en `docs/prompts/008-diseno-service-desk.md`.
+La documentación vigente está en `docs/MODELO.md`, `docs/PROCESOS.md` y `docs/PRUEBAS.md`. Las decisiones complementarias allí descritas son del proyecto, no atributos inventados del Excel. El registro de IA está en `docs/IA.md` y el prompt web real en `docs/prompts/008-diseno-service-desk.md`.
 
 ## Arquitectura acordada
 
@@ -42,7 +42,7 @@ El diseño previo está en `docs/MODELO.md`, `docs/PROCESOS.md` y `docs/PRUEBAS.
 
 ## Ampliación Service Desk
 
-- Conservar el tag `parcial-v2.0`. Desarrollar la ampliación en `feature/service-desk`.
+- Conservar el tag `parcial-v2.0`. La ampliación fue integrada en `main`, conservar la historia de `feature/service-desk`.
 - El enunciado y Excel nuevos están en `data/fuentes-service-desk/`. Conservar sus bytes originales y el catálogo existente. No copiar ni reproducir las presentaciones docentes en el repositorio o su documentación, por indicación del usuario.
 - Distinguir requisitos escritos, aclaraciones reportadas por el usuario y decisiones propias. No atribuir a la grabación una verificación que no se realizó.
 - No confundir organización, clasificación de CI y relaciones técnicas. El Excel no enumera una clasificación completa de dispositivos.

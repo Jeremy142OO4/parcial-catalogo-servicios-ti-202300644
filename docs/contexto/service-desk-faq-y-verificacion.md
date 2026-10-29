@@ -14,6 +14,6 @@ Nota posterior: la reserva de P04 descrita en este registro histórico se resolv
 
 ## Resultados y límites
 
-La [guía de demostración](../DEMOSTRACION-SERVICE-DESK.md) contiene cuentas, flujo y recibo 37/7/5000/8. La [verificación final](../evidencias/service-desk-final.md) recoge resultados de cada ID, mediciones y reinicio. Se conservaron dos observaciones de mejora: medición SQL prematura y fixture de relaciones no repetible. La salida fallida no se sustituyó por texto inventado.
+La [guía de demostración](../../README.md#demo-completa-seis-cuentas-y-37-tickets) contiene cuentas, flujo y recibo 37/7/5000/8. La [verificación final](../evidencias/service-desk-final.md) recoge resultados de cada ID, mediciones y reinicio. Se conservaron dos observaciones de mejora: medición SQL prematura y fixture de relaciones no repetible. La salida fallida no se sustituyó por texto inventado.
 
 Esta actualización existe en el worktree y aún no constituye un commit adicional. No se modifica el tag histórico ni se afirma haber hecho push en esta fase.

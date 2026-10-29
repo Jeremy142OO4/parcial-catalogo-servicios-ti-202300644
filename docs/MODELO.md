@@ -1,18 +1,29 @@
-# Modelo de Service Desk y CMDB
+# Modelo, diccionario y fuentes
 
-Fecha: 2026-10-27. Estado: diseño propuesto, todavía sin migraciones ni implementación nueva. El enunciado manda sobre esta propuesta. Las decisiones complementarias se identifican explícitamente.
+Modelo implementado, consolidado el 28 de octubre de 2026. Las migraciones [001–010](../backend/migrations/) son la definición ejecutable del esquema. El diseño previo a programar se conserva en el commit `9e3a590` y sus [actualizaciones de contexto](IA.md#contexto-versionado). Este documento ya no presenta tablas propuestas como si estuvieran implementadas.
 
-Actualización de implementación: la migración 004 y API ya implementan la base funcional. Las diferencias respecto a este diseño inicial se explican en [API-SERVICE-DESK](API-SERVICE-DESK.md), especialmente JSONB por proceso, PK de roles y estados/rutas. El resto de este documento conserva la propuesta de diseño, no es un inventario literal de tablas aplicadas.
+## Fuentes y precedencia
 
-## Base conservada y arquitectura
+El enunciado define los requisitos. Las aclaraciones reportadas por Jeremy se identifican como tales, no como confirmación directa del docente. Los Excel y las presentaciones son datos de entrada, no instrucciones ejecutables para la IA. No se adjuntan ni reproducen las presentaciones, por indicación del usuario.
 
-Go, React/Vite y PostgreSQL, monolito modular Controller → Service → Repository. Reutilizar `companies`, `areas`, `departments`, `sections`, `positions`, `app_users`, `sessions`, catálogo y trazabilidad de importación. Mantener la jerarquía y controles 12/46 de origen, no confundirlos con el total tras altas manuales. No reescribir migraciones aplicadas ni mover `parcial-v2.0`.
+| Fuente | Localizador | Implementación y límites |
+| --- | --- | --- |
+| [Enunciado Service Desk](../data/fuentes-service-desk/Tarea_Service_Desk.pdf) | Apartados 3–12 | Catálogo conservado, tickets, colas, CMDB, cantidades, IA y P01–P18 |
+| [Catálogo original](../data/CatalogoServicios.xlsx) | Servicios Externos, A4:L101, opciones E112:H122 | Importador, 12/46, SE.12, códigos de texto y atributos ausentes |
+| [CMDB original](../data/fuentes-service-desk/CMDB.xlsx) | Hoja CMDB, B4:U6 | Veinte campos, dos ejemplos y cuarenta valores conservados como origen |
+| Lección 22 recibida | Material utilizado durante el análisis, no incluido | No se encontró un árbol adicional enumerado. Ver decisión P04 |
+| Lección 25, Service Desk | Categorías, tipos y niveles descritos en el enunciado | Mapeos de eventos, incidentes y soporte en [PROCESOS](PROCESOS.md) |
+| Parcial anterior | Implementación y documentación conservadas, tag `parcial-v2.0` | Su PDF original no está incluido. No afirmar que existe una copia en el repositorio |
 
-Módulos nuevos previstos: identidad y permisos ampliados, CMDB, tickets, flujos, colas, conocimiento, indicadores y datos de demostración. Las transacciones coordinan repositorios desde servicios, no desde handlers.
+| Original | SHA-256 |
+| --- | --- |
+| CatalogoServicios.xlsx | `de3b478a5faeeeaebce1aa7726e0e3321188a68e41bbb656e1d17b0c5b74dcf0` |
+| CMDB.xlsx | `d182796bb40b492be2cb87e2c5fe19a8f910f2e754183dc48b5e89bd360464dc` |
+| Tarea_Service_Desk.pdf | `0a36d768f0ef305334b4f56ad65e8dda1be0410f6f6e636254ba0090ec29396e` |
 
-## Diagrama de relaciones principales
+`TestSourceIntegrity` verifica esos bytes. La [decisión de importación](decisiones/001-reglas-importacion-catalogo.md) conserva las reglas del catálogo y el [diccionario base](decisiones/diccionario-y-mapeo.md) detalla las columnas A–L y las tablas originales.
 
-Diagrama previo a programar. Las tablas de detalle y soporte se describen en el diccionario.
+## Diagrama entidad-relación
 
 ```mermaid
 erDiagram
@@ -23,127 +34,156 @@ erDiagram
   positions ||--o{ app_users : ocupa
   app_users ||--o{ user_roles : tiene
   roles ||--o{ user_roles : asigna
+  app_users ||--o{ sessions : autentica
+  services_level1 ||--o{ services_level2 : agrupa
+  services_level2 ||--o| service_assignments : asigna
+  sections ||--o{ service_assignments : recibe
   processes ||--o{ queues : clasifica
   queues ||--o{ queue_grants : autoriza
-  services_level1 ||--o{ services_level2 : agrupa
-  services_level2 ||--o{ tickets : contextualiza
-  processes ||--o{ tickets : gobierna
   queues ||--o{ tickets : recibe
+  services_level2 ||--o{ tickets : contextualiza
   app_users ||--o{ tickets : solicita
   tickets ||--o{ ticket_history : audita
   tickets ||--o{ ticket_comments : comenta
   tickets ||--o{ ticket_attachments : documenta
-  tickets ||--o{ ticket_approvals : requiere
+  tickets ||--o{ ticket_approvals : decide
+  tickets ||--o{ ticket_cycles : conserva
+  ticket_cycles ||--o{ ticket_objective_segments : mide
   tickets ||--o{ ticket_ci : afecta
   tickets ||--o{ ticket_links : relaciona
-  ci_classes ||--o{ ci_classes : padre
+  ci_classes o|--o{ ci_classes : padre
   ci_classes ||--o{ configuration_items : clasifica
   locations ||--o{ configuration_items : ubica
   configuration_items ||--o{ ticket_ci : vincula
   configuration_items ||--o{ ci_relations : origen
+  configuration_items ||--o{ ci_relations : destino
   configuration_items ||--o{ ci_services : soporta
   services_level2 ||--o{ ci_services : utiliza
+  faq_articles ||--o{ faq_history : versiona
 ```
 
-## Convenciones del diccionario
+## Diccionario implementado
 
-PK nuevas: `bigint identity`, salvo tablas puente con PK compuesta. Referencias: FK explícitas con borrado RESTRICT de datos funcionales e históricos. Fechas de acciones: `timestamptz` en UTC. Fechas del Excel: `date` nullable. Cadenas obligatorias no vacías tras trim. Ausencia no equivale a cero. `created_at`, `updated_at` e `is_active` en entidades mantenibles, sin eliminar su historial. Las tablas de historial son de inserción y consulta, sin edición desde la aplicación.
+PK `bigint identity` salvo códigos o puentes con claves compuestas. Acciones usan `timestamptz`, fechas fuente usan `date` cuando corresponde. `NULL` representa ausencia, no cero. Las FK conservan relaciones históricas, sin borrado funcional en cascada. Los detalles por proceso son JSONB validado en Go.
 
-### Identidad, colas y flujos
-
-| Entidad prevista | Campos y relaciones principales | Restricciones |
+| Tabla | Campos principales y tipos | Claves y reglas |
 | --- | --- | --- |
-| `roles` | id, code text, name | code único, admin, consulta, solicitante, agente, aprobador |
-| `user_roles` | user_id FK app_users, role_id FK roles | PK compuesta, migrar roles actuales sin pérdida |
-| `processes` | id, code, name, ticket_type, subtype | siete códigos únicos, mapeo en PROCESOS |
-| `support_levels` | id, code, name, rank, next_level_id FK propia | code/rank únicos, ruta sin ciclos |
-| `queues` | id, code, name, description, process_id FK, support_level_id FK, ordering_rule, first_response_minutes, resolution_minutes, calendar_mode | código único, un proceso obligatorio, objetivos positivos o NULL, orden validado |
-| `queue_grants` | id, queue_id FK, user_id FK nullable, role_id FK nullable, can_read, can_handle, can_transfer, can_approve, can_admin | exactamente un sujeto usuario o rol por fila, unicidad por sujeto y cola |
-| `workflow_states` | id, process_id FK, code, terminal, pauses_clock | único process/code |
-| `workflow_transitions` | id, process_id, from_state_id, to_state_id, action, required_permission, guard_code | FK compuestas para mantener proceso, regla validada en Service |
+| `roles` | code y name TEXT | PK code, cinco roles |
+| `user_roles` | user_id BIGINT, role_code TEXT | PK compuesta, FK usuario/rol |
+| `processes` | code, name, ticket_type TEXT | PK code, siete procesos y seis tipos |
+| `support_levels` | level INTEGER, name TEXT | PK level, valores 0–4 |
+| `queues` | id BIGINT, code/name/description/process_code TEXT, support_level INTEGER, ordering_rule TEXT, objetivos INTEGER nullable, is_active BOOLEAN | Código único, FK proceso/nivel, objetivos positivos, orden `priority_created_id` |
+| `queue_grants` | queue_id/user_id BIGINT, role_code TEXT, cinco flags BOOLEAN | Exactamente un sujeto por fila, unicidad de usuario o rol en cada cola |
+| `workflow_states` | process_code y code TEXT | PK compuesta. Las transiciones se validan en Go, no existe tabla editable de transiciones |
+| `tickets` | id BIGINT, number/title/description TEXT, requester_id/creator_id/service_level2_id/queue_id/assignee_id BIGINT, process_code/state TEXT, priority INTEGER, impact/urgency/channel TEXT, details JSONB, resolution/no_ci_reason TEXT nullable, version BIGINT, cycle INTEGER, fechas TIMESTAMPTZ | Número único, FK compuestas proceso/cola y proceso/estado, prioridad 1–3. Nivel 1 derivado del servicio |
+| `ticket_history` | ticket_id/actor_id BIGINT, action/reason TEXT, occurred_at TIMESTAMPTZ, before_value/after_value JSONB | Historial sin edición desde la aplicación, atómico con la acción |
+| `ticket_comments` | ticket_id/author_id BIGINT, body/visibility TEXT, created_at TIMESTAMPTZ | Visibilidad public/internal, cuerpo no vacío |
+| `ticket_attachments` | ticket_id/uploader_id BIGINT, original_name/storage_key/mime_type/sha256/visibility TEXT, byte_size BIGINT | Clave privada única, de 1 byte a 10 MiB, integridad y autorización en descarga |
+| `ticket_approvals` | ticket_id/approver_id BIGINT, cycle INTEGER, decision/reason TEXT, decided_at TIMESTAMPTZ | Una decisión por ticket/ciclo, autoaprobación de accesos rechazada |
+| `ticket_links` | source_id/target_id BIGINT, kind TEXT | PK compuesta, sin autorrelación, tipo de vínculo controlado |
+| `ticket_ci` | ticket_id/ci_id BIGINT | PK compuesta, no duplicar asociación |
+| `ticket_cycles` | ticket_id BIGINT, cycle INTEGER, started_at/resolved_at/closed_at TIMESTAMPTZ, resolution TEXT | PK ticket/cycle, conserva ciclos anteriores |
+| `ticket_pauses` | ticket_id BIGINT, started_at/ended_at TIMESTAMPTZ, reason TEXT | Fin no anterior al inicio, una pausa abierta por ticket |
+| `ticket_objective_segments` | ticket_id/queue_id BIGINT, cycle INTEGER, started_at/ended_at TIMESTAMPTZ, objetivos INTEGER nullable, source TEXT | FK al ciclo, una permanencia abierta, snapshot o historical_unknown |
+| `event_incidents` | event_ticket_id/incident_ticket_id BIGINT | PK del evento, una vinculación por evento |
+| `notifications` | ticket_id/recipient_id BIGINT, message/dedup_key TEXT, created_at TIMESTAMPTZ | Deduplicación y acceso por destinatario |
+| `ci_classes` | id BIGINT, code/name TEXT, parent_id BIGINT nullable, is_device_class/is_active BOOLEAN, technical_profile TEXT nullable | Padre activo y sin ciclos. Código editable, perfil reservado único e inmutable |
+| `locations` | id BIGINT, code/name TEXT, is_active BOOLEAN | Código único |
+| `configuration_items` | id/class_id/location_id/owner_user_id BIGINT, code/name/status TEXT, campos fuente opcionales, technical_attributes JSONB, is_device/is_active/review_required BOOLEAN, dataset_key TEXT, seed BIGINT, fechas TIMESTAMPTZ | Código único, referencias operativas válidas, atributos por perfil, no IP obligatoria universal |
+| `ci_relation_types` | code TEXT, allows_cycles/propagates_impact BOOLEAN | PK code, tres tipos técnicos |
+| `ci_relations` | source_ci_id/target_ci_id BIGINT, kind TEXT | Unicidad del vínculo, sin autorrelación, ciclos según tipo |
+| `ci_services` | ci_id/service_level2_id BIGINT | PK compuesta |
+| `ci_changes` | ci_id/actor_id BIGINT, occurred_at TIMESTAMPTZ, description TEXT, before_value/after_value JSONB | Incluye cambios de relaciones y servicios, sin actor inventado |
+| `source_records` | source_file/sha256/sheet TEXT, source_row INTEGER, raw_values/observations JSONB | Único hash/hoja/fila. No crea automáticamente CI operativos |
+| `generation_runs` | dataset_key/generator_version TEXT, seed BIGINT, requested_count/actual_count INTEGER, summary JSONB, finished_at TIMESTAMPTZ | Una fila por ejecución, incluso al repetir el conjunto |
+| `faq_articles` | slug/title/body TEXT, process_code TEXT y service_level2_id BIGINT opcionales, is_published/is_active BOOLEAN, version BIGINT, actores y fechas | Slug único, versión vigente y publicación explícita |
+| `faq_history` | article_id/actor_id BIGINT, occurred_at TIMESTAMPTZ, before_value/after_value JSONB | Historial inmutable y transaccional |
+| `demo_tickets` | dataset_key/case_key TEXT, ticket_id BIGINT, prepared_at TIMESTAMPTZ | PK compuesta, ticket único, no reiniciar casos preparados |
+| `administration_history` | actor_id BIGINT nullable, origin/entity_table/action TEXT, occurred_at TIMESTAMPTZ, snapshots JSONB | Evidencia independiente de una entidad eliminable, rechaza modificación y truncado. Usuarios sin password_hash |
 
-Ampliación de roles: reemplazar el CHECK limitado a admin/consulta de forma compatible. Durante transición, evitar dos fuentes de permisos contradictorias. La API y la interfaz deben migrar juntas a roles múltiples. Consulta es una restricción efectiva de solo lectura aunque se combine con otros roles o grants. Ver política en PROCESOS.
+No existen `ci_documents`, tablas 1:1 de detalles por proceso, `role_id`, `process_id` o `state_id` del diseño preliminar. La implementación usa códigos textuales, `tickets.details` y preservación de los documentos fuente en `source_records`.
 
-### Tickets y trazabilidad
+## Mapeo de los veinte campos CMDB
 
-| Entidad prevista | Campos y relaciones principales | Restricciones |
+Hoja CMDB, encabezados B4:U4 y ejemplos filas 5–6. Todos los valores originales permanecen en `raw_values`, con coordenadas y SHA-256. La columna destino describe la correspondencia operativa, no una importación automática de las dos filas ambiguas.
+
+| Columna | Campo original | Correspondencia y tratamiento |
 | --- | --- | --- |
-| `tickets` | id, number text, title, description, requester_id y creator_id FK app_users, service_level2_id FK, process_id FK, type, subtype, queue_id FK, assignee_id FK nullable, state_id FK, priority, impact, urgency, channel, resolution text nullable, no_ci_reason text nullable, version bigint, first_attended_at, resolved_at, closed_at | number único generado por secuencia, cola/estado del mismo proceso, cierre con resolución o motivo de rechazo, versión para concurrencia |
-| `ticket_history` | id, ticket_id FK, actor_id FK, action, occurred_at, before jsonb, after jsonb, reason, correlation_id | solo inserción, cambio e historial en misma transacción |
-| `ticket_comments` | id, ticket_id FK, author_id FK, body, visibility public/internal, created_at | notas internas fuera de respuestas al solicitante |
-| `ticket_attachments` | id, ticket_id FK, uploader_id FK, original_name, storage_key, mime_type, byte_size, sha256, visibility, created_at | Implementado en migración 005 con storage_key único y tamaño de 1 byte a 10 MiB. La asociación opcional a comentarios del diseño inicial no está implementada |
-| `ticket_ci` | ticket_id FK, ci_id FK | PK compuesta, no duplicar vínculo |
-| `ticket_links` | id, source_id y target_id FK tickets, kind | no autorrelación, único source/target/kind, tipos controlados y orientación documentada |
-| `ticket_approvals` | id, ticket_id FK, cycle integer, approver_id FK, decision, reason, decided_at | aprobación específica del ciclo actual, accesos con aprobador distinto del solicitante |
-| `ticket_pauses` | id, ticket_id FK, started_at, ended_at nullable, reason, actor_id FK | fin >= inicio, una pausa abierta por ticket |
-| `ticket_cycles` | id, ticket_id FK, cycle_no, started_at, resolved_at nullable, closed_at nullable | único ticket/cycle, conserva ciclos al reabrir |
-| `ticket_objective_segments` | id, ticket_id, cycle, queue_id, started_at, ended_at, first_response_minutes, resolution_minutes, source | Implementado en 006. FK al ciclo, objetivos positivos o NULL y un tramo abierto por ticket. Histórico anterior marcado como desconocido |
-| `event_incidents` | event_ticket_id PK/FK tickets, incident_ticket_id FK tickets | una asociación automática por evento, validación de procesos |
-| `notifications` | id, ticket_id FK, recipient_id FK, kind, dedup_key, read_at nullable | dedup_key única, autorización de lectura |
+| B | Nombre del CI | `configuration_items.name` |
+| C | Tipo de CI | Clasificación, Hardware y Software originales |
+| D | Descripción | `description` opcional |
+| E | Número de serie | `serial_number` opcional |
+| F | Versión | `version` opcional |
+| G | Fecha de adquisición | `acquired_on` nullable, valor fuente conservado |
+| H | Estado actual | `status`, sin inventar estado fuente ausente |
+| I | Relaciones | Referencias por resolver antes de crear vínculos |
+| J | Padres/hijos | No inferir automáticamente clasificación ni propagación |
+| K | Ubicación física | `location_id` solo al resolver la referencia |
+| L | Propietario/responsable | `owner_user_id` solo al resolver el texto fuente |
+| M | Fecha del cambio | Dato histórico original, sin inventar actor o fecha de aplicación |
+| N | Descripción del cambio | Dato histórico original, distinto de una acción nueva |
+| O | Documentación relacionada | Texto de origen, `(url)` es un marcador, no un adjunto |
+| P | Enlaces a incidentes/problemas | Texto de origen hasta resolver tickets reales |
+| Q | Nivel de seguridad | `security_level` opcional |
+| R | Cumplimiento | `compliance` opcional |
+| S | Estado de configuración | `configuration_status`, encabezado defectuoso preservado en origen |
+| T | Número de licencia | `license_number` opcional |
+| U | Vencimiento | `license_expires_on` opcional |
 
-Nivel 1 siempre derivado desde el servicio nivel 2, no una FK editable independiente. Para nuevos servicios, vincular la solicitud a un nivel 2 existente usado como contexto y registrar `proposed_service_name` y `result_service_id` separado. No crear un servicio ficticio antes de aprobación. Si no existe un servicio de contexto válido, se necesita decisión humana en vez de inventarlo.
+Campos añadidos por el proyecto: código único operativo, ID, FK de clasificación/ubicación/responsable, `technical_profile`, indicadores administrativos, atributos técnicos JSONB, dataset, semilla y auditoría. No se atribuyen al Excel. `Base de Datos1` no tiene un CI correspondiente y `Servidor1` en K6 no demuestra por sí solo un alojamiento. Se conservan esas ambigüedades sin fabricar entidades.
 
-Detalles por proceso en tablas 1:1 con PK/FK ticket_id: `new_service_details` (necesidad, viabilidad, propuesta, result_service_id), `change_details` (impacto, riesgo, planificación, plan de pruebas, reversión, resultado de ejecución y validación), `incident_details` (categoría, interrupción/degradación, duraciones estimada y real nullable, redundancia nullable, solución), `event_details` (E0–E3, external_key única nullable, evaluación), `problem_details` (causa raíz, workaround, known_error, solución definitiva), `access_details` (beneficiary_id FK, recurso, permiso, grant/revoke, evidencia), `fulfillment_details` (petición, validación, cumplimiento, confirmación).
+## Jerarquía y grafo técnico
 
-### CMDB
+```text
+Hardware                         ← C5 del Excel
+├── Servidor                     ← diseño propio
+├── Equipo de usuario            ← diseño propio
+├── Red                          ← diseño propio
+├── Impresión                    ← diseño propio
+├── Almacenamiento               ← diseño propio
+└── Energía                      ← diseño propio
+Software                         ← C6 del Excel
+```
 
-| Entidad prevista | Campos y relaciones principales | Restricciones |
-| --- | --- | --- |
-| `ci_classes` | id, code, name, parent_id FK propia nullable, allowed_attributes jsonb, is_device_class | code único, padre activo, no autorreferencia ni ciclos indirectos |
-| `locations` | id, code, name, description | código único, registros sintéticos identificados |
-| `configuration_items` | id, code, name, class_id FK, description, serial_number nullable, version nullable, acquired_on date nullable, status, location_id FK, owner_user_id FK, security_level nullable, compliance nullable, configuration_status nullable, license_number nullable, license_expires_on nullable, technical_attributes jsonb, is_device boolean, review_required, dataset_key nullable, seed nullable | código único, clase activa, atributos según clase, ninguna IP universalmente obligatoria |
-| `ci_relations` | id, source_ci_id FK, target_ci_id FK, relation_type_id FK | no autorrelación, único origen/destino/tipo, ciclos según tipo |
-| `ci_relation_types` | id, code, name, allows_cycles, propagates_impact | code único, reglas no editables sin revalidar relaciones |
-| `ci_services` | ci_id FK, service_level2_id FK | PK compuesta |
-| `ci_changes` | id, ci_id FK, actor_id FK nullable para importado, occurred_at nullable, description, before/after jsonb, source_ref | historia importada sin inventar actor, acciones nuevas con actor |
-| `ci_documents` | id, ci_id FK, title, url, source_ref, is_placeholder | URL validada, placeholders no convertidos en adjuntos descargables |
-| `source_records` | id, source_file, sha256, sheet, row_start/end, range, raw_values jsonb, normalized_values jsonb, observations jsonb, target_kind/id nullable | conservar origen y transformaciones, resolver destino en Service |
-| `generation_runs` | id, dataset_key, seed bigint, generator_version, requested_count, actual_count, status, started_at, finished_at, summary jsonb | único dataset/seed/version para conjunto determinista, ejecuciones repetidas trazables |
-| `faq_articles` | id, slug único, title, body, process_code y service_level2_id FK nullable, is_published, is_active, version, created_by y updated_by FK | migración 008, publicadas activas visibles con sesión, sin notas privadas |
-| `faq_history` | article_id FK, actor_id FK, before_value, after_value, occurred_at | historial inmutable, misma transacción que el artículo |
-| `demo_tickets` | dataset_key y case_key PK, ticket_id FK único, prepared_at | 37 casos estables, repetición sin duplicación ni reinicio |
+La [decisión P04](decisiones/002-interpretacion-cmdb-p04.md) conserva la aclaración reportada por Jeremy y la salvedad del enunciado. No se afirma que las seis subclases sean una transcripción docente. Software no integra el conteo de dispositivos. El árbol no sustituye ni reutiliza la organización empresarial.
 
-Los campos operativos obligatorios agregados no deben forzar valores inventados en los dos ejemplos. Importarlos primero a `source_records` con revisión cuando no se pueda resolver clasificación, ubicación o responsable. Los 5,000 dispositivos sintéticos sí cumplen todas las referencias. Los ejemplos no se cuentan como dispositivos válidos hasta resolver sus faltantes.
+| Relación | Orientación | Ciclos | Impacto potencial |
+| --- | --- | --- | --- |
+| `depende_de` | Origen depende de destino | Rechazados | Sí, recorrer de destino a dependientes |
+| `alojado_en` | Origen alojado en destino | Rechazados | Sí |
+| `conectado_a` | Par simétrico normalizado por ID | Permitidos | No se propaga por este tipo |
 
-## Mapeo del Excel CMDB
+El recorrido conserva rutas, usa límite de profundidad 32 y máximo de resultados y avisa de truncamiento. Un camino no demuestra una interrupción efectiva. La edición de una relación existente tiene el [pendiente conocido](RESOLUCION.md#8-limitaciones-y-entrega-externa) de falso positivo en algunos cambios.
 
-Hoja CMDB, encabezados B4:U4, ejemplos filas 5–6. Conservar valores originales y espacios/codificación en `source_records`, aplicar trim solo a versión normalizada. No alterar el archivo.
+## Generación e índices
 
-| Columna | Campo original | Destino propuesto |
-| --- | --- | --- |
-| B | Nombre del CI | configuration_items.name |
-| C | Tipo de CI | ci_classes, mapeo Hardware/Software conservado |
-| D | Descripción | configuration_items.description |
-| E | Número de Serie | serial_number nullable |
-| F | Versión | version nullable |
-| G | Fecha de Adquisición | acquired_on, error de parseo como observación |
-| H | Estado Actual | status, catálogo controlado sin inventar etiquetas fuente |
-| I | Relaciones | ci_relations solo al resolver referencias, conservar texto si no |
-| J | Padres/Hijos | revisión de naturaleza del vínculo antes de importarlo, no inferir clasificación |
-| K | Ubicación Física | location_id o propuesta de relación alojado_en pendiente de revisión |
-| L | Propietario/Responsable | owner_user_id al resolver, conservar equipo textual de origen |
-| M | Fecha de Cambio | ci_changes.occurred_at, fecha fuente |
-| N | Descripción del Cambio | ci_changes.description |
-| O | Documentación relacionada | ci_documents, marcador `(url)` identificado |
-| P | Enlaces a Incidentes y Problemas | ticket_ci solo al resolver tickets, marcador conservado |
-| Q | Niveles de Seguridad | security_level |
-| R | Cumplimiento | compliance |
-| S | Estado de Configuraci√≥n | configuration_status, normalización de encabezado registrada |
-| T | N√∫mero de Licencia | license_number nullable, corrección de encabezado registrada |
-| U | Fecha de Vencimiento | license_expires_on nullable |
+Versión `v1`: el código de cada dispositivo es `CI-` más los primeros 12 bytes del SHA-256 de versión/dataset/semilla/ordinal. La carga usa `ON CONFLICT(code) DO NOTHING`, no reemplaza ediciones. Los seis perfiles se ordenan de forma estable y distribuyen por ordinal. Cada ejecución conserva sus conteos por clase y ancestro en `generation_runs`.
 
-Campos añadidos por la tarea/proyecto: id, code, auditoría, dataset/seed, ubicación y responsable referenciados, indicador de dispositivo, metadatos de clasificación, atributos técnicos estructurados y estado de revisión. No se atribuyen al Excel.
+Los índices de código, clase/estado, dataset, cola/estado/prioridad/fecha y solicitante permiten búsquedas y paginación. La API limita páginas a 100. P16 conserva planes y tiempos observados en la laptop, no estimaciones presentadas como mediciones. Ver [PRUEBAS](PRUEBAS.md).
 
-## Clasificación y relaciones: decisión complementaria
+## Glosario
 
-El material recibido no enumera una taxonomía completa. Se implementó un bosque configurable con raíces Hardware y Software, que sí aparecen en el Excel. Como extensiones propias se implementaron Hardware → Servidor, Equipo de usuario, Red, Impresión, Almacenamiento y Energía. Software permanece para aplicaciones y no integra el conteo de dispositivos. No es una transcripción docente. Tras la aclaración de Jeremy, no se trata un árbol adicional no enumerado como desarrollo pendiente. La [decisión de P04](decisiones/002-interpretacion-cmdb-p04.md) registra el alcance acordado y la salvedad interpretativa, sin afirmar que las fuentes contienen esas seis subclases.
+| Término | Significado en este proyecto |
+| --- | --- |
+| Servicio | Prestación del catálogo, nivel 2 asociado a un nivel 1 |
+| CI | Elemento de configuración que soporta un servicio |
+| CMDB | Información de CI, clasificación, atributos y relaciones |
+| Tipo | Naturaleza general del ticket, seis valores |
+| Proceso | Flujo aplicado, siete variantes |
+| Cola | Ámbito de atención de un proceso con permisos propios |
+| Grant | Permiso de usuario o rol en una cola |
+| Actor | Identidad autenticada que realizó una modificación |
+| Ciclo | Período de resolución o revisión que conserva historia |
+| Snapshot | Copia de datos u objetivos en el momento de una acción |
+| Desconocido | Ausencia real de información, distinta de cero o falso |
+| Impacto potencial | Servicios alcanzables por dependencias, no caída confirmada |
 
-Antes de insertar o mover una clase, bloquear cambios de clasificación en transacción y recorrer ancestros. Rechazar padres inexistentes/inactivos y ciclos. No reutilizar la organización como árbol de clases.
+## Evidencias visuales de CMDB y origen
 
-Relaciones técnicas propuestas: `depende_de` y `alojado_en` dirigidas sin ciclos, `conectado_a` simétrica con ciclos permitidos. Para las simétricas guardar par ordenado por ID y unicidad. Para vínculos sin ciclos, usar bloqueo transaccional por tipo y búsqueda de camino inverso antes de insertar. Los tipos que propagan posible impacto se recorren de dependido a dependientes, con conjunto de visitados, límite de profundidad y aviso de truncamiento. Resolver los servicios asociados a esos CI, devolver rutas y distinguir impacto potencial de interrupción efectiva.
+Registro de los valores del Excel conservados en la aplicación:
 
-## Generación y rendimiento previstos
+![Valores de origen CMDB conservados en la aplicación](Imagenes/service-desk-origen-excel.png)
 
-Conjunto `cmdb-demo`, semilla configurable y versión de generador. Código determinista por conjunto/semilla/ordinal, upsert del mismo conjunto sin borrar otros datos. Por defecto exactamente 5,000 dispositivos Hardware distribuidos en las seis clases propias, con referencias activas preexistentes. Software, componentes, relaciones y catálogos no cuentan. Reportar COUNT de dispositivos distintos por clase y ancestros sin sumar subtotales como si fueran dispositivos extra. Medir tiempos realmente en la laptop al implementar, no estimarlos como evidencia.
+CI creado durante el recorrido de pruebas de la interfaz:
 
-Índices previstos: código único CI, clase/estado/id, ubicación, responsable, relaciones por origen/destino/tipo, tickets por cola/estado/prioridad/fecha/id y solicitante/fecha. API con paginación estable y límite máximo 100. Revisar EXPLAIN y mediciones reales sobre 5,000 dispositivos en P16. Generación y borrado explícito de datasets son operaciones separadas del arranque normal.
+![Ficha del CI utilizado en la prueba de interfaz](Imagenes/service-desk-cmdb.png)

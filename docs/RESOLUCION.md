@@ -1,204 +1,82 @@
-# Resolución de la tarea
+# Resolución: catálogo, Service Desk y CMDB
 
-## Estado del documento
+Jeremy Estuardo Orellana Aldana · Carné 202300644 · Software Avanzado.
 
-Integrante: Jeremy Estuardo Orellana Aldana. Carné: 202300644.
+Documento consolidado el 28 de octubre de 2026. Describe lo implementado, no una propuesta pendiente. La base del parcial permanece en `parcial-v2.0`. Service Desk fue integrado en main mediante `8a103ac`. La actualización posterior `7681a47` conserva scripts operativos de la laptop.
 
-Actualización del 4 de octubre de 2026: las afirmaciones históricas de los ciclos anteriores deben leerse junto con el [cierre de auditoría](evidencias/2026-10-04-cierre-auditoria.md). El commit publicado antes de estos cambios es `751dbd8`, con `main` y `parcial-v2.0` sincronizados. Las correcciones de este cierre requieren un nuevo commit y actualización del tag.
+## 1. Problema y alcance
 
-Este documento es la narración principal del proyecto. Se actualiza con resultados reales y enlaza a las evidencias de respaldo. Los apartados que todavía no tienen implementación se marcan como pendientes.
+El sistema reemplaza la gestión aislada en Excel por un catálogo trazable y un punto de atención para solicitudes. Conserva organización Empresa → Área → Departamento → Sección → Puesto → Usuario, autenticación local, bajas lógicas, asignaciones, catálogos auxiliares y filtros.
 
-Actualización de la ampliación, 28 de octubre de 2026: la exclusión de tickets descrita más abajo corresponde al parcial original. En `feature/service-desk` ya se implementaron tickets, siete procesos, CMDB, adjuntos, indicadores, FAQ y pantallas nuevas, sin alterar `parcial-v2.0`. El alcance actual y límites están en [API de Service Desk](API-SERVICE-DESK.md), [cálculos e interfaz](INDICADORES.md) y [demostración de 37 tickets](DEMOSTRACION-SERVICE-DESK.md). La [verificación final](evidencias/service-desk-final.md) distingue resultados funcionales de la limitación de fuente de P04. Los datos y evidencias históricas no se presentan como si fueran pruebas nuevas.
+La ampliación agrega siete procesos de tickets, colas con permisos independientes, clasificación y relaciones de CI, aprobaciones, comentarios públicos e internos, adjuntos protegidos, FAQ e indicadores. La demo tiene 12 servicios nivel 1, 46 nivel 2, siete colas, 37 tickets y 5,000 dispositivos activos. Los conteos de las bases de pruebas son distintos porque contienen fixtures.
 
-Tras la aclaración posterior de Jeremy, el pendiente documental de P04 sobre un árbol adicional quedó cerrado en el alcance acordado, con [salvedad interpretativa registrada](decisiones/002-interpretacion-cmdb-p04.md). Se justifican campos y relaciones observables y se mantienen las subclases adicionales como diseño propio. No se presenta la aclaración como una aprobación directa del catedrático ni se cambian las pruebas históricas.
+No se implementan facturación, KEDB independiente, correo real obligatorio ni cambios automáticos de permisos en sistemas externos. Accesos controla solicitudes, decisiones y evidencias de provisión o revocación, no administra directorios ajenos.
 
-## 1. Problema, alcance y supuestos
-
-La organización administra sus servicios de TI en un Excel y necesita una aplicación web para consultar y mantener el catálogo, organizar usuarios y unidades, y asignar responsables.
-
-El alcance incluye:
-
-- Autenticación local y dos roles.
-- Jerarquía Empresa → Área → Departamento → Sección → Puesto → Usuario.
-- Catálogo de servicios nivel 1 y nivel 2.
-- Importación repetible del Excel.
-- Asignación de servicios a secciones y usuarios responsables.
-- Docker, PostgreSQL, pruebas y documentación reproducible.
-
-No se implementarán tickets, facturación ni consumo de servicios porque están fuera del alcance del parcial.
-
-## 2. Arquitectura y justificación de tecnologías
-
-Se utilizará un monolito modular con MVC por capas, Service y Repository:
+## 2. Arquitectura y tecnologías
 
 ```text
-React/Vite -> Handler/Controller -> Service -> Repository -> PostgreSQL
+React/Vite → Handler/Controller → Service → Repository → PostgreSQL
 ```
 
-- React/Vite organiza la vista por funcionalidades.
-- Go concentra la API y las reglas de negocio.
-- Los Services validan permisos, relaciones y reglas del catálogo.
-- Los Repositories encapsulan las consultas SQL.
-- PostgreSQL conserva los datos y la persistencia.
-- Docker Compose reproducirá la aplicación y la base de datos.
+Monolito modular. React organiza las vistas, Go recibe peticiones y aplica reglas, PostgreSQL conserva integridad y transacciones. Las consultas de Service Desk se encapsulan en su módulo de repositorio y servicios, no en handlers HTTP. Docker Compose ejecuta PostgreSQL, API y Nginx/frontend sin instalar los lenguajes en el anfitrión.
 
-Las bajas son lógicas. El servidor impide desactivar una unidad que todavía tenga dependencias activas y evita desactivar usuarios que continúan como responsables de servicios. Primero debe corregirse la relación.
+Los siete flujos comparten infraestructura de tickets pero tienen rutas y guardas propias. Sus detalles se almacenan en `tickets.details` JSONB. Estados y procesos tienen restricciones referenciales, mientras las transiciones se validan en Go. No existen las siete tablas de detalles ni la tabla editable de transiciones planteadas en el diseño inicial.
 
-## 3. Modelo entidad-relación y diccionario de datos
+El esquema implementado y los originales están en [MODELO](MODELO.md). Los flujos y contratos están en [PROCESOS](PROCESOS.md). La preparación reproducible está en el [README principal](../README.md).
 
-El esquema inicial ya está implementado en `backend/migrations/001_initial_schema.sql`. La estructura base es:
+## 3. Catálogo original y decisiones de importación
 
-```mermaid
-erDiagram
-    COMPANY ||--o{ AREA : contains
-    AREA ||--o{ DEPARTMENT : contains
-    DEPARTMENT ||--o{ SECTION : contains
-    SECTION ||--o{ POSITION : contains
-    POSITION ||--o{ USER : has
-    SERVICE_LEVEL1 ||--o{ SERVICE_LEVEL2 : contains
-    SECTION ||--o{ SERVICE_ASSIGNMENT : responsible_for
-    USER ||--o{ SERVICE_ASSIGNMENT : optionally_responsible
-    SERVICE_LEVEL2 ||--o{ SERVICE_ASSIGNMENT : assigned
-```
+Se conserva `data/CatalogoServicios.xlsx` sin modificaciones. La hoja de servicios usa datos A4:L101 y listas E112:H122.
 
-Tablas previstas:
+1. Una combinación se resuelve desde su celda principal, solo dentro de su rango.
+2. No se crea un servicio por cada fila visual. Las continuaciones y opciones no generan registros.
+3. `SE.12` usa `Suministrar Analitica` como nombre canónico y conserva `Mantener Tableros de Control` como evidencia de conflicto con observación.
+4. Los códigos `SE.12.1`, `SE.12.2` y `SE.12.3` son texto, sin conversión numérica.
+5. Los atributos vacíos permanecen desconocidos y en revisión, sin inventar clase, criticidad, tipo, métrica o estado activo fuente.
+6. Los registros conservan hoja, fila, rango y transformaciones. Reimportar no duplica códigos.
 
-El [diccionario completo y mapeo por columna](decisiones/diccionario-y-mapeo.md) detalla tipos, claves, relaciones, restricciones y tratamiento de valores opcionales.
+Las reglas ejecutables y casos de filas sin código están en la [decisión de importación](decisiones/001-reglas-importacion-catalogo.md). El estado administrativo `is_active` no se confunde con el valor de activo ausente del Excel. El diccionario y la asignación de columnas están en [MODELO](MODELO.md).
 
-| Entidad | Restricciones principales |
-|---|---|
-| Empresa | Código único y estado |
-| Área | Código único dentro de la empresa |
-| Departamento | Código único dentro del área |
-| Sección | Código único dentro del departamento |
-| Puesto | Código único dentro de la sección |
-| Usuario | Usuario/correo único, rol, estado y puesto |
-| Servicio nivel 1 | Código único y nombre canónico |
-| Servicio nivel 2 | Código único, nivel 1 obligatorio y atributos del Excel |
-| Asignación | Servicio, sección y usuario opcional de la misma sección |
-| Observación de importación | Hoja, fila, rango, regla y mensaje |
+## 4. CMDB y generación
 
-La ficha de cada servicio muestra el código, los nombres del nivel 1 y nivel 2,
-el indicador de activo del Excel, el estado del registro, clase, criticidad,
-tipo, descripción, métrica, mínimo, máximo, estado de revisión y asignación.
+La CMDB distingue clasificación, relaciones técnicas y organización. Los ejemplos originales de `CMDB.xlsx` se guardan como origen con celdas y SHA-256. No se crean CI ficticios para resolver `Base de Datos1` u otras referencias ambiguas.
 
-## 4. Mapeo Excel → base de datos
+Hardware y Software proceden del Excel. Las seis subclases de Hardware son decisiones propias. La aclaración de Jeremy no equivale a una aprobación directa del catedrático ni transforma esas extensiones en contenido docente. La [decisión P04](decisiones/002-interpretacion-cmdb-p04.md) conserva esa salvedad.
 
-La fuente original se conserva en `data/CatalogoServicios.xlsx` y no se modifica.
+El generador usa dataset, semilla y ordinal para obtener códigos deterministas. Repetir el conjunto no duplica ni borra dispositivos. Las referencias operativas existen y los atributos dependen del perfil técnico. La migración 009 separa ese perfil inmutable del código editable de la clase, de modo que renombrarla no rompe la validación ni la generación.
 
-- Encabezados: `A4:L4`.
-- Datos: `A5:L101`.
-- Opciones: `E112:H122`.
-- Resultado esperado: 12 códigos de nivel 1 y 46 códigos de nivel 2.
-- Las reglas completas están en [001-reglas-importacion-catalogo.md](decisiones/001-reglas-importacion-catalogo.md).
-- El primer reporte real está en [import-report.json](../outputs/import-report.json).
+La clasificación rechaza padres inexistentes y ciclos. Las relaciones `depende_de` y `alojado_en` rechazan ciclos, mientras `conectado_a` es simétrica y los admite. El recorrido inverso devuelve rutas y servicios potencialmente afectados, con límite de profundidad. No certifica una interrupción real.
 
-### Reglas especiales
+## 5. Seguridad, permisos y concurrencia
 
-1. Las celdas combinadas se resuelven desde su celda principal y únicamente dentro de su rango.
-2. Una fila nivel 2 se crea solo cuando `COD.N2` existe físicamente o es la celda principal de una combinación.
-3. `SE.12` conserva como nombre canónico el primer valor encontrado: `Suministrar Analitica`.
-4. `Mantener Tableros de Control` se conserva como evidencia del conflicto de la fila 100.
-5. `SE.12.1`, `SE.12.2` y `SE.12.3` se mantienen como texto.
-6. El padre de un nivel 2 se obtiene del prefijo del código, sin copiar nombres de filas vecinas.
-7. Los atributos vacíos de las filas 99 a 101 quedan desconocidos y requieren revisión.
-8. Las filas de continuación y las listas de opciones no se convierten en servicios.
-9. Cada registro conserva hoja, fila, rango y transformaciones.
+Las contraseñas usan bcrypt con sal. Los tokens de sesión son aleatorios, se almacenan como hash SHA-256, expiran y se invalidan al cerrar sesión. La autorización se evalúa en el servidor por usuario, objeto y acción, no depende de ocultar botones.
 
-## 5. Autenticación, autorización y sesiones
+Consulta no escribe, incluso combinada con admin, agente o grants. La administración delegada permite editar y conceder permisos de una cola concreta, no crear otras colas ni cambiar roles globales. Aprobar, atender y transferir siguen siendo permisos independientes.
 
-La autenticación local ya está implementada en `backend/internal/auth`: usa bcrypt con sal, sesiones aleatorias almacenadas como hash SHA-256, expiración y cierre de sesión invalidante. El servidor protege las rutas y exige el rol `admin` para crear o modificar organización, usuarios y asignaciones. El rol `consulta` conserva acceso de lectura sin exponer hashes.
+Las acciones críticas usan transacciones, bloqueo y versión del ticket. Dos reclamaciones simultáneas producen un ganador y un conflicto. Las escrituras bloquean las colas antes de consultar grants, para no continuar con un permiso revocado durante la espera. Los métodos administrativos antiguos también revalidan al actor después de bloquearlo y conservan su identidad.
 
-El comando `catalogo-seed` crea localmente una jerarquía de demostración, un usuario administrador, un usuario de consulta y tres asignaciones. Las contraseñas se reciben mediante variables de entorno y no se almacenan en Git.
+Las bajas rechazan dependencias pendientes en lugar de dejar responsables huérfanos. El historial de tickets, FAQ y cambios administrativos conserva actor, fecha y snapshots en la misma transacción. Las migraciones 009 y 010 cubren relaciones eliminadas, configuración y usuarios, sin incluir hashes de contraseñas. Los cambios anteriores a esas migraciones no se reconstruyen artificialmente.
 
-## 6. Evidencias de context engineering, prompt engineering y harness engineering
+Adjuntos: máximo 10 MiB, firma y extensión compatibles, nombres seguros y almacenamiento privado. La descarga exige autorización y verifica tamaño y SHA-256. Público significa visible a lectores autorizados del ticket, no acceso anónimo. Los límites detallados están en [PROCESOS](PROCESOS.md).
 
-- Context engineering: [contexto](contexto/), con dos actualizaciones versionadas motivadas por hallazgos del Excel y por la preparación del harness.
-- Prompt engineering: [prompts](prompts/).
-- Harness engineering: [evidencias](evidencias/).
+## 6. IA y decisiones humanas
 
-Los prompts utilizados están documentados en [prompts](prompts/), incluyendo el diseño del importador, el modelo de datos, Docker y la persistencia del catálogo.
+La IA apoyó análisis, implementación, pruebas y documentación. Las decisiones humanas incluyeron el nombre canónico de SE.12, la separación entre datos de fuente y diseño propio, el alcance de P04, la arquitectura y el aislamiento de pruebas. El estudiante debe comprender y defender el código, no presentar una respuesta del modelo como certificación.
 
-Commits de desarrollo relacionados:
+[IA](IA.md) conserva nueve registros de la ampliación, dos mejoras de prompts, más de tres actualizaciones justificadas de contexto y ciclos con resultados reales. Se distinguen fallos accidentales de controles negativos deliberados. La aplicación terminada no consume un modelo ni requiere una cuenta de IA.
 
-| Técnica | Commits relacionados |
-|---|---|
-| Context engineering | `357e69b`, `dddaefc` |
-| Prompt engineering | `357e69b`, `59a02d0`, `10c099f` |
-| Harness engineering | `357e69b`, `10c099f`, `dddaefc` |
+## 7. Verificación y recuperación
 
-Las capturas y actualizaciones documentales de esta auditoría quedarán incluidas en el commit final de entrega.
+La [matriz de pruebas](PRUEBAS.md) relaciona P01–P18 con implementación y evidencias. La versión `8a103ac` se construyó desde un clon nuevo. Se ejecutaron siete rutas, pruebas de permisos, importación, generación, adjuntos e indicadores. P18 se ejecutó aparte, con digests y descarga de archivo antes y después del reinicio.
 
-## 7. Matriz requisito → implementación → prueba → evidencia
+La actualización de la demo conservó 12/46 servicios, 37 tickets y 5,000 dispositivos. Se respaldaron PostgreSQL y archivos y se verificó la restauración en una base separada. Los resultados, imágenes y SHA constan en la [evidencia de despliegue](evidencias/service-desk-despliegue-final.md). No se usa seed para restaurar datos ni se elimina el volumen al reiniciar.
 
-| Requisito | Implementación | Prueba | Evidencia | Estado |
-|---|---|---|---|---|
-| Importar 12/46 registros | Importador Go | Prueba de conteos | `outputs/import-report.json` | Comprobado |
-| Resolver `SE.12` | Regla de primer valor y observación | Prueba del reporte | Reporte y decisión 001 | Comprobado |
-| Conservar códigos como texto | Modelo del importador | Prueba `SE.12.3` | Pruebas del paquete | Comprobado |
-| Preservar atributos ausentes | Valores nulos y revisión | Prueba de filas 99–101 | Reporte | Comprobado |
-| Login local y roles | Servicio auth, sesiones y middleware | Login válido/inválido, `/api/me`, logout y rol consulta | Evidencia ciclo auth/UI | Comprobado manualmente |
-| Organización y usuarios | Repositorio de unidades, usuarios y bajas lógicas | Seed, jerarquía y endpoints protegidos | Evidencia ciclo auth/UI | Comprobado |
-| Búsqueda y asignaciones | Consulta de servicios y validación de sección/responsable | Tres asignaciones de demostración y validación servidor | Evidencia ciclo auth/UI | Comprobado |
-| Interfaz React | Vite, vista de servicios, organización, usuarios y asignaciones | Build Vite y proxy Nginx | `frontend/` y evidencia ciclo auth/UI | Comprobado |
-| Docker y persistencia | `compose.yaml` y volumen `catalogo_pgdata` | `docker compose up --build -d`, `/api/health`, `/api/ready` | Evidencia de ciclo Compose | Comprobado |
-| Esquema PostgreSQL inicial | Migración `001_initial_schema.sql` | Arranque del servidor y migración | `backend/migrations/` | Comprobado |
-| Persistencia del catálogo | Service/Repository y migración `002_import_idempotency.sql` | Importador con `--database-url` y conteos SQL | Evidencia de ciclo Compose y prompt 004 | Comprobado |
-| CRUD y filtros del catálogo | Repositorio, handlers, migración 003 e interfaz React | Suite P09–P10 y endpoints protegidos | `scripts/acceptance.sh` y evidencia CRUD | Comprobado |
-| Mantenimientos editables | Formularios React para unidades, usuarios, nivel 1 y nivel 2 | Build Vite y handlers PATCH protegidos | `frontend/src/main.jsx` y `backend/internal/httpapi/server.go` | Comprobado |
-| Escenarios de aceptación P01–P12 | Suite reproducible con datos aislados | Ejecución remota completa | Evidencia del ciclo CRUD y pruebas | Comprobado |
+## 8. Limitaciones y entrega externa
 
-## 8. Resultados reales de pruebas
-
-Fecha del primer ciclo: 2026-10-01.
-
-La auditoría final se ejecutó el 2026-10-02 sobre la rama `main`. El último commit publicado antes de esta auditoría es `dddaefc`. Los cambios actuales de documentación, composición y corrección de formularios todavía deben incluirse en el commit final.
-
-Resultado actual:
-
-```text
-go test ./...: PASS
-Importación: 12 nivel 1, 46 nivel 2, 4 observaciones y 51 filas omitidas
-Docker Compose: API, PostgreSQL y frontend iniciados
-/api/health: {"status":"ok"}
-/api/ready: {"status":"ready"}
-Migraciones aplicadas: 3
-Clases de servicio cargadas: 2
-Login válido: HTTP 200
-Login inválido: HTTP 401
-Modificación con rol consulta: HTTP 403
-Sesión después de logout: HTTP 401
-Frontend y proxy `/api`: HTTP 200
-Sección creada con administrador: HTTP 201
-Responsable de sección distinta: HTTP 400
-Usuario inactivo intentando login: HTTP 401
-CRUD y filtros del catálogo: HTTP 200/201/400 según operación
-Suite P01–P12: PASS
-```
-
-Durante el ciclo se corrigió un error real en el uso de `GetSheetIndex` y se añadió una prueba para conservar ambos nombres originales de `SE.12`. La evidencia está en [2026-10-01-ciclo-importador.md](evidencias/2026-10-01-ciclo-importador.md).
-
-## 9. Docker, persistencia y recuperación
-
-El entorno usa tres contenedores: la API Go, PostgreSQL 18 y el frontend Nginx. El volumen se monta en `/var/lib/postgresql`, que es la ruta compatible con la estructura de datos de PostgreSQL 18. Las instrucciones de operación normal y reinicio destructivo están en el README principal.
-
-El primer arranque detectó y corrigió una ruta de volumen incompatible. Después se repitió el arranque con éxito. La evidencia está en [2026-10-01-ciclo-compose.md](evidencias/2026-10-01-ciclo-compose.md).
-
-## 10. Limitaciones conocidas, decisiones humanas y reflexión
-
-Hasta ahora, la decisión humana principal fue conservar el primer nombre de `SE.12` como canónico y mantener el segundo como evidencia, en vez de inventar una unificación semántica. También se decidió no corregir automáticamente la escritura original del Excel.
-
-La suite P01–P12 ya está automatizada y comprobada en la laptop remota. El CRUD, la búsqueda, los filtros, los formularios de edición, la persistencia y las reglas de validación principales ya están comprobados.
-
-El trabajo es individual. La principal corrección atribuible al proceso de desarrollo fue ajustar el uso de `GetSheetIndex` después del primer fallo de compilación. La decisión humana más importante fue conservar `Suministrar Analitica` como nombre canónico de `SE.12` y mantener `Mantener Tableros de Control` como evidencia del conflicto.
-
-## 11. Auditoría final contra la consigna
-
-La funcionalidad, la importación, la persistencia, la autenticación, la organización, los mantenimientos, las asignaciones, Docker y las pruebas P01 a P12 están implementados y cuentan con evidencia en este repositorio.
-
-La entrega externa todavía requiere dos comprobaciones manuales antes del envío final:
-
-1. Confirmar en GitHub que `maldanap-usac` fue agregado como colaborador con permisos suficientes.
-2. Crear el commit final con todos los cambios actuales y mover la etiqueta `parcial-v2.0` a ese commit.
-
-El SHA remoto `751dbd8` incluye las correcciones anteriores y estaba sincronizado con el tag al comenzar la auditoría del 4 de octubre. Los cambios posteriores de este cierre todavía no están publicados. Confirmar el SHA definitivo mediante `git rev-parse HEAD` y `git ls-remote origin refs/heads/main refs/tags/parcial-v2.0`.
+- Persiste un falso positivo al editar determinadas dependencias entre CI porque el chequeo puede incluir la relación reemplazada. Es un defecto conocido, no oculto por el PASS de otras pruebas.
+- P04 tiene una salvedad interpretativa de las fuentes y de las subclases propias. No se inventó un árbol adicional atribuido al docente.
+- Los objetivos usan tiempo calendario, no horas hábiles. Los snapshots históricos desconocidos no se reconstruyen con objetivos actuales.
+- La detección de firma de adjuntos no es antivirus. No hay cuotas acumuladas ni limpieza automática de archivos huérfanos tras una caída entre almacenamiento y commit.
+- No se afirma cobertura de toda combinación de concurrencia ni defensa frente al propietario de PostgreSQL que deshabilite triggers.
+- Confirmar fecha/hora de entrega en Wedy y acceso del catedrático. El resumen de clase aportado por Jeremy reportó jueves 29 frente a miércoles 28 en el PDF. No se toma el viernes 30 como prórroga automática.
+- El tag anterior se conserva. Un tag nuevo no se crea ni se mueve como parte de esta consolidación documental.

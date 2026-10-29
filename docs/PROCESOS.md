@@ -1,8 +1,8 @@
 # Procesos, colas y permisos
 
-Fecha: 2026-10-27. Estado: especificación propuesta, pendiente de implementar y verificar. Referencia principal: enunciado Service Desk, apartados 4–7. Reglas complementarias indicadas como decisiones del proyecto.
+Actualización: 2026-10-28. Descripción de la implementación y decisiones complementarias del proyecto. Referencia principal: enunciado Service Desk, apartados 4–7.
 
-Actualización: las siete rutas y controles principales ya se ejecutaron en el backend. El [alcance implementado](API-SERVICE-DESK.md) distingue lo operativo de lo todavía planeado. Adjuntos, snapshots de objetivos, indicadores y pantallas nuevas están implementados y cuentan con [reglas de cálculo y operación](INDICADORES.md) y [evidencia propia](evidencias/service-desk-indicadores-interfaz.md).
+Los resultados reales y sus límites están en [PRUEBAS](PRUEBAS.md). Las reglas complementarias no se atribuyen al material docente.
 
 ## Tipos, colas y flujos diferenciados
 
@@ -18,7 +18,7 @@ Seis tipos y siete procesos. Cada cola tiene exactamente un proceso y puede habe
 | Accesos, ACCESOS | Solicitud de acceso | solicitado → validacion → pendiente_aprobacion → aprobado → provision_o_revocacion → verificacion → resuelto → cerrado. Alternativa pendiente_aprobacion → rechazado | Beneficiario, recurso/servicio, permiso y acción grant/revoke. Solicitante nunca se autoaprueba, incluso admin. Comprobar decisión vigente y evidencia de provisión/revocación |
 | Servicios existentes, SERVICIOS | Requisición de servicio / existente | solicitado → validacion → asignado → cumplimiento → confirmacion → resuelto → cerrado | Servicio existente activo, solicitud concreta y evidencia de cumplimiento. No crear catálogo nuevo ni registrar interrupción como trámite estándar |
 
-Cada estado y transición se vincula al proceso. No permitir saltos mediante edición genérica de state_id. Las aprobaciones son acciones separadas que aplican una transición y guardan decisión en la misma transacción. Cambiar alcance, CI o riesgo tras aprobación invalida esa aprobación y vuelve a evaluación. No permitir rechazos silenciosos ni omitir campos exigidos por una ruta.
+Cada estado y transición se vincula al proceso. No se permiten saltos mediante edición genérica del estado. Las aprobaciones son acciones separadas que aplican una transición y guardan decisión en la misma transacción. Tras aprobar, se rechaza modificar el alcance sin ejecutar antes `reevaluate`, que abre un ciclo nuevo y exige una decisión vigente. No se permiten rechazos silenciosos ni omitir campos exigidos por una ruta.
 
 ## Roles y autorización efectiva
 
@@ -36,9 +36,9 @@ Los grants de cola pueden asignarse a usuario, rol o ambos mediante filas separa
 
 ## Asignación, transferencia y bajas
 
-Política inicial mixta: orden automático, reclamación y asignación manual. Orden `priority_rank ASC, created_at ASC, id ASC`, con Alta=1, Media=2 y Baja=3. Nunca confiar en orden alfabético del rótulo.
+Política inicial mixta: orden automático, reclamación y asignación manual. Orden `priority ASC, created_at ASC, id ASC`, con Alta=1, Media=2 y Baja=3. Nunca confiar en orden alfabético del rótulo.
 
-Tomar ticket: transacción con UPDATE condicional sobre assignee_id NULL, versión esperada y estado atendible, validar agente y cola activa. Solo un agente obtiene una fila modificada, el otro recibe conflicto 409. Auditoría solo para el ganador. Cualquier selección de siguiente ticket debe bloquear filas o usar SKIP LOCKED.
+Tomar ticket: transacción con bloqueo del ticket, comprobación de versión esperada, responsable y estado atendible. Solo un agente obtiene la asignación, el otro recibe conflicto 409. Auditoría solo para el ganador. No se presenta como implementado un selector con SKIP LOCKED.
 
 Transferencia requiere permiso en origen y agente receptor válido en destino o dejar ticket sin reclamar dentro de la cola activa. Destino debe tener el mismo proceso como regla inicial. Para pasar de evento a incidente o de incidente a problema se crea/vincula otro ticket, no se cambia arbitrariamente process_id. Guardar colas y responsables anteriores/nuevos y motivo.
 
@@ -50,15 +50,15 @@ Desactivar cola con tickets no terminales se rechaza hasta transferirlos a desti
 
 Decisión inicial: adjuntos hasta 10 MiB, PDF, PNG, JPEG y texto plano, MIME detectado y extensión coherente. Rechazar ejecutables, HTML/SVG activo y rutas proporcionadas por el cliente. Nombre interno aleatorio, almacenamiento fuera del directorio público en volumen persistente. Descarga con Content-Disposition attachment y nosniff, autorización antes de abrir el archivo. Historial no almacena contraseñas, tokens o bytes de adjuntos.
 
-Cada mutación funcional registra before/after, actor, instante, acción y motivo cuando aplica. Actualización e historial son atómicos. Reintentos de solicitudes críticas usan clave de idempotencia. Para E2/E3 una relación única por evento y notificación deduplicada evitan duplicación concurrente. Se puede vincular manualmente un incidente válido existente con motivo.
+Las modificaciones auditadas conservan before/after, actor, instante, acción y motivo cuando aplica. Actualización e historial son atómicos. La versión esperada controla conflictos de edición, no equivale a una clave genérica de idempotencia. Para E2/E3 una relación única por evento y notificación deduplicada evitan duplicación concurrente. Se puede vincular manualmente un incidente válido existente con motivo.
 
 ## Reglas complementarias de incidentes
 
 Decisión del proyecto, no transcripción ni SLA: si afecta seguridad, sugerir I6 antes de usar duración. Si no hay interrupción ni degradación, I0. Con interrupción/degradación y duración positiva conocida, elegir el menor límite que contiene la duración: I1 hasta 3 h, I2 más de 3 hasta 8 h, I3 más de 8 hasta 48 h, I4 más de 48 hasta 168 h, I5 desde 720 h. Usar 30 días para un mes en esta regla únicamente.
 
-Entre más de 168 y menos de 720 h asignar I5 con indicador `duration_gap_override` y motivo obligatorio que advierta que está por debajo del rótulo de un mes. No presentar ese ajuste como valor docente. Si duración desconocida o degradación con cero minutos, permitir registro con categoría manual justificada y `classification_review_required`. Rechazar negativos. Guardar duración estimada y real separadas, ambas nullable y sin convertir NULL a cero. No reemplazar la clasificación histórica sin auditoría al conocer duración real.
+Entre más de 168 y menos de 720 h asignar I5 con motivo de clasificación obligatorio que advierta que está por debajo del rótulo de un mes. No presentar ese ajuste como valor docente. Si duración desconocida o degradación con cero minutos, permitir registro con categoría manual justificada y revisión explícita. Rechazar negativos. Guardar duración estimada y real separadas, ambas nullable y sin convertir NULL a cero. No reemplazar la clasificación histórica sin auditoría al conocer duración real.
 
-Mapeo inicial exigido: I0 baja, I1–I2 media, I3–I6 alta. Referencia de redundancia I0 disponible e I1–I6 no disponible, pero registrar lo observado como true/false/unknown. Cualquier discrepancia con el mapeo exige motivo y revisión, no alterar hechos para encajar. Prioridad del ticket se obtiene de esta regla para incidentes con ajuste autorizado y auditado. Para otros procesos usar matriz impacto/urgencia documentada: alto/alto y alto/medio o medio/alto=Alta, bajo/bajo=Baja, demás combinaciones=Media. Valores desconocidos requieren clasificación de agente antes de atender, no relleno arbitrario.
+Mapeo inicial exigido: I0 baja, I1–I2 media, I3–I6 alta. Referencia de redundancia I0 disponible e I1–I6 no disponible, pero registrar lo observado como true/false/unknown. Cualquier discrepancia con el mapeo exige motivo y revisión, no alterar hechos para encajar. Prioridad del ticket se obtiene de esta regla para incidentes con ajuste autorizado y auditado. Para otros procesos la prioridad se recibe explícitamente como 1 alta, 2 media o 3 baja. No se afirma que exista una matriz automática de impacto y urgencia.
 
 ## Pausas, cierre, reapertura e indicadores
 
@@ -66,7 +66,7 @@ Decisión inicial: objetivos en minutos calendario UTC. Objetivos de cola positi
 
 Pausar solo desde estado atendible por espera justificada de solicitante/tercero, con estado previo guardado, motivo y una sola pausa abierta. Reanudar cierra pausa y retorna al estado previo. No pausar tickets terminales ni usar pausas para ocultar incumplimiento. Aprobación pendiente no pausa por defecto. Cerrar exige resuelto, resolución y confirmación autorizada. Rechazado exige motivo. Reabrir cerrado/resuelto por solicitante propio o agente autorizado exige motivo y abre nuevo ciclo en validación/diagnóstico según proceso. No borra resolución anterior y las aprobaciones de ejecución quedan sujetas a nueva revisión si cambia alcance. Rechazo requiere nueva solicitud en lugar de reapertura automática.
 
-| Indicador | Cálculo propuesto y población |
+| Indicador | Cálculo implementado y población |
 | --- | --- |
 | Tickets por cola/proceso/prioridad/estado | Conteo actual con filtros y ACL, sin multiplicar por comentarios o CI |
 | Antigüedad abierta | now − created_at para no terminales, incluye pausas y excluye cerrados del agregado abierto |
@@ -74,10 +74,65 @@ Pausar solo desde estado atendible por espera justificada de solicitante/tercero
 | Resolución por ciclo | resolved_at − cycle.started_at − unión de pausas de ese ciclo. Tickets sin resolución no se mezclan como cero |
 | Tiempo activo abierto | now − cycle.started_at − pausas, visible como pendiente, no como resolución completada |
 | Cumplimiento | Dentro de objetivo / medibles con objetivo configurado. Mostrar por separado cumplidos, incumplidos, pendientes y sin objetivo |
-| Reaperturas | Número de ciclos posteriores al inicial, conservar también primera resolución y última resolución |
+| Reaperturas | Número de acciones `reopen` del historial. Una reevaluación puede abrir ciclo sin contar como reapertura |
 
-Fixtures previstos: ticket de 120 min con pausa de 30 da 90 min activos. Ticket abierto de 60 con pausa de 10 da 50 activos, sin tiempo de resolución final. Una reapertura abre ciclo nuevo sin borrar el anterior. Probar fronteras de objetivos e intervalos solapados sin doble resta. No se reportan estos ejemplos como mediciones ejecutadas.
+Los fixtures con valores exactos y la ejecución real están en [pruebas de indicadores](evidencias/service-desk-indicadores-interfaz.md) y [verificación final](evidencias/service-desk-final.md). No confundir ejemplos aritméticos con mediciones de producción.
 
 ## Datos de demostración
 
 Al menos siete colas activas, una por proceso. Al menos 35 tickets, cinco por proceso y distintos estados. Eventos incluyen E0–E3. Incidentes requieren I0–I6: preparar al menos siete incidentes y por tanto 37 tickets como conjunto inicial, cinco en cada uno de los otros seis procesos. Incluir caso de seguridad, aprobaciones/rechazos, reapertura, pausa, incidente→problema→cambio y caso sin CI justificado. Cuentas sintéticas de administrador, solicitante, dos agentes para concurrencia, aprobador y consulta. No reutilizar datos personales reales.
+
+## Administración delegada y revocación
+
+`can_admin` permite administrar la configuración y los grants de la cola autorizada, por usuario o rol. No concede administración global, ni atención o aprobación implícitas. Consulta conserva el veto de escritura incluso con grants elevados. Las acciones de tickets bloquean la cola antes de revalidar permisos. Las operaciones administrativas transmiten el actor autenticado, incluido el panel anterior de usuarios. [Regresiones](evidencias/service-desk-permisos-y-actor.md).
+
+## Objetivos históricos
+
+Los objetivos usan minutos calendario UTC, sin calendario de días hábiles. La interfaz presenta fechas en la zona del navegador. `ticket_objective_segments` conserva objetivos por ciclo y tramo de cola. Una transferencia cierra el tramo origen y abre otro, sin reiniciar antigüedad ni tiempo total del ciclo. Editar objetivos no modifica snapshots anteriores. Los ciclos previos a la migración 006 quedan como `historical_unknown`, con objetivos NULL, sin reconstruir transferencias no verificables.
+
+Una pausa abierta se recorta al instante de consulta. Las pausas solapadas se unen antes de restarlas. Primera atención y resolución no completadas permanecen NULL, no cero. Asignar responsable o transferir no cuentan por sí solos como primera atención.
+
+| Resultado | Regla |
+| --- | --- |
+| cumplido | Tramo completado dentro del objetivo, incluida la igualdad |
+| incumplido | Tiempo activo mayor al objetivo, incluso pendiente |
+| pendiente | Tramo abierto dentro de un objetivo conocido |
+| sin_objetivo | Objetivo NULL o histórico desconocido |
+| sin_resolucion | Ciclo finalizado sin resolución |
+
+Al combinar tramos prevalece un incumplimiento conocido. Después prevalecen objetivo desconocido y tramo pendiente, en ese orden. Solo todos los tramos cumplidos producen cumplimiento. Los rechazados no cuentan como resoluciones completadas.
+
+## API
+
+Las rutas protegidas validan sesión y autorización en servidor, no solo visibilidad de botones.
+
+| Área | Rutas principales |
+| --- | --- |
+| Identidad | `/api/auth/me`, usuarios y roles |
+| Tickets | `/api/desk/tickets`, acciones, comentarios, vínculos y adjuntos de cada ticket |
+| Recepción | `/api/desk/my-tickets`, `/api/desk/intake-queues` |
+| Colas | `/api/desk/queues` y grants de cada cola |
+| CMDB | `/api/cmdb/classes`, `/api/cmdb/items`, ubicaciones, relaciones e impacto |
+| Indicadores | `/api/desk/indicators` y `/api/desk/tickets/{id}/indicators` |
+
+Los comandos de preparación y las cuentas de demostración están únicamente en el [README principal](../README.md). Los detalles ejecutables de cada ruta permanecen en `backend/internal/httpapi/desk.go`, sin mantener una segunda guía operativa divergente.
+
+## Evidencias visuales de los recorridos
+
+Capturas del recorrido registrado durante la implementación. Conservan el estado de esa ejecución, no representan pruebas nuevas ni sustituyen las correcciones posteriores de permisos.
+
+### Portal del solicitante
+
+![Portal del solicitante durante el recorrido de pruebas](Imagenes/service-desk-portal.png)
+
+### Consola de atención
+
+![Consola del agente y filtro de proceso](Imagenes/service-desk-consola.png)
+
+### Ticket y pausa
+
+![Ficha del ticket con pausa registrada](Imagenes/service-desk-ticket-pausa.png)
+
+### Indicadores
+
+![Indicadores del entorno aislado de pruebas](Imagenes/service-desk-indicadores.png)

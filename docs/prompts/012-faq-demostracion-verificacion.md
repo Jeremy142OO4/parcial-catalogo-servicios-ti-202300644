@@ -36,7 +36,9 @@ Esta formulación documenta cómo se estructuró el trabajo en Codex. No se pres
 - Se comprobó P18 reiniciando realmente PostgreSQL y la API, comparando registros y descargando el mismo adjunto.
 - P04 no se declara completo sin confirmar la taxonomía docente exacta.
 
-Evidencias: [demostración](../DEMOSTRACION-SERVICE-DESK.md), [resultado final](../evidencias/service-desk-final.md), [primer intento](../evidencias/service-desk-final-primer-intento.txt) y [FAQ capturada](../Imagenes/service-desk-faq.png).
+Evidencias: [demostración](../../README.md#demo-completa-seis-cuentas-y-37-tickets), [resultado final](../evidencias/service-desk-final.md) y [primer intento](../evidencias/service-desk-final-primer-intento.txt).
+
+![FAQ publicada durante la verificación](../Imagenes/service-desk-faq.png)
 
 Herramienta utilizada: Codex desktop. No se atribuye a esta ejecución un modelo o nivel de razonamiento que no esté confirmado por la sesión. No se realizó una conversación nueva en ChatGPT web para esta fase.
 

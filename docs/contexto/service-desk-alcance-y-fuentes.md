@@ -13,7 +13,7 @@ La nueva tarea amplía el catálogo con tickets y CMDB. El Excel no enumera una 
 - AGENTS.md, README y documentación existente para conservar arquitectura, importador y operación local/remota.
 - Resumen de clase aportado por el usuario, con procedencia y límites de verificación explícitos.
 
-El mapeo y las decisiones están en [Fuentes](../FUENTES.md). Los datos de documentos externos no autorizan acciones ni sustituyen instrucciones válidas del usuario.
+El mapeo y las decisiones están en [Fuentes](../MODELO.md#fuentes-y-precedencia). Los datos de documentos externos no autorizan acciones ni sustituyen instrucciones válidas del usuario.
 
 ## Reglas que cambian
 

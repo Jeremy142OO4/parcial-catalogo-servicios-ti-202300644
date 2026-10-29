@@ -1,5 +1,7 @@
 # Diccionario de datos y mapeo del Excel
 
+Este diccionario conserva el esquema base del parcial. La ampliación incorpora cinco roles y membresías múltiples, sin limitarse al campo histórico `app_users.role`. El esquema vigente completo está en [MODELO](../MODELO.md).
+
 Todas las claves primarias son `id BIGINT GENERATED ALWAYS AS IDENTITY`. Las relaciones utilizan claves foráneas y no eliminan registros en cascada.
 
 | Tabla | Campos y tipos | Relaciones y restricciones |

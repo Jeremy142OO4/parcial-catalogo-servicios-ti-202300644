@@ -1,0 +1,13 @@
+BACKUP RESTORE
+8|12|46|37|5000
+DEPLOYED VERSION
+8a103ac5aeef0b36ef4bbb6d3ed5e56efe97fff6
+d7fdd0528dc715111d64a135030f9521f54880b5bd63bf397674b67e07a7c98c
+1218972441c4f81a89f7693cda4e1505bd0edbfe861366405c062a7d4e45d584
+RUNTIME MIGRATIONS
+10|6
+2026-10-28T09:07:59-06:00
+catalogo-release-test_frontend_1
+catalogo-release-test_api_1
+catalogo-release-test_db_1
+{"status":"ready"}

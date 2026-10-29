@@ -1,0 +1,21 @@
+BACKUP=/home/jeremy/service-desk-backup-8a103ac-Ku4iLo
+catalogo-service-desk-demo_api_1
+catalogo-service-desk-demo_frontend_1
+BACKUP OK
+{"level1": 12, "level2": 46, "queues": 7, "devices": 5000, "tickets": 37, "ci_digest": "f06c5094ab6edeb266628fc63c60b9f7", "faq_digest": "8c9e8fff08db0d321f0bd702cea5952b", "role_digest": "c1c74399339742695c6b4eb107ae6c23", "user_digest": "30feb1cdf60fdd055c84c62bfc46bd57", "class_digest": "4e444ef44f66d9d91d6de7d9cf2eecbb", "grant_digest": "ac85801d1978039b43b1a2fbc12c1b2c", "queue_digest": "297418d63cde3fd8b89af673534bc4bf", "level1_digest": "6dbbec47314dfea6a18d3a2001858414", "level2_digest": "91e71f33d78773a9ba944d94a43c3368", "ticket_digest": "61ec2e3914dbfe49263ae5e6b1143bb4", "history_digest": "ec5b01a1d0256d5df1d6c8f9994156e4", "relations_digest": null, "attachments_digest": null}
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+>>>> Executing external compose provider "/usr/bin/podman-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+catalogo-service-desk-demo_api_1
+catalogo-service-desk-demo_frontend_1
+catalogo-service-desk-demo_frontend_1
+catalogo-service-desk-demo_api_1
+8cc2b85b39f1fc285beac6d7ed422ad120bb6b6e96b8967669514fbcb0019b59
+a4d866014930ae0ebc9c42e5ce534361f106225e00244a73cecc8ae3a6065271
+catalogo-service-desk-demo_api_1
+catalogo-service-desk-demo_frontend_1
+{"status":"ready"}
+10
+DEPLOYED API d7fdd0528dc715111d64a135030f9521f54880b5bd63bf397674b67e07a7c98c
+DEPLOYED FRONTEND 1218972441c4f81a89f7693cda4e1505bd0edbfe861366405c062a7d4e45d584
+PASS deployment: database digests, counts and attachment files conserved

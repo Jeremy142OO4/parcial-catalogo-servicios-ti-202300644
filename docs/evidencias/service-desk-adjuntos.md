@@ -48,4 +48,4 @@ El test de persistencia se omite en el runner general si no se proporciona `ATTA
 
 ## Límites y pendientes
 
-El contrato completo está en [API de Service Desk](../API-SERVICE-DESK.md). La interfaz React para utilizar estos endpoints sigue pendiente. La detección de firma no sustituye antivirus ni desarme de documentos. No hay cuotas acumuladas ni limpieza automática de archivos huérfanos tras caída abrupta. No se han creado capturas simuladas ni atribuido resultados al tag anterior.
+El contrato completo está en [API de Service Desk](../PROCESOS.md#api). La interfaz React para utilizar estos endpoints sigue pendiente. La detección de firma no sustituye antivirus ni desarme de documentos. No hay cuotas acumuladas ni limpieza automática de archivos huérfanos tras caída abrupta. No se han creado capturas simuladas ni atribuido resultados al tag anterior.
